@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
-body {
-    @apply bg-gray-50  font-sans;
+/* body {
+    @apply  font-sans;
 }
 
 
 button {
     @apply px-4 py-2  text-white rounded;
-}
+} */
