@@ -2,6 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 
+
 const Body: React.FC = () => {
   return (
     <div className="relative min-h-[90vh]">
@@ -13,6 +14,7 @@ const Body: React.FC = () => {
           loop 
           playsInline 
           className="object-cover w-full h-full"
+          poster="/beach-poster.jpg"
         >
           <source src="/beach-background.mp4" type="video/mp4" />
         </video>
@@ -62,7 +64,7 @@ const Body: React.FC = () => {
               href="/start"
               className="inline-block mt-8 px-12 py-5 text-xl font-semibold bg-blue-600 
                 rounded-full transition-all duration-300 hover:scale-105 
-                hover:bg-blue-700 hover:shadow-xl"
+             hover:shadow-xl"
             >
               Start Your Journey
             </Link>
