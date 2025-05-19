@@ -9,7 +9,7 @@ const Body: React.FC = () => {
       <div className="relative z-10 flex flex-col items-center justify-center min-h-[90vh] text-white px-4 md:px-8">
         <div className="max-w-5xl mx-auto text-center space-y-12">
           <motion.h1
-            className="text-5xl md:text-7xl font-bold font-playfair"
+            className="text-3xl md:text-5xl font-bold font-playfair"
             initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: "easeOut" }}

@@ -15,6 +15,8 @@ const Page: React.FC = () => {
           autoPlay
           loop
           muted
+          playsInline
+          preload="auto"
           src="/assets/background.mp4"
         >
           Your browser does not support the video tag.
