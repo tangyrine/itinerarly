@@ -1,13 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Mountain, Waves, Landmark, Palmtree, Compass, Users } from "lucide-react";
+import {
+  Mountain,
+  Waves,
+  Landmark,
+  Palmtree,
+  Compass,
+  Users,
+  Loader2,
+} from "lucide-react";
 
 const features = [
   {
     icon: Mountain,
     label: "AI-Powered Planning",
-    description: "Personalized itineraries crafted by AI based on your preferences",
+    description:
+      "Personalized itineraries crafted by AI based on your preferences",
   },
   {
     icon: Waves,
@@ -32,11 +42,20 @@ const features = [
   {
     icon: Users,
     label: "Community Recommendations",
-    description: "Community-driven suggestions for off-the-beaten-path experiences",
+    description:
+      "Community-driven suggestions for off-the-beaten-path experiences",
   },
 ];
 
 const Body: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  const handleStartJourney = async () => {
+    setIsLoading(true);
+    await router.push("/start");
+  };
+
   return (
     <div className="relative min-h-screen">
       <div className="relative z-10 flex flex-col justify-center min-h-screen text-white">
@@ -52,8 +71,8 @@ const Body: React.FC = () => {
               Welcome to Itinerarly
             </h1>
             <p className="text-lg md:text-xl leading-relaxed font-light max-w-3xl">
-              Your intelligent travel companion for exploring the diverse landscapes 
-              and rich cultural heritage of India.
+              Your intelligent travel companion for exploring the diverse
+              landscapes and rich cultural heritage of India.
             </p>
           </motion.div>
 
@@ -70,9 +89,9 @@ const Body: React.FC = () => {
               About Us
             </h2>
             <p className="text-base md:text-lg leading-relaxed">
-              We combine artificial intelligence with local expertise to create 
-              personalized travel experiences. From the snow-capped Himalayas to 
-              the tropical beaches of Kerala, let us help you discover India's 
+              We combine artificial intelligence with local expertise to create
+              personalized travel experiences. From the snow-capped Himalayas to
+              the tropical beaches of Kerala, let us help you discover India's
               hidden treasures.
             </p>
           </motion.div>
@@ -100,7 +119,9 @@ const Body: React.FC = () => {
                     transform transition-all duration-300 hover:shadow-xl"
                 >
                   <feature.icon className="w-8 h-8 mb-4 text-blue-400" />
-                  <h3 className="text-lg font-semibold mb-3">{feature.label}</h3>
+                  <h3 className="text-lg font-semibold mb-3">
+                    {feature.label}
+                  </h3>
                   <p className="text-sm text-gray-300">{feature.description}</p>
                 </motion.div>
               ))}
@@ -117,15 +138,21 @@ const Body: React.FC = () => {
             <h2 className="text-2xl font-semibold">
               Ready to Start Your Journey?
             </h2>
-            <Link
-              href="/start"
-              className="inline-block px-10 py-4 text-lg font-medium 
-                bg-blue-600/90 rounded-lg transition-all duration-300 
-                hover:bg-blue-500 hover:shadow-xl hover:scale-105
-                backdrop-blur-sm"
+            <button
+              onClick={handleStartJourney}
+              disabled={isLoading}
+              className="inline-flex items-center justify-center px-10 py-4 text-lg font-medium 
+        bg-blue-600/90 rounded-lg transition-all duration-300 
+        hover:bg-blue-500 hover:shadow-xl hover:scale-105
+        backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed
+        disabled:hover:scale-100 disabled:hover:bg-blue-600/90"
             >
-              Plan Your Trip Now
-            </Link>
+              {isLoading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                "Get Started"
+              )}
+            </button>
           </motion.div>
         </div>
       </div>

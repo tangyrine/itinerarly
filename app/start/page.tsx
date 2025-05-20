@@ -5,7 +5,7 @@ import indiaGeoJson from "./india-states.json";
 
 export default function Page() {
   return (
-    <div className="w-full h-screen bg-gray-100">
+    <div className="w-full h-screen bg-blue-500">
       <ComposableMap
         projection="geoMercator"
         projectionConfig={{
