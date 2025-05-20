@@ -37,12 +37,24 @@ const CustomButton = ({
 };
 
 const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleGetStarted = async () => {
     setIsLoading(true);
     await router.push("/start");
+  };
+
+   const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+      setIsMenuOpen(false);
+    }
   };
 
   const navItems = [
@@ -69,6 +81,7 @@ const Navbar = () => {
               item.isSection ? (
                 <button
                   key={item.label}
+                  onClick={() => scrollToSection(item.href.slice(1))}
                   className="text-gray-900 transition-colors cursor-pointer"
                 >
                   {item.label}
