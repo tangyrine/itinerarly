@@ -37,11 +37,23 @@ const CustomButton = ({
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
+    const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+      setIsMenuOpen(false);
+    }
+  };
+
   const navItems = [
     { label: 'Home', href: '/' },
-    { label: 'Features', href: '/features' },
-    { label: 'Pricing', href: '/pricing' },
-    { label: 'About', href: '/about' },
+    { label: 'About', href: '#about', isSection: true  },
+    { label: 'Features', href: '#features', isSection: true  },
+    // { label: 'Pricing', href: '/pricing' },
+    
   ]
 
   return (
@@ -58,13 +70,23 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="text-gray-900 transition-colors"
-              >
-                {item.label}
-              </Link>
+              item.isSection ? (
+                <button
+                  key={item.label}
+                  onClick={() => scrollToSection(item.href.slice(1))}
+                  className="text-gray-900 transition-colors cursor-pointer"
+                >
+                  {item.label}
+                </button>
+              ) : (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className="text-gray-900 transition-colors"
+                >
+                  {item.label}
+                </Link>
+              )
             ))}
             <CustomButton variant="ghost" className="text-sm">
               Sign In
@@ -76,45 +98,14 @@ const Navbar = () => {
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-600 hover:text-gray-900"
-            >
-              {isMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
-            </button>
+            <CustomButton className="text-sm">
+              Get Started
+            </CustomButton>
           </div>
         </div>
       </div>
 
-      {/* Mobile Navigation */}
-      {isMenuOpen && (
-        <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            {navItems.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="block px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
-            <div className="mt-4 space-y-2">
-              <CustomButton variant="ghost" className="w-full justify-start text-sm">
-                Sign In
-              </CustomButton>
-              <CustomButton className="w-full text-sm">
-                Get Started
-              </CustomButton>
-            </div>
-          </div>
-        </div>
-      )}
+      
     </nav>
   )
 }
