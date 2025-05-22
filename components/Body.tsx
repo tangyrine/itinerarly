@@ -45,7 +45,6 @@ const features = [
   },
 ];
 
-
 interface BodyProps {
   sectionRefs: Array<{ ref: (node?: Element | null) => void }>;
   sections: Array<{
@@ -56,12 +55,11 @@ interface BodyProps {
   }>;
 }
 
-
-const Body: React.FC<BodyProps> = ({sectionRefs, sections }) => {
+const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
   return (
     <div className="relative min-h-screen">
       <div className="relative z-10 flex flex-col justify-center min-h-screen text-white">
-        <div className="max-w-6xl mx-auto px-4 md:px-6 py-16 space-y-32">
+        <div className="max-w-6xl mx-auto px-4 md:px-6 py-16 space-y-12">
           {/* Welcome Section */}
           <motion.div
             initial={{ opacity: 0, x: -100 }}
@@ -130,15 +128,16 @@ const Body: React.FC<BodyProps> = ({sectionRefs, sections }) => {
             </div>
           </motion.div>
 
-          <div className="container mx-auto px-4 py-16">
+          {/* Sections */}
+          <div className="container mx-auto px-4 py-5">
             {sections.map((section, index: number) => (
               <motion.section
                 key={section.id}
                 ref={sectionRefs[index].ref}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-                className="min-h-screen flex items-center"
+                initial={{ opacity: 0, x: index % 2 === 0 ? -100 : 100 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="flex min-h-[70vh] items-center"
               >
                 <div className="bg-black/30 backdrop-blur-sm p-8 rounded-xl">
                   <h2 className="text-4xl font-bold text-white mb-4">
