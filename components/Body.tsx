@@ -43,8 +43,6 @@ const sections = [
 
 const Body: React.FC = () => {
   const [activeBg, setActiveBg] = useState(sections[0].bg);
-
-  // Create refs for each section
   const [refs, inViews] = sections.map(() => useInView({ threshold: 0.5 })).reduce(
     (acc, curr) => {
       acc[0].push(curr.ref);
