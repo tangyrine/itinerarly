@@ -9,6 +9,13 @@ import {
   Compass,
   Users,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+
+type SectionType =
+  | "hillstations"
+  | "beaches"
+  | "wildlife"
+  | "historical";
 
 const features = [
   {
@@ -56,6 +63,13 @@ interface BodyProps {
 }
 
 const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
+  const router = useRouter();
+
+  const handleDestinationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedType = e.target.value as SectionType;
+    router.push(`/start?type=${selectedType}`);
+  };
+
   return (
     <div className="relative min-h-screen">
       <div className="relative z-10 flex flex-col justify-center min-h-screen text-white">
@@ -82,8 +96,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
             initial={{ opacity: 0, x: 100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
-            className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-center 
-              md:text-right md:ml-auto md:max-w-2xl"
+            className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-center md:text-right md:ml-auto md:max-w-2xl"
           >
             <h2 className="text-2xl md:text-3xl font-semibold mb-6">
               About Us
@@ -115,13 +128,10 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5, delay: 0.1 * index }}
                   whileHover={{ scale: 1.03 }}
-                  className="bg-white/10 backdrop-blur-sm p-8 rounded-xl 
-                    transform transition-all duration-300 hover:shadow-xl"
+                  className="bg-white/10 backdrop-blur-sm p-8 rounded-xl transform transition-all duration-300 hover:shadow-xl"
                 >
                   <feature.icon className="w-8 h-8 mb-4 text-blue-400" />
-                  <h3 className="text-lg font-semibold mb-3">
-                    {feature.label}
-                  </h3>
+                  <h3 className="text-lg font-semibold mb-3">{feature.label}</h3>
                   <p className="text-sm text-gray-300">{feature.description}</p>
                 </motion.div>
               ))}
@@ -130,35 +140,36 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
 
           {/* Sections */}
           <div className="container mx-auto px-4 py-5">
-            {sections.map((section, index: number) => (
-              <motion.section
-                key={section.id}
-                ref={sectionRefs[index].ref}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -100 : 100 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-                className="flex min-h-[70vh] items-center"
+            <hr />
+            <br />
+            <h1 className="text-3xl text-center">
+              Ready to explore the rich landscape of the subcontinent?
+            </h1>
+            <br />
+            <hr />
+            <div className="space-y-6">
+              <h1 className="text-2xl font-semibold">Where are we planning to go?</h1>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="w-full max-w-md"
               >
-                <div className="bg-black/30 backdrop-blur-sm p-8 rounded-xl">
-                  <h2 className="text-4xl font-bold text-white mb-4">
-                    {section.title}
-                  </h2>
-                  <p className="text-xl text-white/90 mb-6">
-                    {section.description}
-                  </p>
-                  <div className="flex flex-wrap gap-4">
-                    {section.places.map((place: string) => (
-                      <span
-                        key={place}
-                        className="px-4 py-2 bg-white/10 rounded-full text-white"
-                      >
-                        {place}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </motion.section>
-            ))}
+                <select
+                  onChange={handleDestinationChange}
+                  className="w-full px-4 py-3 rounded-lg bg-white/10 backdrop-blur-sm text-white border border-white/20 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                  defaultValue=""
+                >
+                  <option value="" disabled>
+                    Select your destination type
+                  </option>
+                  <option value="hillstations">Hill Stations</option>
+                  <option value="beaches">Beaches</option>
+                  <option value="wildlife">Wildlife Sanctuaries</option>
+                  <option value="historical">Historical Sites</option>
+                </select>
+              </motion.div>
+            </div>
           </div>
 
           {/* CTA Section */}
@@ -168,15 +179,10 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
             transition={{ duration: 0.7, delay: 0.6, ease: "easeOut" }}
             className="text-center space-y-6 mx-auto max-w-xl"
           >
-            <h2 className="text-2xl font-semibold">
-              Ready to Start Your Journey?
-            </h2>
+            <h2 className="text-2xl font-semibold">Ready to Start Your Journey?</h2>
             <Link
               href="/start"
-              className="inline-block px-10 py-4 text-lg font-medium 
-                bg-blue-600/90 rounded-lg transition-all duration-300 
-                hover:bg-blue-500 hover:shadow-xl hover:scale-105
-                backdrop-blur-sm"
+              className="inline-block px-10 py-4 text-lg font-medium bg-blue-600/90 rounded-lg transition-all duration-300 hover:bg-blue-500 hover:shadow-xl hover:scale-105 backdrop-blur-sm"
             >
               Plan Your Trip Now
             </Link>
