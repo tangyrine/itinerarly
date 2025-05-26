@@ -8,19 +8,27 @@ import Navbar from "@/components/Navbar";
 import { sections } from "@/data/sections";
 
 const Page: React.FC = () => {
-  const [currentBackground, setCurrentBackground] = useState(sections[0].backgroundImage);
+  const [currentBackground, setCurrentBackground] = useState(
+    sections[0].backgroundImage
+  );
  
-  const sectionRefs = sections.map(() => useInView({
-    threshold: 0.5,
-    triggerOnce: false
-  }));
+  // Initialize refs for each section.
+  const sectionRefs = sections.map(() =>
+    useInView({
+      threshold: 0.5,
+      triggerOnce: false,
+    })
+  );
+
+  // Extract inView values so that useEffect only runs when their boolean values change.
+  const inViewStates = sectionRefs.map(ref => ref.inView);
 
   useEffect(() => {
-    const visibleSectionIndex = sectionRefs.findIndex(({ inView }) => inView);
+    const visibleSectionIndex = inViewStates.findIndex(inView => inView);
     if (visibleSectionIndex !== -1) {
       setCurrentBackground(sections[visibleSectionIndex].backgroundImage);
     }
-  }, [sectionRefs.map(ref => ref.inView)]);
+  }, [...inViewStates]);
 
   return (
     <div>
@@ -38,7 +46,15 @@ const Page: React.FC = () => {
         <div className="relative z-10 flex flex-col min-h-screen">
           <Navbar />
           <main className="flex-grow">
-            <Body sectionRefs={sectionRefs} sections={sections} />
+            <Body
+              sectionRefs={sectionRefs}
+              sections={sections.map(({ id, title, description, places }) => ({
+                id,
+                title,
+                description,
+                places: places.map(place => place.name)
+              }))}
+            />
           </main>
         </div>
       </div>
