@@ -1,10 +1,4 @@
-import React from 'react'
-import Link from 'next/link'
-import { motion } from 'framer-motion'
-
-
-const Body: React.FC = () => {
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -14,14 +8,11 @@ import {
   Palmtree,
   Compass,
   Users,
+  LoaderCircle,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-type SectionType =
-  | "hillstations"
-  | "beaches"
-  | "wildlife"
-  | "historical";
+type SectionType = "hillstations" | "beaches" | "wildlife" | "historical";
 
 const features = [
   {
@@ -68,23 +59,48 @@ interface BodyProps {
   }>;
 }
 
+const animationVariants = {
+  fadeIn: {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.7, ease: "easeOut" },
+  },
+  slideIn: {
+    initial: { opacity: 0, x: -100 },
+    animate: { opacity: 1, x: 0 },
+    transition: { duration: 0.7, ease: "easeOut" },
+  },
+};
+
 const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
   const router = useRouter();
 
-  const handleDestinationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleDestinationChange = async (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setIsLoading(true);
     const selectedType = e.target.value as SectionType;
-    router.push(`/start?type=${selectedType}`);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 800));
+      await router.push(`/start?type=${selectedType}`);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
+  const [isLoading, setIsLoading] = useState(false);
+
   return (
-    <div className="relative min-h-[90vh]">
+    <div className="relative min-h-screen">
       {/* Background with Video */}
       <div className="absolute inset-0 z-0">
-        <video 
-          autoPlay 
-          muted 
-          loop 
-          playsInline 
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="none"
+          aria-label="Background video showing travel destinations"
           className="object-cover w-full h-full"
           poster="/beach-poster.jpg"
         >
@@ -94,20 +110,11 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-[90vh] text-white px-4 md:px-8">
-        <div className="max-w-5xl mx-auto text-center space-y-12">
-          <motion.h1 
-            className="text-5xl md:text-7xl font-bold font-playfair"
-            initial={{ opacity: 0, y: 60 }}
-            animate={{ opacity: 1, y: 0 }}
-    <div className="relative min-h-screen">
       <div className="relative z-10 flex flex-col justify-center min-h-screen text-white">
         <div className="max-w-6xl mx-auto px-4 md:px-6 py-16 space-y-12">
           {/* Welcome Section */}
           <motion.div
-            initial={{ opacity: 0, x: -100 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
+            {...animationVariants.slideIn}
             className="text-center md:text-left space-y-6 md:pl-8"
           >
             <h1 className="text-4xl md:text-5xl font-bold font-playfair tracking-wide">
@@ -119,31 +126,10 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
             </p>
           </motion.div>
 
-          {/* About Section */}
-          <motion.div
-            id="about"
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
-            className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-center md:text-right md:ml-auto md:max-w-2xl"
-          >
-            <h2 className="text-2xl md:text-3xl font-semibold mb-6">
-              About Us
-            </h2>
-            <p className="text-base md:text-lg leading-relaxed">
-              We combine artificial intelligence with local expertise to create
-              personalized travel experiences. From the snow-capped Himalayas to
-              the tropical beaches of Kerala, let us help you discover India's
-              hidden treasures.
-            </p>
-          </motion.div>
-
-          {/* Features Grid */}
+          {/* Features Section */}
           <motion.div
             id="features"
-            initial={{ opacity: 0, y: 60 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.4, ease: "easeOut" }}
+            {...animationVariants.fadeIn}
             className="space-y-8 md:pl-8"
           >
             <h2 className="text-2xl md:text-3xl font-semibold text-center md:text-left">
@@ -160,35 +146,31 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
                   className="bg-white/10 backdrop-blur-sm p-8 rounded-xl transform transition-all duration-300 hover:shadow-xl"
                 >
                   <feature.icon className="w-8 h-8 mb-4 text-blue-400" />
-                  <h3 className="text-lg font-semibold mb-3">{feature.label}</h3>
+                  <h3 className="text-lg font-semibold mb-3">
+                    {feature.label}
+                  </h3>
                   <p className="text-sm text-gray-300">{feature.description}</p>
                 </motion.div>
               ))}
             </div>
           </motion.div>
 
-          {/* Sections */}
+          {/* Destination Selection */}
           <div className="container mx-auto px-4 py-5">
-            <hr />
-            <br />
-            <h1 className="text-3xl text-center">
-              Ready to explore the rich landscape of the subcontinent?
-            </h1>
-            <br />
-            <hr />
-            <br />
-            <div className="space-y-6">
-              <h1 className="text-2xl text-center font-semibold">Where are we planning to go?</h1>
+            <hr className="border-white/20" />
+            <div className="py-8 space-y-6">
+              <h2 className="text-3xl text-center font-semibold">
+                Ready to explore the rich landscape of the subcontinent?
+              </h2>
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
+                {...animationVariants.fadeIn}
                 className="w-full mx-auto text-center max-w-md"
               >
                 <select
                   onChange={handleDestinationChange}
                   className="w-full px-4 py-3 text-center rounded-lg bg-white/10 backdrop-blur-sm text-black border border-white/20 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                   defaultValue=""
+                  disabled={isLoading}
                 >
                   <option value="" disabled>
                     Select your destination type
@@ -198,34 +180,47 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
                   <option value="wildlife">Wildlife Sanctuaries</option>
                   <option value="historical">Historical Sites</option>
                 </select>
+
+                {/* Loading Spinner */}
+                {isLoading && (
+                  <>
+                    {/* Full page overlay */}
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+                    />
+                    {/* Centered loader */}
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50"
+                    >
+                      <LoaderCircle className="w-12 h-12 text-white animate-spin" />
+                      <p className="text-white mt-4 text-center">
+                        Loading your destination...
+                      </p>
+                    </motion.div>
+                  </>
+                )}
               </motion.div>
             </div>
           </div>
 
           {/* CTA Section */}
-          <motion.div
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.6, ease: "easeOut" }}
-            className="text-center "
-          >
-            <hr />
-            <br />
-            <h1 className="text-3xl text-center">
-                Not Sure where to start? Don't worry, we got you covered!
-            </h1>
-            <br />
-            <hr />
-            <br />
-            <Link
-              href="/start"
-              className="inline-block mt-8 px-12 py-5 text-xl font-semibold bg-blue-600 
-                rounded-full transition-all duration-300 hover:scale-105 
-             hover:shadow-xl"
-              className="inline-block px-10 py-4 text-lg font-medium bg-blue-600/90 rounded-lg transition-all duration-300 hover:bg-blue-500 hover:shadow-xl hover:scale-105 backdrop-blur-sm"
-            >
-              Plan Your Trip Now
-            </Link>
+          <motion.div {...animationVariants.slideIn} className="text-center">
+            <hr className="border-white/20" />
+            <div className="py-8">
+              <h2 className="text-3xl text-center mb-8">
+                Not sure where to start? Don't worry, we got you covered!
+              </h2>
+              <Link
+                href="/start"
+                className="inline-block px-10 py-4 text-lg font-medium bg-blue-600/90 rounded-lg transition-all duration-300 hover:bg-blue-500 hover:shadow-xl hover:scale-105 backdrop-blur-sm"
+              >
+                Plan Your Trip Now
+              </Link>
+            </div>
           </motion.div>
         </div>
       </div>
