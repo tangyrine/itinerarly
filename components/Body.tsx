@@ -157,14 +157,20 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
 
           {/* Destination Selection */}
           <div className="container mx-auto px-4 py-5">
-            <hr className="border-white/20" />
-            <div className="py-8 space-y-6">
-              <h2 className="text-3xl text-center font-semibold">
-                Ready to explore the rich landscape of the subcontinent?
-              </h2>
+            <hr />
+            <br />
+            <h1 className="text-3xl text-center">
+              Ready to explore the rich landscape of the subcontinent?
+            </h1>
+            <br />
+            <hr />
+            <div className="space-y-6">
+              <h1 className="text-2xl font-semibold">Where are we planning to go?</h1>
               <motion.div
-                {...animationVariants.fadeIn}
-                className="w-full mx-auto text-center max-w-md"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="w-full max-w-md"
               >
                 <select
                   onChange={handleDestinationChange}
@@ -208,19 +214,19 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
           </div>
 
           {/* CTA Section */}
-          <motion.div {...animationVariants.slideIn} className="text-center">
-            <hr className="border-white/20" />
-            <div className="py-8">
-              <h2 className="text-3xl text-center mb-8">
-                Not sure where to start? Don't worry, we got you covered!
-              </h2>
-              <Link
-                href="/start"
-                className="inline-block px-10 py-4 text-lg font-medium bg-blue-600/90 rounded-lg transition-all duration-300 hover:bg-blue-500 hover:shadow-xl hover:scale-105 backdrop-blur-sm"
-              >
-                Plan Your Trip Now
-              </Link>
-            </div>
+          <motion.div
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, delay: 0.6, ease: "easeOut" }}
+            className="text-center space-y-6 mx-auto max-w-xl"
+          >
+            <h2 className="text-2xl font-semibold">Ready to Start Your Journey?</h2>
+            <Link
+              href="/start"
+              className="inline-block px-10 py-4 text-lg font-medium bg-blue-600/90 rounded-lg transition-all duration-300 hover:bg-blue-500 hover:shadow-xl hover:scale-105 backdrop-blur-sm"
+            >
+              Plan Your Trip Now
+            </Link>
           </motion.div>
         </div>
       </div>
