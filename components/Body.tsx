@@ -81,7 +81,6 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
     setIsLoading(true);
     const selectedType = e.target.value as SectionType;
     try {
-      await new Promise(resolve => setTimeout(resolve, 800));
       await router.push(`/start?type=${selectedType}`);
     } finally {
       setIsLoading(false);
