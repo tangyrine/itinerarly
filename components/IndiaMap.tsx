@@ -195,7 +195,7 @@ export default function IndiaMap() {
                     fill={hoveredPlace === place.name ? "#FF8C00" : "#F53"}
                     stroke="#fff"
                     strokeWidth={2}
-                    className="transition-all duration-200"
+                    className="transition-all duration-800"
                   />
                 </g>
               </Marker>
@@ -217,7 +217,8 @@ export default function IndiaMap() {
           }}
         >
           <h3 className="font-semibold text-lg mb-2">{hoveredPlace}</h3>
-          {/* <p className="text-gray-600">{hoveredPlaceDetails}</p> */}
+          <hr />
+          <button className="text-blue-400 text-center hover:underline">Show details</button>
         </div>
       )}
     </div>
