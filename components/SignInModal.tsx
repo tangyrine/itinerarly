@@ -13,13 +13,13 @@ import { Label } from "@/components/ui/label";
 
 interface SignInModalProps {
   openModal: boolean;
-  onClose: () => void; // Callback to close the modal
+  onClose: () => void; 
 }
 
 export function SignInModal({ openModal, onClose }: SignInModalProps) {
   return (
     <Dialog open={openModal} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-white shadow-xl rounded-lg border border-gray-300">
         <DialogHeader>
           <DialogTitle>Sign In</DialogTitle>
           <DialogDescription>

@@ -17,6 +17,11 @@ import { ZoomableGroup } from "react-simple-maps";
 
 export default function IndiaMap() {
   const [hoveredPlace, setHoveredPlace] = useState<string | null>(null);
+  const [hoveredPlaceDetails, setHoveredPlaceDetails] = useState<any | null>(
+    null
+  );
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
   const [isMapLoading, setIsMapLoading] = useState(true);
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [position, setPosition] = useState({ coordinates: [82, 22], zoom: 1 });
@@ -71,6 +76,17 @@ export default function IndiaMap() {
     } else {
       handleZoomIn();
     }
+  };
+
+  const handleMouseEnter = (place: any, event: React.MouseEvent) => {
+    setHoveredPlace(place.name);
+    setHoveredPlaceDetails(place.details);
+    setMousePosition({ x: event.clientX, y: event.clientY });
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredPlace(null);
+    setHoveredPlaceDetails(null);
   };
 
   return (
@@ -170,8 +186,8 @@ export default function IndiaMap() {
                 coordinates={[place.coordinates[0], place.coordinates[1]]}
               >
                 <g
-                  onMouseEnter={() => setHoveredPlace(place.name)}
-                  onMouseLeave={() => setHoveredPlace(null)}
+                  onMouseEnter={(e) => handleMouseEnter(place, e)}
+                  onMouseLeave={handleMouseLeave}
                   style={{ cursor: "pointer" }}
                 >
                   <circle
@@ -181,35 +197,28 @@ export default function IndiaMap() {
                     strokeWidth={2}
                     className="transition-all duration-200"
                   />
-                  {hoveredPlace === place.name && (
-                    <>
-                      <rect
-                        x="-50"
-                        y="-35"
-                        width="100"
-                        height="22"
-                        fill="rgba(0,0,0,0.8)"
-                        rx="4"
-                      />
-                      <text
-                        textAnchor="middle"
-                        y="-20"
-                        style={{
-                          fontFamily: "system-ui",
-                          fill: "#fff",
-                          fontSize: "12px",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {place.name}
-                      </text>
-                    </>
-                  )}
                 </g>
               </Marker>
             ))}
           </ZoomableGroup>
         </ComposableMap>
+      )}
+
+      {/* Dialog for hovered place */}
+      {hoveredPlace 
+      // && hoveredPlaceDetails
+       && (
+        <div
+          className="fixed bg-white p-4 rounded-lg shadow-xl border border-gray-200 z-50"
+          style={{
+            left: mousePosition.x + 10,
+            top: mousePosition.y + 10,
+            maxWidth: "300px",
+          }}
+        >
+          <h3 className="font-semibold text-lg mb-2">{hoveredPlace}</h3>
+          {/* <p className="text-gray-600">{hoveredPlaceDetails}</p> */}
+        </div>
       )}
     </div>
   );
