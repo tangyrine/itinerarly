@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { LoaderCircle, RotateCcw } from "lucide-react";
 import { Plus, Minus } from "lucide-react";
 import { ZoomableGroup } from "react-simple-maps";
-import Gemini from "../lib/Gemini"
+import Gemini from "../lib/Gemini";
 
 interface IndiaMapProps {
   type: string | null;
@@ -21,14 +21,19 @@ interface IndiaMapProps {
 
 export default function IndiaMap({ type }: IndiaMapProps) {
   const [hoveredPlace, setHoveredPlace] = useState<string | null>(null);
-  const [hoveredPlaceDetails, setHoveredPlaceDetails] = useState<any | null>(null);
+  const [hoveredPlaceDetails, setHoveredPlaceDetails] = useState<any | null>(
+    null
+  );
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isMapLoading, setIsMapLoading] = useState(true);
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<string | null>(null);
-  const [dialogTimeout, setDialogTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [dialogTimeout, setDialogTimeout] = useState<NodeJS.Timeout | null>(
+    null
+  );
   const [position, setPosition] = useState({ coordinates: [82, 22], zoom: 1 });
-  
+  const [aiData, setAiData] = useState<string>("");
+  const [isLoadingAiData, setIsLoadingAiData] = useState<boolean>(false);
 
   const selectedSection = sections.find((section) => section.id === type);
   const highlightedPlaces = selectedSection?.places || [];
@@ -37,11 +42,13 @@ export default function IndiaMap({ type }: IndiaMapProps) {
     const stateName = geo.properties.NAME_1;
     setSelectedState(selectedState === stateName ? null : stateName);
   };
-  
-  const AI = async() =>{
-      const data = await Gemini();
-      console.log(data);
-  }
+
+  const AI = async () => {
+    setIsLoadingAiData(true);
+    const data = await Gemini();
+    setAiData(data ?? "");
+    setIsLoadingAiData(false);
+  };
 
   useEffect(() => {
     const loadMap = async () => {
@@ -133,7 +140,7 @@ export default function IndiaMap({ type }: IndiaMapProps) {
           <RotateCcw className="w-6 h-6" />
         </button>
       </div>
-      
+
       {isMapLoading ? (
         <div className="h-full w-full flex items-center justify-center">
           <div className="flex flex-col items-center space-y-4">
@@ -159,9 +166,10 @@ export default function IndiaMap({ type }: IndiaMapProps) {
             onMoveEnd={({
               coordinates,
               zoom,
-            }: { coordinates: [number, number]; zoom: number }) =>
-              setPosition({ coordinates, zoom })
-            }
+            }: {
+              coordinates: [number, number];
+              zoom: number;
+            }) => setPosition({ coordinates, zoom })}
             maxZoom={4}
             minZoom={1}
           >
@@ -171,7 +179,11 @@ export default function IndiaMap({ type }: IndiaMapProps) {
                   <Geography
                     key={geo.properties.NAME_1}
                     onClick={() => handleStateClick(geo)}
-                    fill={selectedState === geo.properties.NAME_1 ? "#4299E1" : "#D6D6DA"}
+                    fill={
+                      selectedState === geo.properties.NAME_1
+                        ? "#4299E1"
+                        : "#D6D6DA"
+                    }
                     geography={geo}
                     stroke="#FFFFFF"
                     strokeWidth={0.5}
@@ -236,12 +248,20 @@ export default function IndiaMap({ type }: IndiaMapProps) {
         >
           <h3 className="font-semibold text-lg mb-2">{hoveredPlace}</h3>
           <hr />
-          <button 
-            className="text-blue-400 text-center hover:underline" 
-            onClick={async() => await AI()}
-          >
-            Show details
-          </button>
+          {isLoadingAiData ? (
+            <div className="flex items-center justify-center">
+              <LoaderCircle className="w-6 h-6 animate-spin text-blue-500" />
+            </div>
+          ) : aiData ? (
+            <p className="text-gray-700 mt-4">{aiData}</p>
+          ) : (
+            <button
+              className="text-blue-400 text-center hover:underline"
+              onClick={AI}
+            >
+              Show details
+            </button>
+          )}
         </div>
       )}
     </div>
