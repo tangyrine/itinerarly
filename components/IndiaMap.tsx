@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { LoaderCircle, RotateCcw } from "lucide-react";
 import { Plus, Minus } from "lucide-react";
 import { ZoomableGroup } from "react-simple-maps";
-
+import Gemini from "../lib/Gemini"
 
 interface IndiaMapProps {
   type: string | null;
@@ -37,6 +37,11 @@ export default function IndiaMap({ type }: IndiaMapProps) {
     const stateName = geo.properties.NAME_1;
     setSelectedState(selectedState === stateName ? null : stateName);
   };
+  
+  const AI = async() =>{
+      const data = await Gemini();
+      console.log(data);
+  }
 
   useEffect(() => {
     const loadMap = async () => {
@@ -233,7 +238,7 @@ export default function IndiaMap({ type }: IndiaMapProps) {
           <hr />
           <button 
             className="text-blue-400 text-center hover:underline" 
-            onClick={() => console.log("clicked")}
+            onClick={async() => await AI()}
           >
             Show details
           </button>
