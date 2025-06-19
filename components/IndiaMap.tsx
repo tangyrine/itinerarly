@@ -13,6 +13,7 @@ import { sections } from "@/data/sections";
 import { LoaderCircle, RotateCcw } from "lucide-react";
 import { Plus, Minus } from "lucide-react";
 import Gemini from "../lib/Gemini";
+import PlaceDetails from "./PlaceDetails";
 
 interface IndiaMapProps {
   type: string | null;
@@ -24,11 +25,16 @@ export default function IndiaMap({ type }: IndiaMapProps) {
   const [isMapLoading, setIsMapLoading] = useState(true);
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<string | null>(null);
-  const [dialogTimeout, setDialogTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [dialogTimeout, setDialogTimeout] = useState<NodeJS.Timeout | null>(
+    null
+  );
   const [position, setPosition] = useState({ coordinates: [82, 22], zoom: 1 });
 
-  const [markerDetailsMap, setMarkerDetailsMap] = useState<Record<string, string>>({});
+  const [markerDetailsMap, setMarkerDetailsMap] = useState<
+    Record<string, string>
+  >({});
   const [loadingMarker, setLoadingMarker] = useState<string | null>(null);
+  const [showPlaceDetails, setShowPlaceDetails] = useState(false);
 
   const selectedSection = sections.find((section) => section.id === type);
   const highlightedPlaces = selectedSection?.places || [];
@@ -41,7 +47,7 @@ export default function IndiaMap({ type }: IndiaMapProps) {
   const fetchDetailsForMarker = async (markerName: string) => {
     if (markerDetailsMap[markerName]) return;
     setLoadingMarker(markerName);
-    const data = await Gemini();
+    const data = await Gemini(markerName);
     setMarkerDetailsMap((prev) => ({ ...prev, [markerName]: data ?? "" }));
     setLoadingMarker(null);
   };
@@ -103,6 +109,19 @@ export default function IndiaMap({ type }: IndiaMapProps) {
       setHoveredPlace(null);
     }, 3000);
     setDialogTimeout(timeout);
+  };
+
+  const handleShowDetails = async () => {
+    if (hoveredPlace) {
+      if (!markerDetailsMap[hoveredPlace]) {
+        await fetchDetailsForMarker(hoveredPlace);
+      }
+
+      const currentPlace = hoveredPlace;
+      setHoveredPlace(null);
+      setShowPlaceDetails(true);
+      setSelectedPlace(currentPlace);
+    }
   };
 
   return (
@@ -227,7 +246,7 @@ export default function IndiaMap({ type }: IndiaMapProps) {
         </ComposableMap>
       )}
 
-      {hoveredPlace && (
+      {hoveredPlace && !showPlaceDetails && (
         <div
           className="fixed bg-white p-4 rounded-lg shadow-xl border border-gray-200 z-50"
           style={{
@@ -243,16 +262,32 @@ export default function IndiaMap({ type }: IndiaMapProps) {
               <LoaderCircle className="w-6 h-6 animate-spin text-blue-500" />
             </div>
           ) : markerDetailsMap[hoveredPlace] ? (
-            <p className="text-gray-700 mt-4">{markerDetailsMap[hoveredPlace]}</p>
+            <button
+              className="text-blue-400 text-center hover:underline"
+              onClick={handleShowDetails}
+            >
+              Show details
+            </button>
           ) : (
             <button
               className="text-blue-400 text-center hover:underline"
-              onClick={() => fetchDetailsForMarker(hoveredPlace)}
+              onClick={handleShowDetails}
             >
               Show details
             </button>
           )}
         </div>
+      )}
+
+      {showPlaceDetails && selectedPlace && (
+        <PlaceDetails
+          place={selectedPlace}
+          details={markerDetailsMap[selectedPlace] || ""}
+          onClose={() => {
+            setShowPlaceDetails(false);
+            setSelectedPlace(null);
+          }}
+        />
       )}
     </div>
   );
