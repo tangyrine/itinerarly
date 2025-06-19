@@ -1,18 +1,17 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   ComposableMap,
   Geographies,
   Geography,
   Marker,
+  ZoomableGroup,
 } from "react-simple-maps";
 import indiaGeoJson from "../app/start/india-states.json";
 import { sections } from "@/data/sections";
-import { useEffect, useState } from "react";
 import { LoaderCircle, RotateCcw } from "lucide-react";
 import { Plus, Minus } from "lucide-react";
-import { ZoomableGroup } from "react-simple-maps";
 import Gemini from "../lib/Gemini";
 
 interface IndiaMapProps {
@@ -21,19 +20,15 @@ interface IndiaMapProps {
 
 export default function IndiaMap({ type }: IndiaMapProps) {
   const [hoveredPlace, setHoveredPlace] = useState<string | null>(null);
-  const [hoveredPlaceDetails, setHoveredPlaceDetails] = useState<any | null>(
-    null
-  );
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isMapLoading, setIsMapLoading] = useState(true);
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<string | null>(null);
-  const [dialogTimeout, setDialogTimeout] = useState<NodeJS.Timeout | null>(
-    null
-  );
+  const [dialogTimeout, setDialogTimeout] = useState<NodeJS.Timeout | null>(null);
   const [position, setPosition] = useState({ coordinates: [82, 22], zoom: 1 });
-  const [aiData, setAiData] = useState<string>("");
-  const [isLoadingAiData, setIsLoadingAiData] = useState<boolean>(false);
+
+  const [markerDetailsMap, setMarkerDetailsMap] = useState<Record<string, string>>({});
+  const [loadingMarker, setLoadingMarker] = useState<string | null>(null);
 
   const selectedSection = sections.find((section) => section.id === type);
   const highlightedPlaces = selectedSection?.places || [];
@@ -43,11 +38,12 @@ export default function IndiaMap({ type }: IndiaMapProps) {
     setSelectedState(selectedState === stateName ? null : stateName);
   };
 
-  const AI = async () => {
-    setIsLoadingAiData(true);
+  const fetchDetailsForMarker = async (markerName: string) => {
+    if (markerDetailsMap[markerName]) return;
+    setLoadingMarker(markerName);
     const data = await Gemini();
-    setAiData(data ?? "");
-    setIsLoadingAiData(false);
+    setMarkerDetailsMap((prev) => ({ ...prev, [markerName]: data ?? "" }));
+    setLoadingMarker(null);
   };
 
   useEffect(() => {
@@ -83,7 +79,6 @@ export default function IndiaMap({ type }: IndiaMapProps) {
   const handleMouseEnter = (place: any, event: React.MouseEvent) => {
     if (!selectedPlace) {
       setHoveredPlace(place.name);
-      setHoveredPlaceDetails(place.details);
       setMousePosition({ x: event.clientX, y: event.clientY });
     }
   };
@@ -91,7 +86,6 @@ export default function IndiaMap({ type }: IndiaMapProps) {
   const handleMouseLeave = () => {
     if (!selectedPlace) {
       setHoveredPlace(null);
-      setHoveredPlaceDetails(null);
     }
   };
 
@@ -99,19 +93,15 @@ export default function IndiaMap({ type }: IndiaMapProps) {
     event.stopPropagation();
     setSelectedPlace(place.name);
     setHoveredPlace(place.name);
-    setHoveredPlaceDetails(place.details);
     setMousePosition({ x: event.clientX, y: event.clientY });
 
     if (dialogTimeout) {
       clearTimeout(dialogTimeout);
     }
-
     const timeout = setTimeout(() => {
       setSelectedPlace(null);
       setHoveredPlace(null);
-      setHoveredPlaceDetails(null);
     }, 3000);
-
     setDialogTimeout(timeout);
   };
 
@@ -152,8 +142,8 @@ export default function IndiaMap({ type }: IndiaMapProps) {
         <ComposableMap
           projection="geoMercator"
           projectionConfig={{
-            scale: 800, // Fixed scale instead of dynamic scaling
-            center: [82, 22], // Fixed center instead of dynamic centering
+            scale: 800,
+            center: [82, 22],
           }}
           style={{
             width: "100%",
@@ -248,16 +238,16 @@ export default function IndiaMap({ type }: IndiaMapProps) {
         >
           <h3 className="font-semibold text-lg mb-2">{hoveredPlace}</h3>
           <hr />
-          {isLoadingAiData ? (
+          {loadingMarker === hoveredPlace ? (
             <div className="flex items-center justify-center">
               <LoaderCircle className="w-6 h-6 animate-spin text-blue-500" />
             </div>
-          ) : aiData ? (
-            <p className="text-gray-700 mt-4">{aiData}</p>
+          ) : markerDetailsMap[hoveredPlace] ? (
+            <p className="text-gray-700 mt-4">{markerDetailsMap[hoveredPlace]}</p>
           ) : (
             <button
               className="text-blue-400 text-center hover:underline"
-              onClick={AI}
+              onClick={() => fetchDetailsForMarker(hoveredPlace)}
             >
               Show details
             </button>
