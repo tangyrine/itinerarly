@@ -25,9 +25,6 @@ export default function IndiaMap({ type }: IndiaMapProps) {
   const [isMapLoading, setIsMapLoading] = useState(true);
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<string | null>(null);
-  const [dialogTimeout, setDialogTimeout] = useState<NodeJS.Timeout | null>(
-    null
-  );
   const [position, setPosition] = useState({ coordinates: [82, 22], zoom: 1 });
 
   const [markerDetailsMap, setMarkerDetailsMap] = useState<
@@ -95,21 +92,12 @@ export default function IndiaMap({ type }: IndiaMapProps) {
     }
   };
 
-  const handleMarkerClick = (place: any, event: React.MouseEvent) => {
-    event.stopPropagation();
-    setSelectedPlace(place.name);
-    setHoveredPlace(place.name);
-    setMousePosition({ x: event.clientX, y: event.clientY });
-
-    if (dialogTimeout) {
-      clearTimeout(dialogTimeout);
-    }
-    const timeout = setTimeout(() => {
-      setSelectedPlace(null);
-      setHoveredPlace(null);
-    }, 3000);
-    setDialogTimeout(timeout);
-  };
+ const handleMarkerClick = (place: any, event: React.MouseEvent) => {
+  event.stopPropagation();
+  setSelectedPlace(place.name);
+  setHoveredPlace(place.name);
+  setMousePosition({ x: event.clientX, y: event.clientY });
+};
 
   const handleShowDetails = async () => {
     if (hoveredPlace) {

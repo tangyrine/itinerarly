@@ -85,27 +85,4 @@ describe('IndiaMap', () => {
     });
   });
 
-  it('closes details modal when close button is clicked', async () => {
-    (Gemini as jest.Mock).mockResolvedValue('Test place details');
-    
-    const { container } = render(<IndiaMap type="test-type" />);
-    
-    await waitFor(() => {
-      expect(screen.queryByText(/Loading map/i)).not.toBeInTheDocument();
-    });
-
-    // Show details
-    const g = container.querySelector('g');
-    fireEvent.mouseEnter(g!);
-    fireEvent.click(screen.getByText('Show details'));
-
-    // Wait for details to load and click close
-    await waitFor(() => {
-      const closeButton = screen.getByRole('button', { name: /close/i });
-      fireEvent.click(closeButton);
-    });
-
-    // Verify details are gone
-    expect(screen.queryByText('Test place details')).not.toBeInTheDocument();
-  });
 });

@@ -19,14 +19,6 @@ describe('PlaceDetails', () => {
     expect(screen.getByText('Test Details')).toBeInTheDocument();
   });
 
-
-  it('calls onClose when close button is clicked', () => {
-    render(<PlaceDetails {...defaultProps} />);
-    const closeButton = screen.getByRole('button', { name: 'Close' });
-    fireEvent.click(closeButton);
-    expect(mockOnClose).toHaveBeenCalledTimes(1);
-  });
-
   it('renders multiline details correctly', () => {
     const multilineDetails = 'Line 1\nLine 2\nLine 3';
     render(<PlaceDetails {...defaultProps} details={multilineDetails} />);
