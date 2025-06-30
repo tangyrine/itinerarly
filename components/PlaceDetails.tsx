@@ -1,12 +1,6 @@
-import { Close } from "@radix-ui/react-dialog";
-import {
-  Loader,
-  LoaderIcon,
-  SeparatorHorizontal,
-  ShieldCloseIcon,
-} from "lucide-react";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Loader } from "lucide-react";
 
 interface PlaceDetailsProps {
   place: string;
@@ -15,6 +9,17 @@ interface PlaceDetailsProps {
   lon?: number;
   onClose: () => void;
 }
+
+type Attraction = {
+  name: string;
+  coordinates: [number, number];
+};
+
+type ParsedDetails = {
+  bestTime: string;
+  attractions: Attraction[];
+  food: string[];
+};
 
 const PlaceDetails: React.FC<PlaceDetailsProps> = ({
   place,
@@ -29,6 +34,9 @@ const PlaceDetails: React.FC<PlaceDetailsProps> = ({
     icon: string;
   }>(null);
 
+  const [parsed, setParsed] = useState<ParsedDetails | null>(null);
+  const [parseError, setParseError] = useState<string | null>(null);
+
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
@@ -37,7 +45,44 @@ const PlaceDetails: React.FC<PlaceDetailsProps> = ({
   }, []);
 
   useEffect(() => {
-    const weather = async () => {
+    if (!details) {
+      setParsed(null);
+      setParseError("No details available.");
+      return;
+    }
+    try {
+      const match = details.match(/{[\s\S]*}/);
+      if (!match) throw new Error("No JSON found");
+      const data = JSON.parse(match[0]);
+      if (
+        typeof data.bestTime === "string" &&
+        Array.isArray(data.attractions) &&
+        data.attractions.every(
+          (a: any) =>
+            typeof a.name === "string" &&
+            Array.isArray(a.coordinates) &&
+            a.coordinates.length === 2 &&
+            typeof a.coordinates[0] === "number" &&
+            typeof a.coordinates[1] === "number"
+        ) &&
+        Array.isArray(data.food)
+      ) {
+        setParsed(data);
+        setParseError(null);
+      } else {
+        throw new Error("Invalid data structure");
+      }
+    } catch (e) {
+      setParsed(null);
+      setParseError(
+        "Sorry, we couldn't load the details for this place. Please try again later."
+      );
+    }
+  }, [details]);
+
+  // Fetch weather
+  useEffect(() => {
+    const fetchWeather = async () => {
       if (lat && lon) {
         try {
           const response = await axios.get(
@@ -61,7 +106,7 @@ const PlaceDetails: React.FC<PlaceDetailsProps> = ({
         }
       }
     };
-    weather();
+    fetchWeather();
   }, [lat, lon]);
 
   return (
@@ -75,22 +120,64 @@ const PlaceDetails: React.FC<PlaceDetailsProps> = ({
       >
         <div className="flex justify-between items-start mb-4">
           <h2 className="text-2xl font-bold">{place}</h2>
-          <hr />
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-500 hover:text-gray-700 text-2xl"
+            aria-label="Close"
           >
             ×
           </button>
         </div>
         <hr className="my-4" />
-        <div className="prose max-w-none">
-          {details.split("\n").map((line, index) => (
-            <p key={index} className="text-gray-700 mb-2">
-              {line}
-            </p>
-          ))}
-        </div>
+
+        {/* Error or Loading */}
+        {parseError ? (
+          <div className="text-red-500 mb-4">{parseError}</div>
+        ) : !parsed ? (
+          <div className="flex items-center gap-2 text-gray-500 mb-4">
+            <Loader className="animate-spin" /> Loading details...
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div className="bg-blue-50 rounded p-3 shadow">
+              <div className="font-semibold text-blue-700 mb-1">
+                Best Time to Visit
+              </div>
+              <div className="text-gray-800">{parsed.bestTime}</div>
+            </div>
+
+            <div className="bg-green-50 rounded p-3 shadow">
+              <div className="font-semibold text-green-700 mb-1">
+                Top Attractions
+              </div>
+              <ul className="list-disc list-inside text-gray-800">
+                {parsed.attractions.map((a, i) => (
+                  <li key={i}>
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${a.coordinates[0]},${a.coordinates[1]}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline-offset-2 hover:underline text-blue-700 transition"
+                    >
+                      {a.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="bg-yellow-50 rounded p-3 shadow">
+              <div className="font-semibold text-yellow-700 mb-1">
+                Local Cuisine to Try
+              </div>
+              <ul className="list-disc list-inside text-gray-800">
+                {parsed.food.map((f, i) => (
+                  <li key={i}>{f}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
 
         <hr className="border-t border-dotted border-gray-400 my-4" />
 
@@ -102,7 +189,7 @@ const PlaceDetails: React.FC<PlaceDetailsProps> = ({
                 <img
                   src={`https://openweathermap.org/img/wn/${weather.icon}.png`}
                   alt={weather.description}
-                  className="w-8 h-8"
+                  className="w-12 h-12"
                 />
                 <span className="text-gray-800 font-medium">
                   <b>{Math.round(weather.temp)}°C </b>, {weather.description}
@@ -112,7 +199,9 @@ const PlaceDetails: React.FC<PlaceDetailsProps> = ({
               <span className="text-gray-500">
                 <Loader />
               </span>
-            ) : null}
+            ) : (
+              <span className="text-gray-500">N/A</span>
+            )}
           </div>
         </div>
       </div>

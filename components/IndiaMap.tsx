@@ -10,7 +10,7 @@ import {
 } from "react-simple-maps";
 import indiaGeoJson from "../app/start/india-states.json";
 import { sections } from "@/data/sections";
-import { LoaderCircle, RotateCcw } from "lucide-react";
+import { Loader, LoaderCircle, RotateCcw } from "lucide-react";
 import { Plus, Minus } from "lucide-react";
 import Gemini from "../lib/Gemini";
 import PlaceDetails from "./PlaceDetails";
@@ -142,7 +142,7 @@ export default function IndiaMap({ type }: IndiaMapProps) {
         <div className="h-full w-full flex items-center justify-center">
           <div className="flex flex-col items-center space-y-4">
             <LoaderCircle className="w-12 h-12 animate-spin text-white" />
-            <p className="text-white">Loading map...</p>
+            <p className="text-white"><Loader/> </p>
           </div>
         </div>
       ) : (

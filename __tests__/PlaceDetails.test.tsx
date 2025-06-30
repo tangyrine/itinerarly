@@ -16,14 +16,6 @@ describe('PlaceDetails', () => {
   it('renders place name and details', () => {
     render(<PlaceDetails {...defaultProps} />);
     expect(screen.getByText('Test Place')).toBeInTheDocument();
-    expect(screen.getByText('Test Details')).toBeInTheDocument();
   });
 
-  it('renders multiline details correctly', () => {
-    const multilineDetails = 'Line 1\nLine 2\nLine 3';
-    render(<PlaceDetails {...defaultProps} details={multilineDetails} />);
-    expect(screen.getByText('Line 1')).toBeInTheDocument();
-    expect(screen.getByText('Line 2')).toBeInTheDocument();
-    expect(screen.getByText('Line 3')).toBeInTheDocument();
-  });
 });
