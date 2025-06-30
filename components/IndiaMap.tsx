@@ -92,12 +92,12 @@ export default function IndiaMap({ type }: IndiaMapProps) {
     }
   };
 
- const handleMarkerClick = (place: any, event: React.MouseEvent) => {
-  event.stopPropagation();
-  setSelectedPlace(place.name);
-  setHoveredPlace(place.name);
-  setMousePosition({ x: event.clientX, y: event.clientY });
-};
+  const handleMarkerClick = (place: any, event: React.MouseEvent) => {
+    event.stopPropagation();
+    setSelectedPlace(place.name);
+    setHoveredPlace(place.name);
+    setMousePosition({ x: event.clientX, y: event.clientY });
+  };
 
   const handleShowDetails = async () => {
     if (hoveredPlace) {
@@ -267,16 +267,25 @@ export default function IndiaMap({ type }: IndiaMapProps) {
         </div>
       )}
 
-      {showPlaceDetails && selectedPlace && (
-        <PlaceDetails
-          place={selectedPlace}
-          details={markerDetailsMap[selectedPlace] || ""}
-          onClose={() => {
-            setShowPlaceDetails(false);
-            setSelectedPlace(null);
-          }}
-        />
-      )}
+      {showPlaceDetails &&
+        selectedPlace &&
+        (() => {
+          const selected = highlightedPlaces.find(
+            (p: any) => p.name === selectedPlace
+          );
+          return (
+            <PlaceDetails
+              place={selectedPlace}
+              details={markerDetailsMap[selectedPlace] || ""}
+              lat={selected?.coordinates[1]}
+              lon={selected?.coordinates[0]}
+              onClose={() => {
+                setShowPlaceDetails(false);
+                setSelectedPlace(null);
+              }}
+            />
+          );
+        })()}
     </div>
   );
 }
