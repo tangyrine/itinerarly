@@ -142,7 +142,6 @@ export default function IndiaMap({ type }: IndiaMapProps) {
         <div className="h-full w-full flex items-center justify-center">
           <div className="flex flex-col items-center space-y-4">
             <LoaderCircle className="w-12 h-12 animate-spin text-white" />
-            <p className="text-white"><Loader/> </p>
           </div>
         </div>
       ) : (
