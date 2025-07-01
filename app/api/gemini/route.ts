@@ -1,10 +1,15 @@
 import { GoogleGenAI } from "@google/genai";
 
 export async function POST(req: Request) {
-  console.log("This is server side code");
-  console.log(process.env.GEMINI_API_KEY)
   try {
     const { placeName } = await req.json();
+    if (!placeName || typeof placeName !== "string" || placeName.trim() === "") {
+      return new Response(JSON.stringify({ error: "Invalid or missing placeName in request." }), { status: 400 });
+    }
+    if (!process.env.GEMINI_API_KEY) {
+      console.error("GEMINI_API_KEY is not set in environment variables.");
+      return new Response(JSON.stringify({ error: "Server misconfiguration: Gemini API key is missing." }), { status: 500 });
+    }
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     const models = ["gemini-2.0-flash", "gemini-2.5-flash"];
     let currentModelIndex = 0;
@@ -37,6 +42,15 @@ For the place: ${placeName}`
     const result = await tryGenerate();
     return new Response(JSON.stringify({ result }), { status: 200 });
   } catch (err) {
-    return new Response(JSON.stringify({ error: "Server error" }), { status: 500 });
+    console.error("Gemini API route error:", err);
+    let errorMessage = "Server error";
+    if (typeof err === "object" && err !== null && "message" in err && typeof (err as { message?: unknown }).message === "string") {
+      if ((err as { message: string }).message.includes("rate limit")) {
+        errorMessage = "Gemini API rate limit exceeded. Please try again later.";
+      } else {
+        errorMessage = (err as { message: string }).message;
+      }
+    }
+    return new Response(JSON.stringify({ error: errorMessage }), { status: 500 });
   }
 }
