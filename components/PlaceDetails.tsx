@@ -86,15 +86,7 @@ const PlaceDetails: React.FC<PlaceDetailsProps> = ({
       if (lat && lon) {
         try {
           const response = await axios.get(
-            `https://api.openweathermap.org/data/2.5/weather`,
-            {
-              params: {
-                lat,
-                lon,
-                appid: process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY,
-                units: "metric",
-              },
-            }
+            `/api/weather?lat=${lat}&lon=${lon}`
           );
           setWeather({
             temp: response.data.main.temp,
