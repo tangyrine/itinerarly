@@ -12,21 +12,57 @@ export async function POST(req: NextRequest) {
       try {
         const response = await ai.models.generateContent({
           model: models[currentModelIndex],
-          contents: `if ${formData.destination} is for a place in India but don't return \"Yes ${formData.destination} is a place in India\" just return the below data , in case it isn't a place in India return \"Please search for a place in India\" and don't return any of the below data.\n\nAfter checking, generate a complete itinerary for ${formData.destination} for ${formData.people} people, for ${formData.days} days, with a ${formData.budget} budget (in INR). \nInclude highly rated hotels, cafes, restaurants, and must-visit attractions within ${formData.budget}. Return just the answer in 60 words.`
+          contents: `
+              For "${formData.destination}" in India, return the itinerary in this format, using "|||" as a delimiter between sections:
+              Destination: <destination>
+              Budget: <budget>
+              Hotels: <hotel1>, <hotel2>, <hotel3>
+              Restaurants: <restaurant1>, <restaurant2>, <restaurant3>
+              Attractions: <attraction1>, <attraction2>, <attraction3>
+              Summary: <one or two sentence summary>
+              Day-wise Plan:
+              Day 1: <activities>
+              Day 2: <activities>
+              Day 3: <activities>
+              |||
+              Example:
+              Destination: Delhi
+              Budget: ₹15,000 - ₹20,000
+              Hotels: The Imperial, Taj Palace
+              Restaurants: Karim's, Indian Accent
+              Attractions: Red Fort, Qutub Minar, Lotus Temple
+              Summary: Explore Delhi's rich history and vibrant culture.
+              Day-wise Plan:
+              Day 1: Red Fort, Jama Masjid, Chandni Chowk
+              Day 2: Qutub Minar, Lotus Temple, Hauz Khas Village
+              Day 3: India Gate, Connaught Place, Dilli Haat
+              |||
+              If not a place in India, return: Error: Please search for a place in India.
+              Now generate for: ${formData.destination}, ${formData.people} people, ${formData.days} days, budget: ${formData.budget} (INR).
+            `,
         });
-        return response.text;
+        let text =
+          typeof response.text === "string" ? response.text.trim() : "";
+        return text;
       } catch (error: any) {
-        if (error.message?.includes('rate limit') && currentModelIndex < models.length - 1) {
+        if (
+          error.message?.includes("rate limit") &&
+          currentModelIndex < models.length - 1
+        ) {
           currentModelIndex++;
           return tryGenerate();
         }
-        return "Failed to generate content";
+        console.error("Gemini API error:", error);
+        return { error: "Failed to generate content" };
       }
     }
 
     const result = await tryGenerate();
     return new Response(JSON.stringify({ result }), { status: 200 });
   } catch (err) {
-    return new Response(JSON.stringify({ error: "Server error" }), { status: 500 });
+    console.error("Server error:", err);
+    return new Response(JSON.stringify({ error: "Server error" }), {
+      status: 500,
+    });
   }
 }

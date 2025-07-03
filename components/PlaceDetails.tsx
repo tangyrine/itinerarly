@@ -174,7 +174,7 @@ const PlaceDetails: React.FC<PlaceDetailsProps> = ({
         <hr className="border-t border-dotted border-gray-400 my-4" />
 
         <div className="flex items-center justify-between gap-4">
-          <div>Weather right now :</div>
+          <div>Current weather of {place}:</div>
           <div className="flex items-center">
             {weather ? (
               <div className="flex items-center gap-2">
@@ -183,7 +183,7 @@ const PlaceDetails: React.FC<PlaceDetailsProps> = ({
                   alt={weather.description}
                   className="w-12 h-12"
                 />
-                <span className="text-gray-800 font-medium">
+                <span className="text-gray-800 text-">
                   <b>{Math.round(weather.temp)}°C </b>, {weather.description}
                 </span>
               </div>
