@@ -9,28 +9,49 @@ interface ItineraryProps {
 
 function parseDelimitedItinerary(itinerary: string) {
   // Split by delimiter and trim each section
-  const sections = itinerary.split("|||").map(s => s.trim()).filter(Boolean);
+  const sections = itinerary
+    .split("|||")
+    .map((s) => s.trim())
+    .filter(Boolean);
   let data: any = {};
   for (const section of sections) {
     if (/^Error:/i.test(section)) {
       data.error = section.replace(/^Error:\s*/i, "");
       return data;
     }
-    const lines = section.split("\n").map(l => l.trim()).filter(Boolean);
+    const lines = section
+      .split("\n")
+      .map((l) => l.trim())
+      .filter(Boolean);
     for (const line of lines) {
-      if (line.startsWith("Destination:")) data.destination = line.replace("Destination:", "").trim();
-      else if (line.startsWith("Budget:")) data.budget = line.replace("Budget:", "").trim();
-      else if (line.startsWith("Hotels:")) data.hotels = line.replace("Hotels:", "").split(",").map(s => s.trim());
-      else if (line.startsWith("Restaurants:")) data.restaurants = line.replace("Restaurants:", "").split(",").map(s => s.trim());
-      else if (line.startsWith("Attractions:")) data.attractions = line.replace("Attractions:", "").split(",").map(s => s.trim());
-      else if (line.startsWith("Summary:")) data.summary = line.replace("Summary:", "").trim();
+      if (line.startsWith("Destination:"))
+        data.destination = line.replace("Destination:", "").trim();
+      else if (line.startsWith("Budget:"))
+        data.budget = line.replace("Budget:", "").trim();
+      else if (line.startsWith("Hotels:"))
+        data.hotels = line
+          .replace("Hotels:", "")
+          .split(",")
+          .map((s) => s.trim());
+      else if (line.startsWith("Restaurants:"))
+        data.restaurants = line
+          .replace("Restaurants:", "")
+          .split(",")
+          .map((s) => s.trim());
+      else if (line.startsWith("Attractions:"))
+        data.attractions = line
+          .replace("Attractions:", "")
+          .split(",")
+          .map((s) => s.trim());
+      else if (line.startsWith("Summary:"))
+        data.summary = line.replace("Summary:", "").trim();
       else if (line.startsWith("Day-wise Plan:")) data.daysPlan = [];
       else if (/^Day \d+:/.test(line)) {
         if (!data.daysPlan) data.daysPlan = [];
         const [day, ...rest] = line.split(":");
         data.daysPlan.push({
           day: day.replace("Day", "").trim(),
-          activities: rest.join(":").trim()
+          activities: rest.join(":").trim(),
         });
       }
     }
@@ -57,16 +78,14 @@ const Itinerary: React.FC<ItineraryProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 z-[2000] flex items-center justify-center">
-      {/* Overlay for closing modal */}
+    <div className="fixed inset-0 z-[4000] flex items-center justify-center">
       <div
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-fade-in"
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-fade-in z-[4000]"
         onClick={onClose}
         aria-label="Close itinerary modal"
       />
-      {/* Modal content */}
       <div
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-lg md:max-w-2xl h-[80vh] max-h-[90vh] p-8 relative animate-slide-up flex flex-col"
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-lg md:max-w-2xl h-[80vh] max-h-[90vh] p-8 relative animate-slide-up flex flex-col z-[4100]"
         style={{ scrollbarGutter: "stable" }}
         tabIndex={0}
       >
@@ -96,7 +115,9 @@ const Itinerary: React.FC<ItineraryProps> = ({
           ) : (
             <>
               {parsed.summary && (
-                <div className="mb-2 italic text-gray-600">{parsed.summary}</div>
+                <div className="mb-2 italic text-gray-600">
+                  {parsed.summary}
+                </div>
               )}
               {parsed.budget && (
                 <div className="mb-4">
@@ -108,7 +129,9 @@ const Itinerary: React.FC<ItineraryProps> = ({
               <div className="flex flex-col md:flex-row gap-6 mb-4">
                 {parsed.hotels && (
                   <div className="flex-1">
-                    <span className="font-semibold block mb-1">Recommended Hotels:</span>
+                    <span className="font-semibold block mb-1">
+                      Recommended Hotels:
+                    </span>
                     <ul className="list-disc list-inside pl-4">
                       {parsed.hotels.map((h: string, i: number) => (
                         <li key={i}>{h}</li>
@@ -118,7 +141,9 @@ const Itinerary: React.FC<ItineraryProps> = ({
                 )}
                 {parsed.restaurants && (
                   <div className="flex-1">
-                    <span className="font-semibold block mb-1">Recommended Restaurants:</span>
+                    <span className="font-semibold block mb-1">
+                      Recommended Restaurants:
+                    </span>
                     <ul className="list-disc list-inside pl-4">
                       {parsed.restaurants.map((r: string, i: number) => (
                         <li key={i}>{r}</li>

@@ -19,7 +19,6 @@ export async function POST(req: NextRequest) {
               Hotels: <hotel1>, <hotel2>, <hotel3>
               Restaurants: <restaurant1>, <restaurant2>, <restaurant3>
               Attractions: <attraction1>, <attraction2>, <attraction3>
-              Summary: <one or two sentence summary>
               Day-wise Plan:
               Day 1: <activities>
               Day 2: <activities>
@@ -31,7 +30,6 @@ export async function POST(req: NextRequest) {
               Hotels: The Imperial, Taj Palace
               Restaurants: Karim's, Indian Accent
               Attractions: Red Fort, Qutub Minar, Lotus Temple
-              Summary: Explore Delhi's rich history and vibrant culture.
               Day-wise Plan:
               Day 1: Red Fort, Jama Masjid, Chandni Chowk
               Day 2: Qutub Minar, Lotus Temple, Hauz Khas Village
