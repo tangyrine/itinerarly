@@ -24,18 +24,15 @@ For the place: ${placeName}`
         });
         return response.text;
       } catch (error) {
-        if (
-          typeof error === "object" &&
-          error !== null &&
-          "message" in error &&
-          typeof (error as { message?: unknown }).message === "string" &&
-          (error as { message: string }).message.includes('rate limit') &&
-          currentModelIndex < models.length - 1
-        ) {
+        const errorMsg = (typeof error === "object" && error && "message" in error)
+          ? (error as any).message
+          : String(error);
+        if (errorMsg?.includes('rate limit') && currentModelIndex < models.length - 1) {
           currentModelIndex++;
           return tryGenerate();
         }
-        return "Failed to generate content";
+        console.error("Gemini API error:", errorMsg);
+        return `Failed to generate content: ${errorMsg}`;
       }
     }
 
