@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Loader } from "lucide-react";
+import { Copy, Loader, Check } from "lucide-react";
 
 interface PlaceDetailsProps {
   place: string;
@@ -36,6 +36,7 @@ const PlaceDetails: React.FC<PlaceDetailsProps> = ({
 
   const [parsed, setParsed] = useState<ParsedDetails | null>(null);
   const [parseError, setParseError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -101,6 +102,29 @@ const PlaceDetails: React.FC<PlaceDetailsProps> = ({
     fetchWeather();
   }, [lat, lon]);
 
+  // Compose the details string to copy
+  const getCopyText = () => {
+    if (!parsed) return "";
+    return [
+      `Best Time to Visit: ${parsed.bestTime}`,
+      "",
+      "Top Attractions:",
+      ...parsed.attractions.map(
+        (a, i) => `${i + 1}. ${a.name} (${a.coordinates[0]}, ${a.coordinates[1]})`
+      ),
+      "",
+      "Local Cuisine to Try:",
+      ...parsed.food.map((f, i) => `${i + 1}. ${f}`),
+    ].join("\n");
+  };
+
+  const handleCopy = () => {
+    if (!parsed) return;
+    navigator.clipboard.writeText(getCopyText());
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
   return (
     <div
       className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[1000]"
@@ -112,13 +136,28 @@ const PlaceDetails: React.FC<PlaceDetailsProps> = ({
       >
         <div className="flex justify-between items-start mb-4">
           <h2 className="text-2xl font-bold">{place}</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 text-2xl"
-            aria-label="Close"
-          >
-            ×
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={handleCopy}
+              className={`text-gray-500 hover:text-green-600 text-2xl transition`}
+              aria-label="Copy details"
+              title="Copy details"
+              disabled={!parsed}
+            >
+              {copied ? (
+                <Check className="w-6 h-6 text-green-600" />
+              ) : (
+                <Copy className="w-6 h-6" />
+              )}
+            </button>
+            <button
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700 text-2xl"
+              aria-label="Close"
+            >
+              ×
+            </button>
+          </div>
         </div>
         <hr className="my-4" />
 

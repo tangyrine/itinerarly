@@ -27,13 +27,22 @@ export default function Planner() {
     alert("Your preferences have been saved!");
   };
 
-  const generateItinerary = async () => {
-    setLoading(true);
-    const result = await ItineraryGeneration(formData);
-    setItinerary(result ?? "");
-    setShowModal(true);
-    setLoading(false);
-  };
+const generateItinerary = async () => {
+  if (
+    !formData.destination.trim() ||
+    !formData.people.trim() ||
+    !formData.days.toString().trim() ||
+    !formData.budget.trim()
+  ) {
+    alert("Please fill in all fields before generating an itinerary.");
+    return;
+  }
+  setLoading(true);
+  const result = await ItineraryGeneration(formData);
+  setItinerary(result ?? "");
+  setShowModal(true);
+  setLoading(false);
+};
 
   return (
     <>
@@ -131,7 +140,7 @@ export default function Planner() {
               >
                 {loading ? (
                     <>
-                      <Loader className="animate-spin mr-2" /> Generating...
+                      Generating...
                     </>
                   ) : (
                     "Generate Itinerary"

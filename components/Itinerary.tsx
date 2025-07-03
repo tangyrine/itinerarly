@@ -1,3 +1,4 @@
+import { Copy } from "lucide-react";
 import React from "react";
 
 interface ItineraryProps {
@@ -8,7 +9,6 @@ interface ItineraryProps {
 }
 
 function parseDelimitedItinerary(itinerary: string) {
-  // Split by delimiter and trim each section
   const sections = itinerary
     .split("|||")
     .map((s) => s.trim())
@@ -178,6 +178,16 @@ const Itinerary: React.FC<ItineraryProps> = ({
             </>
           )}
         </div>
+        <button
+          className="mt-6 w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow transition"
+          onClick={() => {
+            if (itinerary) {
+              navigator.clipboard.writeText(itinerary);
+            }
+          }}
+        >
+          <Copy/>
+        </button>
         <style jsx global>{`
           .animate-fade-in {
             animation: fadeIn 0.3s;
