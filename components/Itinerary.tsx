@@ -1,5 +1,5 @@
-import { Copy } from "lucide-react";
-import React from "react";
+import { Check, Copy } from "lucide-react";
+import React, { useState } from "react";
 
 interface ItineraryProps {
   open: boolean;
@@ -76,6 +76,43 @@ const Itinerary: React.FC<ItineraryProps> = ({
   } catch (e) {
     parseError = "Could not parse itinerary.";
   }
+
+    const [copied, setCopied] = useState(false);
+
+ const getCopyText = () => {
+    if (!parsed) return "";
+    let lines: string[] = [];
+    if (parsed.destination) lines.push(`Destination: ${parsed.destination}`);
+    if (parsed.budget) lines.push(`Budget: ${parsed.budget}`);
+    if (parsed.summary) lines.push(`Summary: ${parsed.summary}`);
+    if (parsed.hotels) {
+      lines.push("Recommended Hotels:");
+      parsed.hotels.forEach((h: string, i: number) => lines.push(`  - ${h}`));
+    }
+    if (parsed.restaurants) {
+      lines.push("Recommended Restaurants:");
+      parsed.restaurants.forEach((r: string, i: number) => lines.push(`  - ${r}`));
+    }
+    if (parsed.attractions) {
+      lines.push("Must-Visit Attractions:");
+      parsed.attractions.forEach((a: string, i: number) => lines.push(`  - ${a}`));
+    }
+    if (parsed.daysPlan) {
+      lines.push("Day-wise Plan:");
+      parsed.daysPlan.forEach((d: any) =>
+        lines.push(`  Day ${d.day}: ${d.activities}`)
+      );
+    }
+    return lines.join("\n");
+  };
+
+    const handleCopy = () => {
+    if (parsed) {
+      navigator.clipboard.writeText(getCopyText());
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-[4000] flex items-center justify-center">
@@ -178,15 +215,23 @@ const Itinerary: React.FC<ItineraryProps> = ({
             </>
           )}
         </div>
-        <button
-          className="mt-6 w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow transition"
-          onClick={() => {
-            if (itinerary) {
-              navigator.clipboard.writeText(itinerary);
-            }
-          }}
+         <button
+          className={`mt-6 w-full py-2 px-4 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow transition-all duration-300 ${
+            copied ? "bg-green-600 hover:bg-green-700" : ""
+          }`}
+          onClick={handleCopy}
         >
-          <Copy/>
+          {copied ? (
+            <>
+              <Check className="w-5 h-5 animate-bounce" />
+              Copied!
+            </>
+          ) : (
+            <>
+              <Copy className="w-5 h-5" />
+              Copy to Clipboard
+            </>
+          )}
         </button>
         <style jsx global>{`
           .animate-fade-in {
