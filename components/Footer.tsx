@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { Facebook, Twitter, Instagram, Linkedin, Mail } from 'lucide-react'
+import { Facebook, Twitter, Instagram, Linkedin, Mail, Github } from 'lucide-react'
 
 const Footer: React.FC = () => (
   <footer className="bg-gray-900 text-gray-300">
@@ -53,9 +53,8 @@ const Footer: React.FC = () => (
           <h3 className="text-base font-semibold text-white mb-2">Connect</h3>
           <div className="flex space-x-3">
             {[
-              { icon: Facebook, href: 'https://facebook.com' },
-              { icon: Twitter, href: 'https://twitter.com' },
-              { icon: Instagram, href: 'https://instagram.com' },
+              { icon: Twitter, href: 'https://x.com/iWriteCode__' },
+              { icon: Github, href: 'https://github.com/heisen47' },
               { icon: Linkedin, href: 'https://linkedin.com' },
               { icon: Mail, href: 'mailto:contact@itinerarly.com' },
             ].map((social, index) => (
