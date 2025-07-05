@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
           contents: `
               For "${formData.destination}" in India, return the itinerary in this format, using "|||" as a delimiter between sections:
               Destination: <destination>
-              Budget: <budget>
+              Budget: <budget> per head
               Hotels: <hotel1>, <hotel2>, <hotel3>
               Restaurants: <restaurant1>, <restaurant2>, <restaurant3>
               Attractions: <attraction1>, <attraction2>, <attraction3>
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
               |||
               Example:
               Destination: Delhi
-              Budget: ₹15,000 - ₹20,000
+              Budget: ₹15,000 - ₹20,000 per head
               Hotels: The Imperial, Taj Palace
               Restaurants: Karim's, Indian Accent
               Attractions: Red Fort, Qutub Minar, Lotus Temple
@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
               Day 3: India Gate, Connaught Place, Dilli Haat
               |||
               If not a place in India, return: Error: Please search for a place in India.
-              Now generate for: ${formData.destination}, ${formData.people} people, ${formData.days} days, budget: ${formData.budget} (INR). Return in 80 words or less.
+              Now generate for: ${formData.destination}, ${formData.people} people, ${formData.days} days, budget: ${formData.budget} (INR and USD) per head. Return in 80 words or less.
             `,
         });
         let text =

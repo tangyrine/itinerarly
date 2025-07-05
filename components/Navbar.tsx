@@ -87,7 +87,7 @@ const Navbar = () => {
                 href="https://coff.ee/heisen47"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
+                className="text-sm bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 flex items-center"
               >
                 Buy me a coffee
                 <Coffee className="inline ml-2" />
