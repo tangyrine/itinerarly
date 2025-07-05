@@ -1,4 +1,4 @@
-import { Check, Copy } from "lucide-react";
+import { Check, Coffee, Copy } from "lucide-react";
 import React, { useState } from "react";
 
 interface ItineraryProps {
@@ -77,9 +77,9 @@ const Itinerary: React.FC<ItineraryProps> = ({
     parseError = "Could not parse itinerary.";
   }
 
-    const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState(false);
 
- const getCopyText = () => {
+  const getCopyText = () => {
     if (!parsed) return "";
     let lines: string[] = [];
     if (parsed.destination) lines.push(`Destination: ${parsed.destination}`);
@@ -91,11 +91,15 @@ const Itinerary: React.FC<ItineraryProps> = ({
     }
     if (parsed.restaurants) {
       lines.push("Recommended Restaurants:");
-      parsed.restaurants.forEach((r: string, i: number) => lines.push(`  - ${r}`));
+      parsed.restaurants.forEach((r: string, i: number) =>
+        lines.push(`  - ${r}`)
+      );
     }
     if (parsed.attractions) {
       lines.push("Must-Visit Attractions:");
-      parsed.attractions.forEach((a: string, i: number) => lines.push(`  - ${a}`));
+      parsed.attractions.forEach((a: string, i: number) =>
+        lines.push(`  - ${a}`)
+      );
     }
     if (parsed.daysPlan) {
       lines.push("Day-wise Plan:");
@@ -106,7 +110,7 @@ const Itinerary: React.FC<ItineraryProps> = ({
     return lines.join("\n");
   };
 
-    const handleCopy = () => {
+  const handleCopy = () => {
     if (parsed) {
       navigator.clipboard.writeText(getCopyText());
       setCopied(true);
@@ -215,24 +219,42 @@ const Itinerary: React.FC<ItineraryProps> = ({
             </>
           )}
         </div>
-         <button
-          className={`mt-6 w-full py-2 px-4 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow transition-all duration-300 ${
-            copied ? "bg-green-600 hover:bg-green-700" : ""
-          }`}
-          onClick={handleCopy}
-        >
-          {copied ? (
-            <>
-              <Check className="w-5 h-5 animate-bounce" />
-              Copied!
-            </>
-          ) : (
-            <>
-              <Copy className="w-5 h-5" />
-              Copy to Clipboard
-            </>
-          )}
-        </button>
+
+          <hr/>
+          <span className="text-gray-500 text-xs text-center  italic">
+            Hope you enjoyed this itinerary! If you found it helpful, consider supporting my work.
+          </span>
+        <div className="p-2 ">
+          <a
+            href="https://coff.ee/heisen47"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2 w-full py-1 px-4 flex items-center justify-center bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg shadow transition-all duration-300"
+          >
+            <Coffee className="w-5 h-5 mr-2" />
+            Buy me a coffee
+          </a>
+
+          <button
+            className={`mt-2 w-full py-1 px-4 flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow transition-all duration-300 ${
+              copied ? "bg-green-600 hover:bg-green-700" : ""
+            }`}
+            onClick={handleCopy}
+          >
+            {copied ? (
+              <>
+                <Check className="w-5 h-5 mr-2 animate-bounce" />
+                Copied!
+              </>
+            ) : (
+              <>
+                <Copy className="w-5 h-5 mr-2" />
+                Copy to Clipboard
+              </>
+            )}
+          </button>
+        </div>
+
         <style jsx global>{`
           .animate-fade-in {
             animation: fadeIn 0.3s;
