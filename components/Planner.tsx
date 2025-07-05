@@ -6,6 +6,7 @@ import { Drawer } from "vaul";
 import ItineraryGeneration from "../lib/ItineraryGeneration";
 import Itinerary from "./Itinerary";
 import { Loader } from "lucide-react";
+import Chat from "./Chat";
 
 export default function Planner() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -19,6 +20,7 @@ export default function Planner() {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const [openChat ,setOpenChat] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -60,6 +62,7 @@ export default function Planner() {
         >
           Return to Home
         </button>
+
         <Drawer.Root open={drawerOpen} onOpenChange={setDrawerOpen}>
           <Drawer.Trigger asChild>
             <div className="p-2 text-white text-center rounded cursor-pointer shadow-md bg-blue-700 hover:bg-blue-800 transition">
@@ -171,6 +174,10 @@ export default function Planner() {
             </Drawer.Content>
           </Drawer.Portal>
         </Drawer.Root>
+
+        <button className="absolute right-4 top-1/2 -translate-y-1/2 bg-blue-700 text-white py-2 px-4 rounded hover:bg-blue-800 transition">
+          Chat
+        </button>
       </div>
       <Itinerary
         open={showModal}
@@ -178,6 +185,8 @@ export default function Planner() {
         itinerary={itinerary}
         destination={formData.destination}
       />
+
+      {/* <Chat open = {openChat}  onClose={() => setOpenChat(false)}/> */}
     </>
   );
 }
