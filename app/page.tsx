@@ -12,7 +12,6 @@ const Page: React.FC = () => {
     sections[0].backgroundImage
   );
  
-  // Initialize refs for each section.
   const sectionRefs = sections.map(() =>
     useInView({
       threshold: 0.5,
@@ -20,7 +19,6 @@ const Page: React.FC = () => {
     })
   );
 
-  // Extract inView values so that useEffect only runs when their boolean values change.
   const inViewStates = sectionRefs.map(ref => ref.inView);
 
   useEffect(() => {
