@@ -272,7 +272,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
             className="space-y-6 md:pl-8"
           >
             <h3 className="text-xl md:text-2xl font-semibold text-center md:text-left text-white">
-              Our community images so far
+              Community Clicks :
             </h3>
             <div className="relative w-full">
               {/* Left Arrow - Hidden on mobile */}
@@ -338,6 +338,8 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
               </div>
             </div>
           </motion.div>
+
+          
         </div>
       </div>
 
