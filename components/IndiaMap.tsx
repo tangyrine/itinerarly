@@ -241,6 +241,7 @@ export default function IndiaMap({ type }: IndiaMapProps) {
             top: mousePosition.y + 10,
             maxWidth: "300px",
           }}
+          onClick={e => e.stopPropagation()} 
         >
           <h3 className="font-semibold text-lg mb-2">{hoveredPlace}</h3>
           <hr />

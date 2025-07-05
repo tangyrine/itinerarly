@@ -101,9 +101,9 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
           preload="none"
           aria-label="Background video showing travel destinations"
           className="object-cover w-full h-full"
-          poster="/beach-poster.jpg"
+          poster="/assets/bg-poster.jpg"
         >
-          <source src="/beach-background.mp4" type="video/mp4" />
+          <source src="/assets/background.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-black/40" />
       </div>
@@ -175,7 +175,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
               >
                 <select
                   onChange={handleDestinationChange}
-                  className="w-full px-4 py-3 text-center rounded-lg bg-white/10 backdrop-blur-sm text-black border border-white/20 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                  className="w-full px-4 py-3 text-center rounded-lg bg-white/10 backdrop-blur-sm text-[#f7e9d5] border border-white/20 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                   defaultValue=""
                   disabled={isLoading}
                 >
@@ -226,7 +226,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
             </h2>
             <Link
               href="/start"
-              className="inline-block px-10 py-4 text-lg font-medium bg-blue-600/90 rounded-lg transition-all duration-300 hover:bg-blue-500 hover:shadow-xl hover:scale-105 backdrop-blur-sm"
+              className="inline-block px-10 py-4 text-lg text-black font-medium bg-[#f7e9d5] rounded-lg transition-all duration-300 hover:bg-yellow-600 hover:shadow-xl hover:scale-105 backdrop-blur-sm"
             >
               Click me!
             </Link>
