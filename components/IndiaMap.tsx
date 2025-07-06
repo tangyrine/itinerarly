@@ -32,6 +32,8 @@ export default function IndiaMap({ type }: IndiaMapProps) {
   >({});
   const [loadingMarker, setLoadingMarker] = useState<string | null>(null);
   const [showPlaceDetails, setShowPlaceDetails] = useState(false);
+  const [hoveredState, setHoveredState] = useState<string | null>(null);
+  const [stateMousePosition, setStateMousePosition] = useState({ x: 0, y: 0 });
 
   const selectedSection = sections.find((section) => section.id === type);
   const highlightedPlaces = selectedSection?.places || [];
@@ -175,27 +177,28 @@ export default function IndiaMap({ type }: IndiaMapProps) {
                   <Geography
                     key={geo.properties.NAME_1}
                     onClick={() => handleStateClick(geo)}
+                    onMouseEnter={(event) => {
+                      setHoveredState(geo.properties.NAME_1);
+                      setStateMousePosition({
+                        x: event.clientX,
+                        y: event.clientY,
+                      });
+                    }}
+                    onMouseLeave={() => setHoveredState(null)}
                     fill={
                       selectedState === geo.properties.NAME_1
-                        ? "#4299E1"
-                        : "#D6D6DA"
+                        ? "#4299E1" 
+                        : hoveredState === geo.properties.NAME_1
+                        ? "#FFA500" 
+                        : "#D6D6DA" 
                     }
                     geography={geo}
                     stroke="#FFFFFF"
                     strokeWidth={0.5}
                     style={{
-                      default: {
-                        fill: "#D6D6DA",
-                        outline: "none",
-                      },
-                      hover: {
-                        fill: "#E6E6EA",
-                        outline: "none",
-                      },
-                      pressed: {
-                        fill: "#D6D6DA",
-                        outline: "none",
-                      },
+                      default: { fill: "#D6D6DA", outline: "none" },
+                      hover: { fill: "#E6E6EA", outline: "none" },
+                      pressed: { fill: "#D6D6DA", outline: "none" },
                     }}
                   />
                 ))
@@ -241,7 +244,7 @@ export default function IndiaMap({ type }: IndiaMapProps) {
             top: mousePosition.y + 10,
             maxWidth: "300px",
           }}
-          onClick={e => e.stopPropagation()} 
+          onClick={(e) => e.stopPropagation()}
         >
           <h3 className="font-semibold text-lg mb-2">{hoveredPlace}</h3>
           <hr />
@@ -264,6 +267,19 @@ export default function IndiaMap({ type }: IndiaMapProps) {
               Show details
             </button>
           )}
+        </div>
+      )}
+
+      {hoveredState && (
+        <div
+          className="fixed bg-gray-800 text-white px-3 py-1 rounded shadow z-50 text-sm"
+          style={{
+            left: stateMousePosition.x + 10,
+            top: stateMousePosition.y + 10,
+            pointerEvents: "none",
+          }}
+        >
+          {hoveredState}
         </div>
       )}
 
