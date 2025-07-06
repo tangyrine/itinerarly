@@ -5,7 +5,7 @@ import IndiaMap from "@/components/IndiaMap";
 import Planner from "@/components/Planner";
 import { useSearchParams } from "next/navigation";
 
-function MapWithParams() {
+function  MapWithParams() {
   const searchParams = useSearchParams();
   const type = searchParams.get("type");
   return <IndiaMap type={type} />;
