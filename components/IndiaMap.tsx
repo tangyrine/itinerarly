@@ -173,35 +173,50 @@ export default function IndiaMap({ type }: IndiaMapProps) {
           >
             <Geographies geography={indiaGeoJson}>
               {({ geographies }: { geographies: any[] }) =>
-                geographies.map((geo) => (
-                  <Geography
-                    key={geo.properties.NAME_1}
-                    onClick={() => handleStateClick(geo)}
-                    onMouseEnter={(event) => {
-                      setHoveredState(geo.properties.NAME_1);
-                      setStateMousePosition({
-                        x: event.clientX,
-                        y: event.clientY,
-                      });
-                    }}
-                    onMouseLeave={() => setHoveredState(null)}
-                    fill={
-                      selectedState === geo.properties.NAME_1
-                        ? "#4299E1" 
-                        : hoveredState === geo.properties.NAME_1
-                        ? "#FFA500" 
-                        : "#D6D6DA" 
-                    }
-                    geography={geo}
-                    stroke="#FFFFFF"
-                    strokeWidth={0.5}
-                    style={{
-                      default: { fill: "#D6D6DA", outline: "none" },
-                      hover: { fill: "#E6E6EA", outline: "none" },
-                      pressed: { fill: "#D6D6DA", outline: "none" },
-                    }}
-                  />
-                ))
+                geographies.map((geo) => {
+                  const isSelected = selectedState === geo.properties.NAME_1;
+                  const isHovered = hoveredState === geo.properties.NAME_1;
+
+                  const fillColor = isSelected
+                    ? "#4299E1"
+                    : isHovered
+                    ? "#FFA500"
+                    : "#D6D6DA";
+
+                  return (
+                    <Geography
+                      key={geo.properties.NAME_1}
+                      onClick={() => handleStateClick(geo)}
+                      onMouseEnter={(
+                        event: React.MouseEvent<SVGPathElement, MouseEvent>
+                      ) => {
+                        setHoveredState(geo.properties.NAME_1);
+                        setStateMousePosition({
+                          x: event.clientX,
+                          y: event.clientY,
+                        });
+                      }}
+                      onMouseLeave={() => setHoveredState(null)}
+                      geography={geo}
+                      stroke="#FFFFFF"
+                      strokeWidth={0.5}
+                      style={{
+                        default: {
+                          fill: fillColor,
+                          outline: "none",
+                        },
+                        hover: {
+                          fill: fillColor,
+                          outline: "none",
+                        },
+                        pressed: {
+                          fill: fillColor,
+                          outline: "none",
+                        },
+                      }}
+                    />
+                  );
+                })
               }
             </Geographies>
 
