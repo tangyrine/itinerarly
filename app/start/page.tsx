@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import IndiaMap from "@/components/IndiaMap";
 import Planner from "@/components/Planner";
 import { useSearchParams } from "next/navigation";
+import { createClientForServer } from "@/lib/utils/supabase/server";
 
 function  MapWithParams() {
   const searchParams = useSearchParams();
@@ -11,7 +12,12 @@ function  MapWithParams() {
   return <IndiaMap type={type} />;
 }
 
-export default function Page() {
+export default async function Page() {
+  // const supabase = await createClientForServer()
+  // const session = await supabase.auth.getUser();
+
+  // console.log(session)
+
   return (
     <div className="flex flex-col w-full h-screen bg-blue-500 overflow-hidden">
       <div className="flex-none">

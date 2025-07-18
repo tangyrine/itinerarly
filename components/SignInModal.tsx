@@ -9,15 +9,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+import {signinWithGoogle} from "@/lib/utils/actions";
+
 
 interface SignInModalProps {
   openModal: boolean;
   onClose: () => void; 
 }
 
-const signInWithGoogle = () => {
-  console.log("Signing in with Google");
-}
 
 const signInWithGithub = () => {
   console.log("Signing in with Github");
@@ -39,7 +38,7 @@ export function SignInModal({ openModal, onClose }: SignInModalProps) {
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4">
-          <button className="cursor-pointer bg-amber-300 h-7" onClick={signInWithGoogle}>
+          <button className="cursor-pointer bg-amber-300 h-7" onClick={signinWithGoogle}>
             Sign in with Google
           </button>
           <button className="cursor-pointer bg-amber-300 h-7" onClick={signInWithGithub}>
