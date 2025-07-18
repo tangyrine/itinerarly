@@ -6,9 +6,9 @@ export async function GET(request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
 
-  let next = searchParams.get('next') ?? '/start/page'
+  let next = searchParams.get('next') ?? '/start/'
   if (!next.startsWith('/')) {
-    next = '/start/page'
+    next = '/start/'
   }
 
   if (code) {

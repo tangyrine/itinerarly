@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Coffee, LogIn } from "lucide-react";
 import { SignInModal } from "./SignInModal";
+import Cookies from 'js-cookie'
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -29,6 +30,10 @@ const Navbar = () => {
       setIsMenuOpen(false);
     }
   };
+
+  const isLoggedIn = Object.keys(Cookies.get() || {}).some((key) =>
+  key.includes("auth-token-code-verifier")
+);
 
   const navItems = [
     { label: "Home", href: "/" },
@@ -85,7 +90,7 @@ const Navbar = () => {
                 className="text-sm text-gray-600 hover:bg-gray-100 px-4 py-2 rounded-md"
                 onClick={handleModal}
               >
-                Sign In
+                  {isLoggedIn ? "Sign Out" : "Sign In"}
               </button>
               <a
                 href="https://coff.ee/heisen47"
