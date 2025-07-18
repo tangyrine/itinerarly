@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Coffee, Loader2, LogIn } from "lucide-react";
+import { Coffee, LogIn } from "lucide-react";
 import { SignInModal } from "./SignInModal";
 
 const Navbar = () => {
@@ -77,6 +77,10 @@ const Navbar = () => {
                   </Link>
                 )
               )}
+
+              {/* available tokens */}
+              <div className="text-center space-x-4 bg-white h-5 w-5">2</div>
+
               <button
                 className="text-sm text-gray-600 hover:bg-gray-100 px-4 py-2 rounded-md"
                 onClick={handleModal}

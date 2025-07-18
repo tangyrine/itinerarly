@@ -269,11 +269,12 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.8 }}
-            className="space-y-6 md:pl-8"
+            className="space-y-6 md:pl-8 px-4 sm:px-6"
           >
-            <h3 className="text-xl md:text-2xl font-semibold text-center md:text-left text-white">
+            <h3 className="text-xl sm:text-2xl font-semibold text-center md:text-left text-white">
               Community Clicks :
             </h3>
+
             <div className="relative w-full">
               {/* Left Arrow - Hidden on mobile */}
               <button
@@ -289,33 +290,39 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
               <div
                 className="overflow-hidden w-full rounded-lg"
                 style={{
-                  maskImage: "linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)",
-                  WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)",
+                  maskImage:
+                    "linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)",
+                  WebkitMaskImage:
+                    "linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)",
                 }}
               >
                 <div
                   ref={carouselRef}
-                  className="overflow-x-hidden w-full"
+                  className="overflow-x-scroll no-scrollbar w-full"
                 >
                   <div
-                    className="flex gap-4 md:gap-6 py-2"
+                    className="flex gap-3 sm:gap-4 py-2 px-1 sm:px-2"
                     style={{
                       minWidth: "100%",
                       width: `${communityImages.length * 280 * 2}px`,
                     }}
                   >
-                    {[...communityImages, ...communityImages].map((img, idx) => (
-                      <img
-                        key={idx}
-                        src={img}
-                        alt={`Community image ${(idx % communityImages.length) + 1}`}
-                        className="rounded-lg shadow-lg object-cover w-[240px] md:w-[320px] h-[150px] md:h-[200px] border-2 md:border-4 border-white flex-shrink-0 transition-transform duration-300 hover:scale-105"
-                        style={{
-                          background: "#eee",
-                        }}
-                        draggable={false}
-                      />
-                    ))}
+                    {[...communityImages, ...communityImages].map(
+                      (img, idx) => (
+                        <img
+                          key={idx}
+                          src={img}
+                          alt={`Community image ${
+                            (idx % communityImages.length) + 1
+                          }`}
+                          className="rounded-lg shadow-lg object-cover w-[200px] sm:w-[240px] md:w-[320px] h-[120px] sm:h-[150px] md:h-[200px] border-2 md:border-4 border-white flex-shrink-0 transition-transform duration-300 hover:scale-105"
+                          style={{
+                            background: "#eee",
+                          }}
+                          draggable={false}
+                        />
+                      )
+                    )}
                   </div>
                 </div>
               </div>
@@ -338,8 +345,6 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
               </div>
             </div>
           </motion.div>
-
-          
         </div>
       </div>
 
