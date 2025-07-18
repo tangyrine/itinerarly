@@ -35,6 +35,19 @@ const Navbar = () => {
   key.includes("auth-token-code-verifier")
 );
 
+const handleAuthClick = () => {
+  if (isLoggedIn) {
+    Object.keys(Cookies.get() || {}).forEach((key) => {
+      if (key.includes("auth-token-code-verifier")) {
+        Cookies.remove(key);
+      }
+    });
+    window.location.reload(); 
+  } else {
+    handleModal();
+  }
+};
+
   const navItems = [
     { label: "Home", href: "/" },
     { label: "About", href: "#about", isSection: true },
@@ -88,7 +101,7 @@ const Navbar = () => {
 
               <button
                 className="text-sm text-gray-600 hover:bg-gray-100 px-4 py-2 rounded-md"
-                onClick={handleModal}
+                onClick={handleAuthClick}
               >
                   {isLoggedIn ? "Sign Out" : "Sign In"}
               </button>
