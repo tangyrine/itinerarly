@@ -8,13 +8,23 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import axios from "axios";
+
 
 interface SignInModalProps {
   openModal: boolean;
   onClose: () => void; 
+}
+
+const signInWithGoogle = () => {
+  console.log("Signing in with Google");
+}
+
+const signInWithGithub = () => {
+  console.log("Signing in with Github");
+}
+
+const signInWithApple = () => {
+  console.log("Signing in with Apple");
 }
 
 export function SignInModal({ openModal, onClose }: SignInModalProps) {
@@ -29,20 +39,20 @@ export function SignInModal({ openModal, onClose }: SignInModalProps) {
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4">
-          <div className="grid gap-3">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" name="email" type="email" placeholder="Enter your email" />
-          </div>
-          <div className="grid gap-3">
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" name="password" type="password" placeholder="Enter your password" />
-          </div>
+          <button className="cursor-pointer bg-amber-300 h-7" onClick={signInWithGoogle}>
+            Sign in with Google
+          </button>
+          <button className="cursor-pointer bg-amber-300 h-7" onClick={signInWithGithub}>
+            Sign in with Github
+          </button>
+          <button className="cursor-pointer bg-amber-300 h-7" onClick={signInWithApple}>
+            Sign in with Apple
+          </button>
         </div>
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>
           </DialogClose>
-          <Button type="submit">Sign In</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
