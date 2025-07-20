@@ -13,8 +13,9 @@ export async function GET(req: NextRequest) {
   });
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Supabase OAuth error:", error);
+    return NextResponse.json({ error: "Authentication failed. Please try again later." }, { status: 500 });
   }
 
   return NextResponse.redirect(data.url);
-} 
+}
