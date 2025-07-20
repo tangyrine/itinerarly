@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Coffee, LogIn } from "lucide-react";
 import { SignInModal } from "./SignInModal";
 import Cookies from 'js-cookie'
-import { signOut, signinWithGoogle } from "@/lib/utils/actions";
+import { signOut } from "@/lib/utils/actions";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
