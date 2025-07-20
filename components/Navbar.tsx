@@ -1,15 +1,26 @@
-import React, { useState } from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Coffee, LogIn } from "lucide-react";
 import { SignInModal } from "./SignInModal";
 import Cookies from 'js-cookie'
+import { signOut, signinWithGoogle } from "@/lib/utils/actions";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const loggedIn = Object.keys(Cookies.get() || {}).some((key) =>
+      key.includes("auth-token-code-verifier")
+    );
+    setIsLoggedIn(loggedIn);
+  }, []);
 
   const handleGetStarted = async () => {
     setIsLoading(true);
@@ -31,20 +42,13 @@ const Navbar = () => {
     }
   };
 
-  const isLoggedIn = Object.keys(Cookies.get() || {}).some((key) =>
-  key.includes("auth-token-code-verifier")
-);
 
-const handleAuthClick = () => {
+const handleAuthClick = async() => {
   if (isLoggedIn) {
-    Object.keys(Cookies.get() || {}).forEach((key) => {
-      if (key.includes("auth-token-code-verifier")) {
-        Cookies.remove(key);
-      }
-    });
-    window.location.reload(); 
+    await signOut();
+    window.location.href = "/"; 
   } else {
-    handleModal();
+    router.push("/signin");
   }
 };
 
