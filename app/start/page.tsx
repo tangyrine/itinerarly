@@ -20,6 +20,8 @@ export default async function Page() {
     data: { user },
   } = await supabase.auth.getUser();
 
+  console.log("user in /start", user);
+
   if (!user) {
     redirect("/signin");
   }

@@ -31,7 +31,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-, "app/auth/callback/route.js"  ],
+, "app/auth/callback/route.ts"  ],
   "exclude": [
     "node_modules"
   ]

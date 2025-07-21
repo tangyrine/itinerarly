@@ -17,6 +17,9 @@ export async function middleware(req: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  console.log("user in middleware", user);
+  console.log("Cookies in middleware:", req.cookies.getAll());
+
   const protectedPaths = ["/dashboard", "/start", "/account"];
   const pathIsProtected = protectedPaths.some((path) =>
     req.nextUrl.pathname.startsWith(path)
