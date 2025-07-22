@@ -20,7 +20,7 @@ export default function SignInPage() {
           Failed to authenticate. Please try again.
         </div>
       )}
-      <SignInModal openModal={true} onClose={() => {}} />
+      <SignInModal openModal={true} onClose={() => {window.location.href = '/'}} />
     </div>
   );
 }

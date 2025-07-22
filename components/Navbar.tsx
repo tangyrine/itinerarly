@@ -42,6 +42,7 @@ const Navbar = () => {
   };
 
   const handleAuthClick =()=>{
+    window.location.href = "/signin"
     console.log('handleAuthClick called');
   }
 
