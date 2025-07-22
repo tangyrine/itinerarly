@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { Coffee, LogIn } from "lucide-react";
 import { SignInModal } from "./SignInModal";
 import Cookies from 'js-cookie'
-import { signOut } from "@/lib/utils/actions";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -42,15 +41,10 @@ const Navbar = () => {
     }
   };
 
-
-const handleAuthClick = async() => {
-  if (isLoggedIn) {
-    await signOut();
-    window.location.href = "/"; 
-  } else {
-    router.push("/signin");
+  const handleAuthClick =()=>{
+    console.log('handleAuthClick called');
   }
-};
+
 
   const navItems = [
     { label: "Home", href: "/" },
