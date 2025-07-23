@@ -14,7 +14,6 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-type SectionType = "hillstations" | "beaches" | "wildlife" | "historical";
 
 const features = [
   {
@@ -130,17 +129,6 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
 
   const router = useRouter();
 
-  const handleDestinationChange = async (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setIsLoading(true);
-    const selectedType = e.target.value as SectionType;
-    try {
-      await router.push(`/start?type=${selectedType}`);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -211,42 +199,6 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
             </div>
           </motion.div>
 
-          {/* Destination Selection */}
-          <div className="container mx-auto px-4 py-5">
-            <hr />
-            <br />
-            <h1 className="text-3xl text-center">
-              Ready to explore the rich landscape of the subcontinent?
-            </h1>
-            <br />
-            <hr />
-            <div className="space-y-6 text-center">
-              <h1 className="text-2xl p-6 font-semibold">
-                Where are we planning to go?
-              </h1>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="flex flex-col items-center w-full max-w-md mx-auto"
-              >
-                <select
-                  onChange={handleDestinationChange}
-                  className="w-full px-4 py-3 text-center rounded-lg bg-white/10 backdrop-blur-sm text-[#f7e9d5] border border-white/20 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                  defaultValue=""
-                  disabled={isLoading}
-                >
-                  <option value="" disabled>
-                    Select your destination type
-                  </option>
-                  <option value="hillstations">Hill Stations</option>
-                  <option value="beaches">Beaches</option>
-                  <option value="wildlife">Wildlife Sanctuaries</option>
-                  <option value="historical">Historical Sites</option>
-                </select>
-              </motion.div>
-            </div>
-          </div>
 
           {/* CTA Section */}
           <motion.div
