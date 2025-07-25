@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Coffee, LogIn } from "lucide-react";
 import { SignInModal } from "./SignInModal";
 import Cookies from 'js-cookie'
+import axios from "axios";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -41,9 +42,9 @@ const Navbar = () => {
     }
   };
 
-  const handleAuthClick =()=>{
-    window.location.href = "/signin"
+  const handleAuthClick =async()=>{
     console.log('handleAuthClick called');
+    await axios.get('http://localhost:8080/')
   }
 
 
