@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Coffee, LogIn } from "lucide-react";
 import { SignInModal } from "./SignInModal";
 import Cookies from 'js-cookie'
@@ -10,23 +9,10 @@ import axios from "axios";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-  const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const SiteUrl: string = process.env.SITE_URL || "http://localhost:8080";
 
-  useEffect(() => {
-    const loggedIn = Object.keys(Cookies.get() || {}).some((key) =>
-      key.includes("auth-token-code-verifier")
-    );
-    setIsLoggedIn(loggedIn);
-  }, []);
-
-  const handleGetStarted = async () => {
-    setIsLoading(true);
-    await router.push("/start");
-  };
 
   const handleModal = () => {
     setOpenModal(!openModal);
@@ -43,11 +29,12 @@ const Navbar = () => {
     }
   };
 
-const handleAuthClick = async (): Promise<void> => {
+
+const handleAuthClick = async (): Promise<void>  => {
   if (isLoggedIn) {
     try {
-      await axios.post(`${SiteUrl}/logout`, {}, { withCredentials: true });
-      Cookies.remove("auth_token"); 
+      await axios.post(`${SiteUrl}/api/v1/logout`, {}, { withCredentials: true });
+      Cookies.remove("auth-token"); 
       setIsLoggedIn(false);
       window.location.href = "/"; 
     } catch (err) {
@@ -60,8 +47,16 @@ const handleAuthClick = async (): Promise<void> => {
 
 
 useEffect(() => {
-  const loggedIn = !!Cookies.get("auth_token");
-  setIsLoggedIn(loggedIn);
+  const checkLogin = () => {
+    const loggedIn = !!Cookies.get("auth-token");
+    console.log("cookies:" + Cookies.get("auth-token"))
+    setIsLoggedIn(loggedIn);
+  };
+
+  checkLogin(); 
+
+  window.addEventListener("focus", checkLogin);
+  return () => window.removeEventListener("focus", checkLogin);
 }, []);
 
   const navItems = [
