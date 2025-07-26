@@ -25,7 +25,7 @@ const signInWithApple = () => {
 }
 
 const signInWithGoogle = () => {
-  window.location.href = "/start";
+  window.location.href = "localhost:8080/oauth2/authorization/google";
 };
 
 export function SignInModal({ openModal, onClose }: SignInModalProps) {
