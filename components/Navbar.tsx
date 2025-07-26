@@ -42,11 +42,26 @@ const Navbar = () => {
     }
   };
 
-  const handleAuthClick =async()=>{
-    console.log('handleAuthClick called');
-    await axios.get('http://localhost:8080/')
+const handleAuthClick = async (): Promise<void> => {
+  if (isLoggedIn) {
+    try {
+      await axios.post("http://localhost:8080/logout", {}, { withCredentials: true });
+      Cookies.remove("auth_token"); 
+      setIsLoggedIn(false);
+      window.location.href = "/"; 
+    } catch (err) {
+      alert("Logout failed");
+    }
+  } else {
+    window.location.href = "http://localhost:8080/login";
   }
+};
 
+
+useEffect(() => {
+  const loggedIn = !!Cookies.get("auth_token");
+  setIsLoggedIn(loggedIn);
+}, []);
 
   const navItems = [
     { label: "Home", href: "/" },
