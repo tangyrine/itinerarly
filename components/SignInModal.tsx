@@ -15,9 +15,12 @@ interface SignInModalProps {
   onClose: () => void; 
 }
 
+  const SiteUrl: string = process.env.SITE_URL || "http://localhost:8080";
+
+
 
 const signInWithGithub = () => {
-  console.log("Signing in with Github");
+  window.location.href = `${SiteUrl}/oauth2/authorization/github`;
 }
 
 const signInWithApple = () => {
@@ -25,7 +28,7 @@ const signInWithApple = () => {
 }
 
 const signInWithGoogle = () => {
-  window.location.href = "localhost:8080/oauth2/authorization/google";
+  window.location.href = `${SiteUrl}/oauth2/authorization/google`;
 };
 
 export function SignInModal({ openModal, onClose }: SignInModalProps) {

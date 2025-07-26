@@ -14,6 +14,7 @@ const Navbar = () => {
   const [openModal, setOpenModal] = useState(false);
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const SiteUrl: string = process.env.SITE_URL || "http://localhost:8080";
 
   useEffect(() => {
     const loggedIn = Object.keys(Cookies.get() || {}).some((key) =>
@@ -45,7 +46,7 @@ const Navbar = () => {
 const handleAuthClick = async (): Promise<void> => {
   if (isLoggedIn) {
     try {
-      await axios.post("http://localhost:8080/logout", {}, { withCredentials: true });
+      await axios.post(`${SiteUrl}/logout`, {}, { withCredentials: true });
       Cookies.remove("auth_token"); 
       setIsLoggedIn(false);
       window.location.href = "/"; 
@@ -53,7 +54,7 @@ const handleAuthClick = async (): Promise<void> => {
       alert("Logout failed");
     }
   } else {
-    window.location.href = "http://localhost:8080/login";
+    setOpenModal(true); 
   }
 };
 
