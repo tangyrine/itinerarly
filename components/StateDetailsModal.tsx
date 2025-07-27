@@ -10,7 +10,8 @@ import {
 } from "@/components/ui/dialog";
 import axios from "axios";
 import { Loader } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import StateDetailsBody from "./StateDetailsBody";
 
 interface StateDetailsModal {
   showStateModal: boolean;
@@ -25,8 +26,8 @@ export function StateDetailsModal({
   onClose,
   mousePosition,
 }: StateDetailsModal) {
-
-const [dataLoad, setDataLoad] = useState(false);
+  const [dataLoad, setDataLoad] = useState(false);
+  const [details, setDetails] = useState<string | null>(null);
 
   const handleGenerate = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -39,14 +40,19 @@ const [dataLoad, setDataLoad] = useState(false);
       const res = await axios.post("/api/stateDetails", {
         placeName: stateName,
       });
-      console.log(res.data);
+      console.log(res.data.result);
+      setDetails(res.data.result);
+      setTimeout(onClose, 4000);
     } catch (err) {
       console.error("Error generating state details:", err);
       alert("Failed to generate state details. Please try again.");
     }
     setDataLoad(false);
-    onClose(); 
   };
+
+  useEffect(() => {
+    if (!showStateModal) setDetails(null);
+  }, [showStateModal, stateName]);
 
   return (
     <Dialog open={showStateModal} onOpenChange={onClose}>
@@ -61,9 +67,23 @@ const [dataLoad, setDataLoad] = useState(false);
             <Button variant="outline">Close</Button>
           </DialogClose>
           <Button type="submit" onClick={handleGenerate}>
-            {!dataLoad ? `Generate!` : <Loader className="animate-spin h-4 w-4 mr-2" />}
+            {!dataLoad ? (
+              `Generate!`
+            ) : (
+              <Loader className="animate-spin h-4 w-4 mr-2" />
+            )}
           </Button>
         </DialogFooter>
+
+        {details && (
+          <div className="mt-4">
+            <StateDetailsBody
+              place={stateName ?? ""}
+              details={details}
+              onClose={onClose}
+            />
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );
