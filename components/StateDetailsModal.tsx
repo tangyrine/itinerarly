@@ -8,9 +8,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import axios from "axios";
+import { Loader } from "lucide-react";
+import { useState } from "react";
 
 interface StateDetailsModal {
   showStateModal: boolean;
@@ -25,12 +25,16 @@ export function StateDetailsModal({
   onClose,
   mousePosition,
 }: StateDetailsModal) {
+
+const [dataLoad, setDataLoad] = useState(false);
+
   const handleGenerate = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!stateName) {
       alert("State name is required!");
       return;
     }
+    setDataLoad(true);
     try {
       const res = await axios.post("/api/stateDetails", {
         placeName: stateName,
@@ -40,6 +44,8 @@ export function StateDetailsModal({
       console.error("Error generating state details:", err);
       alert("Failed to generate state details. Please try again.");
     }
+    setDataLoad(false);
+    onClose(); 
   };
 
   return (
@@ -55,7 +61,7 @@ export function StateDetailsModal({
             <Button variant="outline">Close</Button>
           </DialogClose>
           <Button type="submit" onClick={handleGenerate}>
-            Generate!
+            {!dataLoad ? `Generate!` : <Loader className="animate-spin h-4 w-4 mr-2" />}
           </Button>
         </DialogFooter>
       </DialogContent>

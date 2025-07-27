@@ -102,7 +102,7 @@ const PlaceDetails: React.FC<PlaceDetailsProps> = ({
     fetchWeather();
   }, [lat, lon]);
 
-  // Compose the details string to copy
+
   const getCopyText = () => {
     if (!parsed) return "";
     return [
