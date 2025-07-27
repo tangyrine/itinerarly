@@ -9,6 +9,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+import { FaApple, FaGithub, FaGoogle } from "react-icons/fa";
+
 
 interface SignInModalProps {
   openModal: boolean;
@@ -42,15 +44,16 @@ export function SignInModal({ openModal, onClose }: SignInModalProps) {
             Enter your credentials to access your account.
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4">
-          <button className="cursor-pointer bg-amber-300 h-7" onClick={signInWithGoogle}>
-            Sign in with Google
+        <div className="flex flex-col md:flex-row md:justify-between space-y-4 md:space-y-0 md:space-x-4
+            p-2">
+          <button className="cursor-pointer border border-black h-20 w-20 flex justify-center items-center" onClick={signInWithGoogle}>
+            <FaGoogle className="h-10 w-10 text-center"/>
           </button>
-          <button className="cursor-pointer bg-amber-300 h-7" onClick={signInWithGithub}>
-            Sign in with Github
+          <button className="cursor-pointer border border-black h-20 w-20 flex justify-center items-center" onClick={signInWithGithub}>
+            <FaGithub className="h-10 w-10 text-center"/>
           </button>
-          <button className="cursor-pointer bg-amber-300 h-7" onClick={signInWithApple}>
-            Sign in with Apple
+          <button className="cursor-pointer border border-black h-20 w-20 flex justify-center items-center" onClick={signInWithApple}>
+            <FaApple className="h-10 w-10 text-center"/>
           </button>
         </div>
         <DialogFooter>

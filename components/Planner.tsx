@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation";
 import { Drawer } from "vaul";
 import ItineraryGeneration from "../lib/ItineraryGeneration";
 import Itinerary from "./Itinerary";
-import { Loader } from "lucide-react";
 import Chat from "./Chat";
+import { IoMdHome } from "react-icons/io";
+import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
 
 export default function Planner() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -47,7 +48,7 @@ export default function Planner() {
           className="absolute left-4 top-1/2 -translate-y-1/2 bg-blue-700 text-white py-2 px-4 rounded hover:bg-blue-800 transition"
           type="button"
         >
-          Return to Home
+          <IoMdHome />
         </button>
 
         <Drawer.Root open={drawerOpen} onOpenChange={setDrawerOpen}>
@@ -177,7 +178,7 @@ export default function Planner() {
           onClick={() => setOpenChat(true)}
           className="absolute right-4 top-1/2 -translate-y-1/2 bg-blue-700 text-white py-2 px-4 rounded hover:bg-blue-800 transition"
         >
-          Chat
+          <IoChatbubbleEllipsesOutline />
         </button>
       </div>
 

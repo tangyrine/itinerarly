@@ -44,7 +44,7 @@ export default function Page() {
       >
         <select
           onChange={handleDestinationChange}
-          className="w-full px-4 py-3 text-center rounded-lg bg-white/10 backdrop-blur-sm text-[#f7e9d5] border border-white/20 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+          className="lg:w-full px-4 py-3 text-center rounded-lg bg-white/10 backdrop-blur-sm text-[#f7e9d5] border border-white/20 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-all md:w-1/2"
           defaultValue=""
           disabled={isLoading}
         >

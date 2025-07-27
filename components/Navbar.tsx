@@ -35,7 +35,7 @@ const handleAuthClick = async (): Promise<void>  => {
     try {
       await axios.post(`${SiteUrl}/api/v1/logout`, {}, { withCredentials: true });
       Cookies.remove("auth-token"); 
-      setIsLoggedIn(false);
+      setIsLoggedIn(isLoggedIn);
       window.location.href = "/"; 
     } catch (err) {
       alert("Logout failed");
@@ -49,7 +49,6 @@ const handleAuthClick = async (): Promise<void>  => {
 useEffect(() => {
   const checkLogin = () => {
     const loggedIn = !!Cookies.get("auth-token");
-    console.log("cookies:" + Cookies.get("auth-token"))
     setIsLoggedIn(loggedIn);
   };
 
