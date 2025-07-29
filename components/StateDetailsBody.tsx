@@ -1,22 +1,19 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { Copy, Loader, Check } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Loader } from "lucide-react";
 
-interface PlaceDetailsProps {
+type ParsedDetails = {
+  attractions: string[];
+  footfall: { domestic: number; international: number };
+  best_time: string;
+  avoid: { places: string[]; food: string[] };
+  safety_security: number;
+  info: string;
+};
+
+type PlaceDetailsProps = {
   place: string;
   details: string;
   onClose: () => void;
-}
-
-type Attraction = {
-  name: string;
-  coordinates: [number, number];
-};
-
-type ParsedDetails = {
-  bestTime: string;
-  attractions: Attraction[];
-  food: string[];
 };
 
 const StateDetailsBody: React.FC<PlaceDetailsProps> = ({
@@ -24,17 +21,9 @@ const StateDetailsBody: React.FC<PlaceDetailsProps> = ({
   details,
   onClose,
 }) => {
-
+  // Add these missing state variables
   const [parsed, setParsed] = useState<ParsedDetails | null>(null);
   const [parseError, setParseError] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, []);
 
   useEffect(() => {
     if (!details) {
@@ -43,57 +32,60 @@ const StateDetailsBody: React.FC<PlaceDetailsProps> = ({
       return;
     }
     try {
-      const match = details.match(/{[\s\S]*}/);
-      if (!match) throw new Error("No JSON found");
-      const data = JSON.parse(match[0]);
+      let jsonString = details;
+      const codeBlockMatch = details.match(
+        /```(?:json)?\s*\n?([\s\S]*?)\n?```/
+      );
+      if (codeBlockMatch) {
+        jsonString = codeBlockMatch[1].trim();
+      }
+
+      if (jsonString.startsWith("```") && jsonString.endsWith("```")) {
+        jsonString = jsonString
+          .slice(3, -3)
+          .replace(/^json\s*\n?/, "")
+          .trim();
+      }
+
+      const data = JSON.parse(jsonString);
+
       if (
-        typeof data.bestTime === "string" &&
         Array.isArray(data.attractions) &&
-        data.attractions.every(
-          (a: any) =>
-            typeof a.name === "string" &&
-            Array.isArray(a.coordinates) &&
-            a.coordinates.length === 2 &&
-            typeof a.coordinates[0] === "number" &&
-            typeof a.coordinates[1] === "number"
-        ) &&
-        Array.isArray(data.food)
+        (data.good_time_to_visit || data.best_time) &&
+        typeof data.safety_security === "number" &&
+        data.footfall &&
+        typeof data.footfall.domestic === "number" &&
+        typeof data.footfall.international === "number"
       ) {
+        const transformedData = {
+          attractions: data.attractions,
+          footfall: data.footfall,
+          best_time: data.good_time_to_visit || data.best_time,
+          avoid: {
+            places: data.places_to_avoid || [],
+            food: data.food_to_avoid || [],
+          },
+          safety_security: data.safety_security,
+          info:
+            data.other_info ||
+            data.info ||
+            "No additional information available",
+        };
         setParsed(data);
         setParseError(null);
       } else {
+        console.error("Invalid data structure:", data);
         throw new Error("Invalid data structure");
       }
     } catch (e) {
+      console.error("Parsing error:", e);
+      console.error("Raw details:", details);
       setParsed(null);
       setParseError(
         "Sorry, we couldn't load the details for this place. Please try again later."
       );
     }
   }, [details]);
-
-
-  const getCopyText = () => {
-    if (!parsed) return "";
-    return [
-      `Best Time to Visit: ${parsed.bestTime}`,
-      "",
-      "Top Attractions:",
-      ...parsed.attractions.map(
-        (a, i) => `${i + 1}. ${a.name} (${a.coordinates[0]}, ${a.coordinates[1]})`
-      ),
-      "",
-      "Local Cuisine to Try:",
-      ...parsed.food.map((f, i) => `${i + 1}. ${f}`),
-    ].join("\n");
-  };
-
-  const handleCopy = () => {
-    if (!parsed) return;
-    navigator.clipboard.writeText(getCopyText());
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
-  };
 
   return (
     <div
@@ -105,46 +97,34 @@ const StateDetailsBody: React.FC<PlaceDetailsProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-start mb-4">
-          <h2 className="text-2xl font-bold">{place}</h2>
-          <div className="flex gap-2">
-            <button
-              onClick={handleCopy}
-              className={`text-gray-500 hover:text-green-600 text-2xl transition`}
-              aria-label="Copy details"
-              title="Copy details"
-              disabled={!parsed}
-            >
-              {copied ? (
-                <Check className="w-6 h-6 text-green-600" />
-              ) : (
-                <Copy className="w-6 h-6" />
-              )}
-            </button>
-            <button
-              onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 text-2xl"
-              aria-label="Close"
-            >
-              ×
-            </button>
-          </div>
+          <h2 className="text-xl font-bold">{place}</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700 text-2xl"
+            aria-label="Close"
+          >
+            ×
+          </button>
         </div>
         <hr className="my-4" />
 
-        {/* Error or Loading */}
+        {/* Show error or loading state */}
         {parseError ? (
           <div className="text-red-500 mb-4">{parseError}</div>
         ) : !parsed ? (
           <div className="flex items-center gap-2 text-gray-500 mb-4">
             <Loader className="animate-spin" /> Loading details...
           </div>
-        ) : (
+        ) : null}
+
+        {/* Show parsed data */}
+        {parsed && (
           <div className="space-y-4">
             <div className="bg-blue-50 rounded p-3 shadow">
               <div className="font-semibold text-blue-700 mb-1">
                 Best Time to Visit
               </div>
-              <div className="text-gray-800">{parsed.bestTime}</div>
+              <div className="text-gray-800">{parsed.best_time}</div>
             </div>
 
             <div className="bg-green-50 rounded p-3 shadow">
@@ -153,37 +133,57 @@ const StateDetailsBody: React.FC<PlaceDetailsProps> = ({
               </div>
               <ul className="list-disc list-inside text-gray-800">
                 {parsed.attractions.map((a, i) => (
-                  <li key={i}>
-                    <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${a.coordinates[0]},${a.coordinates[1]}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline-offset-2 hover:underline text-blue-700 transition"
-                    >
-                      {a.name}
-                    </a>
-                  </li>
+                  <li key={i}>{a}</li>
                 ))}
               </ul>
+            </div>
+
+            <div className="bg-purple-50 rounded p-3 shadow">
+              <div className="font-semibold text-purple-700 mb-1">
+                Tourist Footfall
+              </div>
+              <div className="text-gray-800">
+                Domestic: {parsed.footfall.domestic.toLocaleString()} <br />
+                International: {parsed.footfall.international.toLocaleString()}
+              </div>
             </div>
 
             <div className="bg-yellow-50 rounded p-3 shadow">
               <div className="font-semibold text-yellow-700 mb-1">
-                Local Cuisine to Try
+                Places & Food to Avoid
               </div>
-              <ul className="list-disc list-inside text-gray-800">
-                {parsed.food.map((f, i) => (
-                  <li key={i}>{f}</li>
-                ))}
-              </ul>
+              <div>
+                <b>Places:</b>{" "}
+                {parsed.avoid.places && parsed.avoid.places.length
+                  ? parsed.avoid.places.join(", ")
+                  : "None"}
+              </div>
+              <div>
+                <b>Food:</b>{" "}
+                {parsed.avoid.food && parsed.avoid.food.length
+                  ? parsed.avoid.food.join(", ")
+                  : "None"}
+              </div>
+            </div>
+
+            <div className="bg-red-50 rounded p-3 shadow">
+              <div className="font-semibold text-red-700 mb-1">
+                Safety & Security
+              </div>
+              <div className="text-gray-800">{parsed.safety_security} / 5</div>
+            </div>
+
+            <div className="bg-gray-50 rounded p-3 shadow">
+              <div className="font-semibold text-gray-700 mb-1">
+                Other Information
+              </div>
+              <div className="text-gray-800">{parsed.info}</div>
             </div>
           </div>
         )}
-
-
       </div>
     </div>
   );
 };
 
-export default StateDetailsBody;    
+export default StateDetailsBody;

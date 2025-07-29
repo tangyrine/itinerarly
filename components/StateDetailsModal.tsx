@@ -42,7 +42,7 @@ export function StateDetailsModal({
       });
       console.log(res.data.result);
       setDetails(res.data.result);
-      setTimeout(onClose, 4000);
+      setTimeout(onClose, 15000);
     } catch (err) {
       console.error("Error generating state details:", err);
       alert("Failed to generate state details. Please try again.");
