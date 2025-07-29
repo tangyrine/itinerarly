@@ -32,9 +32,9 @@ export default function Planner() {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   
-  // User state management (same as Navbar)
+  // User state management (same as Navbar) - Updated to include avatar
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userInfo, setUserInfo] = useState<{name?: string, email?: string} | null>(null);
+  const [userInfo, setUserInfo] = useState<{name?: string, email?: string, avatar?: string} | null>(null);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const SiteUrl: string = process.env.SITE_URL || "http://localhost:8080";
@@ -102,7 +102,7 @@ export default function Planner() {
     }
   };
 
-  // Fetch user info function (same as Navbar)
+  // Fetch user info function (updated to include avatar handling)
   const fetchUserInfo = async () => {
     try {
       const response = await axios.get(`${SiteUrl}/api/v1/user/profile`, {
@@ -111,10 +111,23 @@ export default function Planner() {
           'Content-Type': 'application/json',
         }
       });
-      setUserInfo(response.data);
+      
+      const userData = response.data;
+      
+      // If no avatar provided, generate one using UI Avatars
+      if (!userData.avatar && userData.name) {
+        userData.avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name)}&background=3b82f6&color=fff&size=128&rounded=true`;
+      }
+      
+      setUserInfo(userData);
     } catch (error) {
       console.error("Failed to fetch user info:", error);
-      setUserInfo({ name: "User", email: "" });
+      const defaultUser = { 
+        name: "User", 
+        email: "", 
+        avatar: "https://ui-avatars.com/api/?name=User&background=3b82f6&color=fff&size=128&rounded=true" 
+      };
+      setUserInfo(defaultUser);
     }
   };
 
@@ -262,6 +275,7 @@ export default function Planner() {
                   </div>
                 </div>
 
+                {/* Forms remain the same */}
                 {plannerMode === "manual" ? (
                   <form
                     onSubmit={(e) => {
@@ -269,11 +283,9 @@ export default function Planner() {
                       generateItinerary();
                     }}
                   >
+                    {/* Manual form content remains unchanged */}
                     <div>
-                      <label
-                        htmlFor="destination"
-                        className="block text-sm font-medium text-gray-700"
-                      >
+                      <label htmlFor="destination" className="block text-sm font-medium text-gray-700">
                         Where do you want to go?
                       </label>
                       <input
@@ -289,10 +301,7 @@ export default function Planner() {
                     </div>
 
                     <div className="mt-4">
-                      <label
-                        htmlFor="people"
-                        className="block text-sm font-medium text-gray-700"
-                      >
+                      <label htmlFor="people" className="block text-sm font-medium text-gray-700">
                         How many people?
                       </label>
                       <select
@@ -303,9 +312,7 @@ export default function Planner() {
                         required
                         className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2"
                       >
-                        <option value="" disabled>
-                          Select group size
-                        </option>
+                        <option value="" disabled>Select group size</option>
                         <option value="1-4">1-4</option>
                         <option value="5-9">5-9</option>
                         <option value=">9">&gt;9</option>
@@ -313,10 +320,7 @@ export default function Planner() {
                     </div>
 
                     <div className="mt-4">
-                      <label
-                        htmlFor="days"
-                        className="block text-sm font-medium text-gray-700"
-                      >
+                      <label htmlFor="days" className="block text-sm font-medium text-gray-700">
                         How many days?
                       </label>
                       <input
@@ -333,10 +337,7 @@ export default function Planner() {
                     </div>
 
                     <div className="mt-4">
-                      <label
-                        htmlFor="budget"
-                        className="block text-sm font-medium text-gray-700"
-                      >
+                      <label htmlFor="budget" className="block text-sm font-medium text-gray-700">
                         Approximate Budget (INR)
                       </label>
                       <select
@@ -347,9 +348,7 @@ export default function Planner() {
                         required
                         className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2"
                       >
-                        <option value="" disabled>
-                          Select budget
-                        </option>
+                        <option value="" disabled>Select budget</option>
                         <option value="high">High (Above ₹50,000)</option>
                         <option value="medium">Medium (₹20,000 - ₹50,000)</option>
                         <option value="low">Low (Below ₹20,000)</option>
@@ -371,11 +370,9 @@ export default function Planner() {
                       generateMonthBasedItinerary();
                     }}
                   >
+                    {/* Month form content remains unchanged */}
                     <div>
-                      <label
-                        htmlFor="month"
-                        className="block text-sm font-medium text-gray-700"
-                      >
+                      <label htmlFor="month" className="block text-sm font-medium text-gray-700">
                         Which month do you want to travel?
                       </label>
                       <select
@@ -386,22 +383,15 @@ export default function Planner() {
                         required
                         className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2"
                       >
-                        <option value="" disabled>
-                          Select month
-                        </option>
+                        <option value="" disabled>Select month</option>
                         {months.map((month) => (
-                          <option key={month} value={month}>
-                            {month}
-                          </option>
+                          <option key={month} value={month}>{month}</option>
                         ))}
                       </select>
                     </div>
 
                     <div className="mt-4">
-                      <label
-                        htmlFor="people-month"
-                        className="block text-sm font-medium text-gray-700"
-                      >
+                      <label htmlFor="people-month" className="block text-sm font-medium text-gray-700">
                         How many people?
                       </label>
                       <select
@@ -412,9 +402,7 @@ export default function Planner() {
                         required
                         className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2"
                       >
-                        <option value="" disabled>
-                          Select group size
-                        </option>
+                        <option value="" disabled>Select group size</option>
                         <option value="1-4">1-4</option>
                         <option value="5-9">5-9</option>
                         <option value=">9">&gt;9</option>
@@ -422,10 +410,7 @@ export default function Planner() {
                     </div>
 
                     <div className="mt-4">
-                      <label
-                        htmlFor="days-month"
-                        className="block text-sm font-medium text-gray-700"
-                      >
+                      <label htmlFor="days-month" className="block text-sm font-medium text-gray-700">
                         How many days?
                       </label>
                       <input
@@ -442,10 +427,7 @@ export default function Planner() {
                     </div>
 
                     <div className="mt-4">
-                      <label
-                        htmlFor="budget-month"
-                        className="block text-sm font-medium text-gray-700"
-                      >
+                      <label htmlFor="budget-month" className="block text-sm font-medium text-gray-700">
                         Approximate Budget (INR)
                       </label>
                       <select
@@ -456,9 +438,7 @@ export default function Planner() {
                         required
                         className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2"
                       >
-                        <option value="" disabled>
-                          Select budget
-                        </option>
+                        <option value="" disabled>Select budget</option>
                         <option value="high">High (Above ₹50,000)</option>
                         <option value="medium">Medium (₹20,000 - ₹50,000)</option>
                         <option value="low">Low (Below ₹20,000)</option>
@@ -479,7 +459,7 @@ export default function Planner() {
           </Drawer.Portal>
         </Drawer.Root>
 
-        {/* User Profile Section (replacing Chat) */}
+        {/* User Profile Section with Avatar (Updated) */}
         <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center space-x-2">
           {isLoggedIn ? (
             <div className="relative profile-dropdown">
@@ -487,8 +467,25 @@ export default function Planner() {
                 className="flex items-center space-x-2 text-white hover:text-gray-200 focus:outline-none"
                 onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
               >
-                <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                  <User className="w-5 h-5 text-blue-600" />
+                <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center overflow-hidden border-2 border-white shadow-sm">
+                  {userInfo?.avatar ? (
+                    <>
+                      <img 
+                        src={userInfo.avatar} 
+                        alt={userInfo.name || 'User'} 
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          // Fallback to icon if image fails to load
+                          e.currentTarget.style.display = 'none';
+                          const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                          if (fallback) fallback.style.display = 'flex';
+                        }}
+                      />
+                      <User className="w-5 h-5 text-blue-600 hidden" />
+                    </>
+                  ) : (
+                    <User className="w-5 h-5 text-blue-600" />
+                  )}
                 </div>
                 <span className="text-sm font-medium hidden md:block">
                   {userInfo?.name ? userInfo.name.split(" ")[0] : 'User'}
@@ -496,14 +493,37 @@ export default function Planner() {
                 <ChevronDown className={`w-4 h-4 transition-transform ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
-              {/* Dropdown Menu */}
+              {/* Dropdown Menu with Avatar */}
               {isProfileDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
-                  <div className="px-4 py-2 text-sm text-gray-700 border-b border-gray-100">
-                    <div className="font-medium">{userInfo?.name || 'User'}</div>
-                    {userInfo?.email && (
-                      <div className="text-gray-500 text-xs">{userInfo.email}</div>
-                    )}
+                  <div className="px-4 py-3 text-sm text-gray-700 border-b border-gray-100">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center overflow-hidden">
+                        {userInfo?.avatar ? (
+                          <>
+                            <img 
+                              src={userInfo.avatar} 
+                              alt={userInfo.name || 'User'} 
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                                const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                                if (fallback) fallback.style.display = 'flex';
+                              }}
+                            />
+                            <User className="w-6 h-6 text-white hidden" />
+                          </>
+                        ) : (
+                          <User className="w-6 h-6 text-white" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium truncate">{userInfo?.name || 'User'}</div>
+                        {userInfo?.email && (
+                          <div className="text-gray-500 text-xs truncate">{userInfo.email}</div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                   
                   <Link
@@ -572,6 +592,7 @@ export default function Planner() {
   );
 }
 
+// generateMonthBasedTrip function remains the same
 async function generateMonthBasedTrip(monthData: {
   month: string;
   people: string;
@@ -617,8 +638,7 @@ async function generateMonthBasedTrip(monthData: {
       result = JSON.stringify(response.data, null, 2);
       console.log("Stringified response data:", result);
     }
-    
-    // Make sure we're returning a non-empty string
+  
     if (!result) {
       throw new Error("API returned empty result");
     }

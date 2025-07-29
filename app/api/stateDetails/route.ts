@@ -30,7 +30,7 @@ export async function POST(req: Request) {
       try {
         const response = await ai.models.generateContent({
           model: models[currentModelIndex],
-          contents: `Return ONLY a valid JSON object in 50 words with these exact keys: "attractions" (array), "footfall" (object with "domestic" and "international" numbers), "best_time" (string), "avoid" (object with "places" array and "food" array), "safety_security" (number 1-5), "info" (string). 
+          contents: `Return ONLY a valid JSON object in 50 words with these exact keys: "attractions" (array), "footfall" (object with "domestic" and "international" numbers), "best_time" (string), "avoid" (object with "places" array and "food" array), "safety_security" (give feedback based on user experience in number 1-5 ), "info" (string). 
 
           Include current tourist footfall and popular attractions in ${placeName}. No markdown, no code blocks, no backticks. Raw JSON only.`,
         });

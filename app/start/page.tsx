@@ -32,15 +32,15 @@ export default function Page() {
   };
 
   return (
-    <div className="flex flex-col w-full h-screen bg-blue-500 overflow-hidden">
-      <div className="flex-none">
+    <div className="flex flex-col w-full h-screen bg-blue-500 relative">
+      <div className="flex-none relative z-10">
         <Planner />
       </div>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="flex flex-col items-center w-full max-w-md mx-auto py-5"
+        className="flex flex-col items-center w-full max-w-md mx-auto py-5 relative z-0"
       >
         <select
           onChange={handleDestinationChange}
@@ -58,7 +58,7 @@ export default function Page() {
           <option value="none">Entire India Map</option>
         </select>
       </motion.div>
-      <div className="flex-grow min-h-0">
+      <div className="flex-grow min-h-0 relative z-0">
         <Suspense
           fallback={
             <div className="h-full w-full flex items-center justify-center">

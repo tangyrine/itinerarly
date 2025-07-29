@@ -2,7 +2,14 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Coffee, LogIn, User, ChevronDown, Settings, LogOut } from "lucide-react";
+import {
+  Coffee,
+  LogIn,
+  User,
+  ChevronDown,
+  Settings,
+  LogOut,
+} from "lucide-react";
 import { SignInModal } from "./SignInModal";
 import Cookies from "js-cookie";
 import axios from "axios";
@@ -12,7 +19,11 @@ const Navbar = () => {
   const [openModal, setOpenModal] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
-  const [userInfo, setUserInfo] = useState<{name?: string, email?: string} | null>(null);
+  const [userInfo, setUserInfo] = useState<{
+    name?: string;
+    email?: string;
+    avatar?: string;
+  } | null>(null);
   const SiteUrl: string = process.env.SITE_URL || "http://localhost:8080";
 
   const handleModal = () => {
@@ -29,7 +40,7 @@ const Navbar = () => {
       setIsMenuOpen(false);
     }
   };
- 
+
   const handleAuthClick = async (): Promise<void> => {
     if (isLoggedIn) {
       await handleLogout();
@@ -47,43 +58,44 @@ const Navbar = () => {
           withCredentials: true,
           timeout: 10000,
           headers: {
-            'Content-Type': 'application/json',
-          }
+            "Content-Type": "application/json",
+          },
         }
       );
-      
+
       console.log("Logout successful:", response.status);
-      
-      Cookies.remove("auth-token", { path: '/' });
-      Cookies.remove("JSESSIONID", { path: '/' });
-      
+
+      Cookies.remove("auth-token", { path: "/" });
+      Cookies.remove("JSESSIONID", { path: "/" });
+
       setIsLoggedIn(false);
       setUserInfo(null);
       setIsProfileDropdownOpen(false);
       window.location.href = "/";
-      
     } catch (err) {
       console.error("Logout error:", err);
-      
+
       if (axios.isAxiosError(err)) {
         console.error("Error details:", {
           status: err.response?.status,
           statusText: err.response?.statusText,
-          data: err.response?.data
+          data: err.response?.data,
         });
-        
+
         if (err.response?.status === 403) {
           console.log("403 error - clearing local auth state anyway");
         }
       }
-      
-      Cookies.remove("auth-token", { path: '/' });
-      Cookies.remove("JSESSIONID", { path: '/' });
+
+      Cookies.remove("auth-token", { path: "/" });
+      Cookies.remove("JSESSIONID", { path: "/" });
       setIsLoggedIn(false);
       setUserInfo(null);
       setIsProfileDropdownOpen(false);
-      
-      alert("Logout completed locally. Please refresh if you experience any issues.");
+
+      alert(
+        "Logout completed locally. Please refresh if you experience any issues."
+      );
     }
   };
 
@@ -92,8 +104,8 @@ const Navbar = () => {
       const response = await axios.get(`${SiteUrl}/api/v1/user/profile`, {
         withCredentials: true,
         headers: {
-          'Content-Type': 'application/json',
-        }
+          "Content-Type": "application/json",
+        },
       });
       setUserInfo(response.data);
     } catch (error) {
@@ -106,7 +118,7 @@ const Navbar = () => {
     const checkLogin = () => {
       const loggedIn = !!Cookies.get("auth-token");
       setIsLoggedIn(loggedIn);
-      
+
       if (loggedIn && !userInfo) {
         fetchUserInfo();
       }
@@ -121,13 +133,13 @@ const Navbar = () => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
-      if (!target.closest('.profile-dropdown')) {
+      if (!target.closest(".profile-dropdown")) {
         setIsProfileDropdownOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const navItems = [
@@ -183,27 +195,57 @@ const Navbar = () => {
                 <div className="relative profile-dropdown">
                   <button
                     className="flex items-center space-x-2 text-gray-700 hover:text-gray-900 focus:outline-none"
-                    onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                    onClick={() =>
+                      setIsProfileDropdownOpen(!isProfileDropdownOpen)
+                    }
                   >
-                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                      <User className="w-5 h-5 text-white" />
+                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center overflow-hidden">
+                      {userInfo?.avatar ? (
+                        <img
+                          src={userInfo.avatar}
+                          alt={userInfo.name || "User"}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                            if (e.currentTarget.nextElementSibling) {
+                              (
+                                e.currentTarget
+                                  .nextElementSibling as HTMLElement
+                              ).style.display = "flex";
+                            }
+                          }}
+                        />
+                      ) : null}
+                      <User
+                        className={`w-5 h-5 text-white ${
+                          userInfo?.avatar ? "hidden" : "block"
+                        }`}
+                      />
                     </div>
                     <span className="text-sm font-medium">
-                      {userInfo?.name ? userInfo.name.split(" ")[0] : 'User'}
+                      {userInfo?.name ? userInfo.name.split(" ")[0] : "User"}
                     </span>
-                    <ChevronDown className={`w-4 h-4 transition-transform ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown
+                      className={`w-4 h-4 transition-transform ${
+                        isProfileDropdownOpen ? "rotate-180" : ""
+                      }`}
+                    />
                   </button>
 
                   {/* Dropdown Menu */}
                   {isProfileDropdownOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
                       <div className="px-4 py-2 text-sm text-gray-700 border-b border-gray-100">
-                        <div className="font-medium">{userInfo?.name || 'User'}</div>
+                        <div className="font-medium">
+                          {userInfo?.name || "User"}
+                        </div>
                         {userInfo?.email && (
-                          <div className="text-gray-500 text-xs">{userInfo.email}</div>
+                          <div className="text-gray-500 text-xs">
+                            {userInfo.email}
+                          </div>
                         )}
                       </div>
-                      
+
                       <Link
                         href="/profile"
                         className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -212,7 +254,7 @@ const Navbar = () => {
                         <User className="w-4 h-4 mr-3" />
                         Profile
                       </Link>
-                      
+
                       <Link
                         href="/settings"
                         className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -221,9 +263,9 @@ const Navbar = () => {
                         <Settings className="w-4 h-4 mr-3" />
                         Settings
                       </Link>
-                      
+
                       <hr className="my-1" />
-                      
+
                       <button
                         className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         onClick={handleLogout}
@@ -260,21 +302,49 @@ const Navbar = () => {
                 <div className="relative profile-dropdown">
                   <button
                     className="flex items-center space-x-1 text-gray-700"
-                    onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                    onClick={() =>
+                      setIsProfileDropdownOpen(!isProfileDropdownOpen)
+                    }
                   >
-                    <div className="w-7 h-7 bg-blue-500 rounded-full flex items-center justify-center">
-                      <User className="w-4 h-4 text-white" />
+                    <div className="w-7 h-7 bg-blue-500 rounded-full flex items-center justify-center overflow-hidden">
+                      {userInfo?.avatar ? (
+                        <img
+                          src={userInfo.avatar}
+                          alt={userInfo.name || "User"}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                            if (e.currentTarget.nextElementSibling) {
+                              (
+                                e.currentTarget
+                                  .nextElementSibling as HTMLElement
+                              ).style.display = "flex";
+                            }
+                          }}
+                        />
+                      ) : null}
+                      <User
+                        className={`w-4 h-4 text-white ${
+                          userInfo?.avatar ? "hidden" : "block"
+                        }`}
+                      />
                     </div>
-                    <ChevronDown className={`w-3 h-3 transition-transform ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown
+                      className={`w-3 h-3 transition-transform ${
+                        isProfileDropdownOpen ? "rotate-180" : ""
+                      }`}
+                    />
                   </button>
 
                   {/* Mobile Dropdown Menu */}
                   {isProfileDropdownOpen && (
                     <div className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
                       <div className="px-3 py-2 text-xs text-gray-700 border-b border-gray-100">
-                        <div className="font-medium truncate">{userInfo?.name || 'User'}</div>
+                        <div className="font-medium truncate">
+                          {userInfo?.name || "User"}
+                        </div>
                       </div>
-                      
+
                       <Link
                         href="/profile"
                         className="flex items-center px-3 py-2 text-xs text-gray-700 hover:bg-gray-100"
@@ -283,7 +353,7 @@ const Navbar = () => {
                         <User className="w-3 h-3 mr-2" />
                         Profile
                       </Link>
-                      
+
                       <button
                         className="flex items-center w-full px-3 py-2 text-xs text-gray-700 hover:bg-gray-100"
                         onClick={handleLogout}
@@ -302,7 +372,7 @@ const Navbar = () => {
                   <LogIn />
                 </button>
               )}
-              
+
               <a
                 href="https://coff.ee/heisen47"
                 target="_blank"
