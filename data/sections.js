@@ -3,7 +3,6 @@ export const sections = [
     id: 'hillstations',
     title: 'Hill Stations',
     description: 'Discover peaceful mountain retreats',
-    backgroundImage: '/images/hillstations-bg.jpg',
     places: [
       { name: 'Darjeeling', state: 'West Bengal', coordinates: [88.2636, 27.0410] },
       { name: 'Shimla', state: 'Himachal Pradesh', coordinates: [77.1734, 31.1048] },

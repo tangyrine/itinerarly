@@ -144,7 +144,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
           preload="none"
           aria-label="Background video showing travel destinations"
           className="object-cover w-full h-full"
-          poster="/assets/bg-poster.jpg"
+          poster="/assets/bg-poster.png"
         >
           <source src="/assets/background.mp4" type="video/mp4" />
         </video>
