@@ -44,9 +44,9 @@ export async function POST(req: NextRequest) {
             - Best places to visit during this specific month
             - Activities suitable for the weather
 
-            Format your response as:
+            Format your response each response should come in a new line:
             **Recommended Destination: [DESTINATION NAME]**
-            /n
+            
             **Why this destination is perfect for ${month}:** [Brief explanation]
 
             **${days}-Day Itinerary:**
