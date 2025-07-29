@@ -1,5 +1,6 @@
 import { Check, Coffee, Copy } from "lucide-react";
 import React, { useState } from "react";
+import ReactMarkdown from "react-markdown";  // You'll need to install this
 
 interface ItineraryProps {
   open: boolean;
@@ -9,54 +10,58 @@ interface ItineraryProps {
 }
 
 function parseDelimitedItinerary(itinerary: string) {
-  const sections = itinerary
-    .split("|||")
-    .map((s) => s.trim())
-    .filter(Boolean);
-  let data: any = {};
-  for (const section of sections) {
-    if (/^Error:/i.test(section)) {
-      data.error = section.replace(/^Error:\s*/i, "");
-      return data;
-    }
-    const lines = section
-      .split("\n")
-      .map((l) => l.trim())
+  if (itinerary.includes("|||")) {
+    const sections = itinerary
+      .split("|||")
+      .map((s) => s.trim())
       .filter(Boolean);
-    for (const line of lines) {
-      if (line.startsWith("Destination:"))
-        data.destination = line.replace("Destination:", "").trim();
-      else if (line.startsWith("Budget:"))
-        data.budget = line.replace("Budget:", "").trim();
-      else if (line.startsWith("Hotels:"))
-        data.hotels = line
-          .replace("Hotels:", "")
-          .split(",")
-          .map((s) => s.trim());
-      else if (line.startsWith("Restaurants:"))
-        data.restaurants = line
-          .replace("Restaurants:", "")
-          .split(",")
-          .map((s) => s.trim());
-      else if (line.startsWith("Attractions:"))
-        data.attractions = line
-          .replace("Attractions:", "")
-          .split(",")
-          .map((s) => s.trim());
-      else if (line.startsWith("Summary:"))
-        data.summary = line.replace("Summary:", "").trim();
-      else if (line.startsWith("Day-wise Plan:")) data.daysPlan = [];
-      else if (/^Day \d+:/.test(line)) {
-        if (!data.daysPlan) data.daysPlan = [];
-        const [day, ...rest] = line.split(":");
-        data.daysPlan.push({
-          day: day.replace("Day", "").trim(),
-          activities: rest.join(":").trim(),
-        });
+    let data: any = {};
+    for (const section of sections) {
+      if (/^Error:/i.test(section)) {
+        data.error = section.replace(/^Error:\s*/i, "");
+        return data;
+      }
+      const lines = section
+        .split("\n")
+        .map((l) => l.trim())
+        .filter(Boolean);
+      for (const line of lines) {
+        if (line.startsWith("Destination:"))
+          data.destination = line.replace("Destination:", "").trim();
+        else if (line.startsWith("Budget:"))
+          data.budget = line.replace("Budget:", "").trim();
+        else if (line.startsWith("Hotels:"))
+          data.hotels = line
+            .replace("Hotels:", "")
+            .split(",")
+            .map((s) => s.trim());
+        else if (line.startsWith("Restaurants:"))
+          data.restaurants = line
+            .replace("Restaurants:", "")
+            .split(",")
+            .map((s) => s.trim());
+        else if (line.startsWith("Attractions:"))
+          data.attractions = line
+            .replace("Attractions:", "")
+            .split(",")
+            .map((s) => s.trim());
+        else if (line.startsWith("Summary:"))
+          data.summary = line.replace("Summary:", "").trim();
+        else if (line.startsWith("Day-wise Plan:")) data.daysPlan = [];
+        else if (/^Day \d+:/.test(line)) {
+          if (!data.daysPlan) data.daysPlan = [];
+          const [day, ...rest] = line.split(":");
+          data.daysPlan.push({
+            day: day.replace("Day", "").trim(),
+            activities: rest.join(":").trim(),
+          });
+        }
       }
     }
+    return { ...data, isDelimitedFormat: true };
   }
-  return data;
+  
+  return { rawContent: itinerary, isDelimitedFormat: false };
 }
 
 const Itinerary: React.FC<ItineraryProps> = ({
@@ -72,15 +77,24 @@ const Itinerary: React.FC<ItineraryProps> = ({
   try {
     if (itinerary) {
       parsed = parseDelimitedItinerary(itinerary);
+      console.log("Parsed itinerary:", parsed);
     }
   } catch (e) {
     parseError = "Could not parse itinerary.";
+    console.error("Parse error:", e);
   }
 
   const [copied, setCopied] = useState(false);
 
   const getCopyText = () => {
     if (!parsed) return "";
+    
+    // If raw content, return it directly
+    if (!parsed.isDelimitedFormat && parsed.rawContent) {
+      return parsed.rawContent;
+    }
+    
+    // Otherwise format the structured data
     let lines: string[] = [];
     if (parsed.destination) lines.push(`Destination: ${parsed.destination}`);
     if (parsed.budget) lines.push(`Budget: ${parsed.budget}`);
@@ -153,7 +167,8 @@ const Itinerary: React.FC<ItineraryProps> = ({
             <div className="text-gray-500">Loading...</div>
           ) : parsed.error ? (
             <div className="text-red-500">{parsed.error}</div>
-          ) : (
+          ) : parsed.isDelimitedFormat ? (
+            // Original formatted display for delimited content
             <>
               {parsed.summary && (
                 <div className="mb-2 italic text-gray-600">
@@ -217,14 +232,31 @@ const Itinerary: React.FC<ItineraryProps> = ({
                 </div>
               )}
             </>
+          ) : (
+            // For raw content from the AI, display as markdown
+            <div className="prose prose-sm max-w-full">
+              {/* If you have react-markdown installed */}
+              {parsed.rawContent && (
+                <div className="markdown-content">
+                  <ReactMarkdown>{parsed.rawContent}</ReactMarkdown>
+                </div>
+              )}
+              
+              {/* If you don't have react-markdown, use this instead: */}
+              {!parsed.rawContent && (
+                <pre className="whitespace-pre-wrap text-gray-800">
+                  {itinerary}
+                </pre>
+              )}
+            </div>
           )}
         </div>
 
-          <hr/>
-          <span className="text-gray-500 text-xs text-center  italic">
-            Hope you enjoyed this itinerary! If you found it helpful, consider supporting my work.
-          </span>
-        <div className="p-2 ">
+        <hr/>
+        <span className="text-gray-500 text-xs text-center italic">
+          Hope you enjoyed this itinerary! If you found it helpful, consider supporting my work.
+        </span>
+        <div className="p-2">
           <a
             href="https://coff.ee/heisen47"
             target="_blank"
@@ -290,6 +322,36 @@ const Itinerary: React.FC<ItineraryProps> = ({
           .itinerary-scroll::-webkit-scrollbar-thumb {
             background: #cbd5e1;
             border-radius: 4px;
+          }
+          .markdown-content h1, 
+          .markdown-content h2, 
+          .markdown-content h3 {
+            font-weight: bold;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+          }
+          .markdown-content h1 {
+            font-size: 1.5rem;
+          }
+          .markdown-content h2 {
+            font-size: 1.3rem;
+          }
+          .markdown-content h3 {
+            font-size: 1.1rem;
+          }
+          .markdown-content ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+          }
+          .markdown-content ol {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+          }
+          .markdown-content p {
+            margin-bottom: 0.75rem;
+          }
+          .markdown-content strong {
+            font-weight: bold;
           }
         `}</style>
       </div>
