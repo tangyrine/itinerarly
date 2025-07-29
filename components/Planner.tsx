@@ -1,15 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Drawer } from "vaul";
 import ItineraryGeneration from "../lib/ItineraryGeneration";
 import Itinerary from "./Itinerary";
-import Chat from "./Chat";
 import { IoMdHome } from "react-icons/io";
-import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
 import { GoNorthStar } from "react-icons/go";
+import { User, ChevronDown, Settings, LogOut, LogIn, Coffee } from "lucide-react";
+import { SignInModal } from "./SignInModal";
 import axios from "axios";
+import Cookies from "js-cookie";
+import Link from "next/link";
 
 export default function Planner() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -29,9 +31,122 @@ export default function Planner() {
   const [itinerary, setItinerary] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [openChat, setOpenChat] = useState(false);
+  
+  // User state management (same as Navbar)
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userInfo, setUserInfo] = useState<{name?: string, email?: string} | null>(null);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const SiteUrl: string = process.env.SITE_URL || "http://localhost:8080";
 
   const router = useRouter();
+
+  const handleModal = () => {
+    setOpenModal(!openModal);
+  };
+
+  const handleAuthClick = async (): Promise<void> => {
+    if (isLoggedIn) {
+      await handleLogout();
+    } else {
+      setOpenModal(true);
+    }
+  };
+
+  const handleLogout = async (): Promise<void> => {
+    try {
+      const response = await axios.post(
+        `${SiteUrl}/api/v1/logout`,
+        {},
+        {
+          withCredentials: true,
+          timeout: 10000,
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        }
+      );
+      
+      console.log("Logout successful:", response.status);
+      
+      Cookies.remove("auth-token", { path: '/' });
+      Cookies.remove("JSESSIONID", { path: '/' });
+      
+      setIsLoggedIn(false);
+      setUserInfo(null);
+      setIsProfileDropdownOpen(false);
+      window.location.href = "/";
+      
+    } catch (err) {
+      console.error("Logout error:", err);
+      
+      if (axios.isAxiosError(err)) {
+        console.error("Error details:", {
+          status: err.response?.status,
+          statusText: err.response?.statusText,
+          data: err.response?.data
+        });
+        
+        if (err.response?.status === 403) {
+          console.log("403 error - clearing local auth state anyway");
+        }
+      }
+      
+      Cookies.remove("auth-token", { path: '/' });
+      Cookies.remove("JSESSIONID", { path: '/' });
+      setIsLoggedIn(false);
+      setUserInfo(null);
+      setIsProfileDropdownOpen(false);
+      
+      alert("Logout completed locally. Please refresh if you experience any issues.");
+    }
+  };
+
+  // Fetch user info function (same as Navbar)
+  const fetchUserInfo = async () => {
+    try {
+      const response = await axios.get(`${SiteUrl}/api/v1/user/profile`, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      setUserInfo(response.data);
+    } catch (error) {
+      console.error("Failed to fetch user info:", error);
+      setUserInfo({ name: "User", email: "" });
+    }
+  };
+
+  // Check login status (same as Navbar)
+  useEffect(() => {
+    const checkLogin = () => {
+      const loggedIn = !!Cookies.get("auth-token");
+      setIsLoggedIn(loggedIn);
+      
+      if (loggedIn && !userInfo) {
+        fetchUserInfo();
+      }
+    };
+
+    checkLogin();
+
+    window.addEventListener("focus", checkLogin);
+    return () => window.removeEventListener("focus", checkLogin);
+  }, [userInfo]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.profile-dropdown')) {
+        setIsProfileDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -364,12 +479,85 @@ export default function Planner() {
           </Drawer.Portal>
         </Drawer.Root>
 
-        <button
-          onClick={() => setOpenChat(true)}
-          className="absolute right-4 top-1/2 -translate-y-1/2 bg-blue-700 text-white py-2 px-4 rounded hover:bg-blue-800 transition"
-        >
-          <IoChatbubbleEllipsesOutline />
-        </button>
+        {/* User Profile Section (replacing Chat) */}
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center space-x-2">
+          {isLoggedIn ? (
+            <div className="relative profile-dropdown">
+              <button
+                className="flex items-center space-x-2 text-white hover:text-gray-200 focus:outline-none"
+                onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+              >
+                <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                  <User className="w-5 h-5 text-blue-600" />
+                </div>
+                <span className="text-sm font-medium hidden md:block">
+                  {userInfo?.name ? userInfo.name.split(" ")[0] : 'User'}
+                </span>
+                <ChevronDown className={`w-4 h-4 transition-transform ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {/* Dropdown Menu */}
+              {isProfileDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                  <div className="px-4 py-2 text-sm text-gray-700 border-b border-gray-100">
+                    <div className="font-medium">{userInfo?.name || 'User'}</div>
+                    {userInfo?.email && (
+                      <div className="text-gray-500 text-xs">{userInfo.email}</div>
+                    )}
+                  </div>
+                  
+                  <Link
+                    href="/profile"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    onClick={() => setIsProfileDropdownOpen(false)}
+                  >
+                    <User className="w-4 h-4 mr-3" />
+                    Profile
+                  </Link>
+                  
+                  <Link
+                    href="/settings"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    onClick={() => setIsProfileDropdownOpen(false)}
+                  >
+                    <Settings className="w-4 h-4 mr-3" />
+                    Settings
+                  </Link>
+                  
+                  <hr className="my-1" />
+                  
+                  <button
+                    className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="w-4 h-4 mr-3" />
+                    Sign Out
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex items-center space-x-2">
+              <button
+                className="bg-blue-700 text-white py-2 px-4 rounded hover:bg-blue-800 transition flex items-center space-x-2"
+                onClick={handleAuthClick}
+              >
+                <LogIn className="w-4 h-4" />
+                <span className="hidden md:block">Sign In</span>
+              </button>
+            </div>
+          )}
+          
+          <a
+            href="https://coff.ee/heisen47"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600 transition flex items-center space-x-2"
+          >
+            <Coffee className="w-4 h-4" />
+            <span className="hidden md:block">Coffee</span>
+          </a>
+        </div>
       </div>
 
       <Itinerary
@@ -379,7 +567,7 @@ export default function Planner() {
         destination={plannerMode === "manual" ? formData.destination : "AI Recommended Destination"}
       />
 
-      <Chat open={openChat} onClose={() => setOpenChat(false)} />
+      <SignInModal openModal={openModal} onClose={handleModal} />
     </>
   );
 }
