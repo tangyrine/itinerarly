@@ -11,9 +11,10 @@ import {
   LoaderCircle,
   ChevronLeft,
   ChevronRight,
+  ArrowRight,
+  Sparkles,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-
 
 const features = [
   {
@@ -60,80 +61,50 @@ interface BodyProps {
   }>;
 }
 
-const animationVariants = {
-  fadeIn: {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.7, ease: "easeOut" },
-  },
-  slideIn: {
-    initial: { opacity: 0, x: -100 },
-    animate: { opacity: 1, x: 0 },
-    transition: { duration: 0.7, ease: "easeOut" },
-  },
-};
-
 const communityImages = [
   "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
   "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80",
   "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=600&q=80",
   "https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=crop&w=600&q=80",
   "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80",
 ];
 
 const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
   const carouselRef = useRef<HTMLDivElement>(null);
-  const [scrollX, setScrollX] = useState(0);
-  const [manualScroll, setManualScroll] = useState(false);
-
-  const scrollBy = (offset: number) => {
-    const carousel = carouselRef.current;
-    if (!carousel) return;
-    setManualScroll(true);
-    carousel.scrollBy({ left: offset, behavior: "smooth" });
-    setTimeout(() => setManualScroll(false), 2000);
-  };
-
-  useEffect(() => {
-    const carousel = carouselRef.current;
-    if (!carousel) return;
-
-    let animationFrame: number;
-    let lastTimestamp: number | null = null;
-
-    const scrollSpeed = 0.5;
-
-    function animate(ts: number) {
-      if (lastTimestamp === null) lastTimestamp = ts;
-      const delta = ts - lastTimestamp;
-      lastTimestamp = ts;
-
-      if (carousel && carousel.scrollWidth > carousel.clientWidth) {
-        carousel.scrollLeft += scrollSpeed * (delta / 16.67);
-        if (
-          carousel.scrollLeft >=
-          carousel.scrollWidth - carousel.clientWidth
-        ) {
-          carousel.scrollLeft = 0;
-        }
-      }
-      animationFrame = requestAnimationFrame(animate);
-    }
-
-    animationFrame = requestAnimationFrame(animate);
-
-    return () => {
-      cancelAnimationFrame(animationFrame);
-    };
-  }, []);
-
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
+  // Auto-scroll carousel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => 
+        prev === communityImages.length - 1 ? 0 : prev + 1
+      );
+    }, 3000);
 
-  const [isLoading, setIsLoading] = useState(false);
+    return () => clearInterval(interval);
+  }, []);
+
+  const scrollToImage = (index: number) => {
+    setCurrentImageIndex(index);
+  };
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => 
+      prev === communityImages.length - 1 ? 0 : prev + 1
+    );
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => 
+      prev === 0 ? communityImages.length - 1 : prev - 1
+    );
+  };
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen overflow-hidden">
       {/* Background with Video */}
       <div className="absolute inset-0 z-0">
         <video
@@ -141,181 +112,226 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
           muted
           loop
           playsInline
-          preload="none"
+          preload="metadata"
           aria-label="Background video showing travel destinations"
           className="object-cover w-full h-full"
           poster="/assets/bg-poster.png"
         >
           <source src="/assets/background.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0 bg-black/50" />
       </div>
 
       {/* Content */}
       <div className="relative z-10 flex flex-col justify-center min-h-screen text-white">
-        <div className="max-w-6xl mx-auto px-4 md:px-6 py-16 space-y-12">
-          {/* Welcome Section */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 space-y-8 sm:space-y-12 lg:space-y-16">
+          
+          {/* Hero Section */}
           <motion.div
-            {...animationVariants.slideIn}
-            className="text-center md:text-left space-y-6 md:pl-8"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="text-center space-y-4 sm:space-y-6 pt-8 sm:pt-16"
           >
-            <h1 className="text-4xl md:text-5xl font-bold font-playfair tracking-wide">
-              Welcome to Itinerarly
+            <div className="flex items-center justify-center space-x-2 mb-4">
+              <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />
+              <span className="text-sm sm:text-base text-yellow-400 font-medium">
+                AI-Powered Travel Planning
+              </span>
+              <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />
+            </div>
+            
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-playfair tracking-wide leading-tight">
+              Welcome to{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400">
+                Itinerarly
+              </span>
             </h1>
-            <p className="text-lg md:text-xl leading-relaxed font-light max-w-3xl">
+            
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed font-light max-w-4xl mx-auto text-gray-200">
               Your intelligent and{" "}
-              <span className="text-yellow-500 text-2xl">personalized</span>{" "}
+              <span className="text-yellow-400 font-semibold">personalized</span>{" "}
               travel companion for exploring the diverse landscapes and rich
               cultural heritage of India.
             </p>
           </motion.div>
 
+          {/* CTA Section - Moved up for better mobile UX */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="text-center space-y-4 sm:space-y-6"
+          >
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-100">
+              Ready to explore India?
+            </h2>
+            <Link
+              href="/start"
+              className="inline-flex items-center space-x-3 px-6 sm:px-8 lg:px-12 py-3 sm:py-4 text-base sm:text-lg lg:text-xl text-black font-semibold bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full transition-all duration-300 hover:from-yellow-300 hover:to-orange-300 hover:shadow-2xl hover:scale-105 transform active:scale-95"
+            >
+              <span>Start Planning</span>
+              <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6" />
+            </Link>
+          </motion.div>
+
           {/* Features Section */}
           <motion.div
             id="features"
-            {...animationVariants.fadeIn}
-            className="space-y-8 md:pl-8"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="space-y-6 sm:space-y-8"
           >
-            <h2 className="text-2xl md:text-3xl font-semibold text-center md:text-left">
-              Key Features
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-white">
+              Why Choose Itinerarly?
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            {/* Mobile: 1 column, Tablet: 2 columns, Desktop: 3 columns */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
               {features.map((feature, index) => (
                 <motion.div
                   key={feature.label}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.1 * index }}
-                  whileHover={{ scale: 1.03 }}
-                  className="bg-white/10 backdrop-blur-sm p-8 rounded-xl transform transition-all duration-300 hover:shadow-xl"
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  className="bg-white/10 backdrop-blur-md p-4 sm:p-6 lg:p-8 rounded-2xl border border-white/20 hover:border-white/40 transition-all duration-300 hover:shadow-2xl hover:bg-white/15"
                 >
-                  <feature.icon className="w-8 h-8 mb-4 text-blue-400" />
-                  <h3 className="text-lg font-semibold mb-3">
-                    {feature.label}
-                  </h3>
-                  <p className="text-sm text-gray-300">{feature.description}</p>
+                  <div className="flex items-center space-x-3 mb-3 sm:mb-4">
+                    <div className="p-2 sm:p-3 bg-gradient-to-br from-blue-400 to-purple-500 rounded-lg">
+                      <feature.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                    </div>
+                    <h3 className="text-base sm:text-lg font-semibold text-white">
+                      {feature.label}
+                    </h3>
+                  </div>
+                  <p className="text-sm sm:text-base text-gray-300 leading-relaxed">
+                    {feature.description}
+                  </p>
                 </motion.div>
               ))}
             </div>
           </motion.div>
 
-
-          {/* CTA Section */}
+          {/* Community Images Section */}
           <motion.div
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.6, ease: "easeOut" }}
-            className="text-center space-y-6 mx-auto max-w-xl"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="space-y-6 sm:space-y-8"
           >
-            <h2 className="text-2xl font-semibold">Not Sure where to go?</h2>
-            <Link
-              href="/start"
-              className="inline-block px-10 py-4 text-lg text-black font-medium bg-[#f7e9d5] rounded-lg transition-all duration-300 hover:bg-yellow-600 hover:shadow-xl hover:scale-105 backdrop-blur-sm"
-            >
-              Click me!
-            </Link>
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-white">
+              Community Highlights
+            </h3>
+
+            {/* Mobile-First Carousel */}
+            <div className="relative w-full">
+              {/* Image Container */}
+              <div className="relative overflow-hidden rounded-2xl mx-auto max-w-md sm:max-w-lg md:max-w-2xl lg:max-w-4xl">
+                <div 
+                  className="flex transition-transform duration-500 ease-in-out"
+                  style={{
+                    transform: `translateX(-${currentImageIndex * 100}%)`,
+                  }}
+                >
+                  {communityImages.map((img, idx) => (
+                    <div key={idx} className="w-full flex-shrink-0">
+                      <img
+                        src={img}
+                        alt={`Community travel photo ${idx + 1}`}
+                        className="w-full h-48 sm:h-64 md:h-80 lg:h-96 object-cover"
+                        loading="lazy"
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Navigation Arrows - Hidden on mobile */}
+                <button
+                  onClick={prevImage}
+                  className="hidden sm:flex absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 sm:p-3 transition-all duration-200 items-center justify-center backdrop-blur-sm"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+                </button>
+
+                <button
+                  onClick={nextImage}
+                  className="hidden sm:flex absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 sm:p-3 transition-all duration-200 items-center justify-center backdrop-blur-sm"
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                </button>
+
+                {/* Gradient Overlays */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
+              </div>
+
+              {/* Dots Indicator */}
+              <div className="flex justify-center space-x-2 mt-4 sm:mt-6">
+                {communityImages.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => scrollToImage(idx)}
+                    className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${
+                      idx === currentImageIndex
+                        ? "bg-white scale-125"
+                        : "bg-white/50 hover:bg-white/70"
+                    }`}
+                    aria-label={`Go to image ${idx + 1}`}
+                  />
+                ))}
+              </div>
+
+              {/* Mobile Touch Hint */}
+              <div className="sm:hidden flex justify-center mt-4">
+                <div className="flex items-center space-x-2 text-xs text-gray-300 bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm">
+                  <span>Swipe or tap dots to explore</span>
+                  <ArrowRight className="w-3 h-3" />
+                </div>
+              </div>
+            </div>
           </motion.div>
 
-          {/* Community Images Carousel */}
+          {/* Bottom CTA */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.8 }}
-            className="space-y-6 md:pl-8 px-4 sm:px-6"
+            transition={{ duration: 0.6, delay: 0.8 }}
+            className="text-center space-y-4 pt-8 sm:pt-12 pb-8"
           >
-            <h3 className="text-xl sm:text-2xl font-semibold text-center md:text-left text-white">
-              Community Clicks :
-            </h3>
-
-            <div className="relative w-full">
-              {/* Left Arrow - Hidden on mobile */}
-              <button
-                aria-label="Previous image"
-                onClick={() => scrollBy(-340)}
-                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-gray-700 rounded-full p-2 shadow transition items-center justify-center"
-                style={{ marginLeft: -16 }}
+            <p className="text-lg sm:text-xl text-gray-300">
+              Join thousands of travelers discovering India
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4">
+              <Link
+                href="/start"
+                className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 sm:px-8 py-3 text-base sm:text-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-all duration-300 hover:scale-105 transform active:scale-95"
               >
-                <ChevronLeft className="w-6 h-6" />
-              </button>
-
-              {/* Carousel Container */}
-              <div
-                className="overflow-hidden w-full rounded-lg"
-                style={{
-                  maskImage:
-                    "linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)",
-                  WebkitMaskImage:
-                    "linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)",
-                }}
-              >
-                <div
-                  ref={carouselRef}
-                  className="overflow-x-scroll no-scrollbar w-full"
-                >
-                  <div
-                    className="flex gap-3 sm:gap-4 py-2 px-1 sm:px-2"
-                    style={{
-                      minWidth: "100%",
-                      width: `${communityImages.length * 280 * 2}px`,
-                    }}
-                  >
-                    {[...communityImages, ...communityImages].map(
-                      (img, idx) => (
-                        <img
-                          key={idx}
-                          src={img}
-                          alt={`Community image ${
-                            (idx % communityImages.length) + 1
-                          }`}
-                          className="rounded-lg shadow-lg object-cover w-[200px] sm:w-[240px] md:w-[320px] h-[120px] sm:h-[150px] md:h-[200px] border-2 md:border-4 border-white flex-shrink-0 transition-transform duration-300 hover:scale-105"
-                          style={{
-                            background: "#eee",
-                          }}
-                          draggable={false}
-                        />
-                      )
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Arrow - Hidden on mobile */}
-              <button
-                aria-label="Next image"
-                onClick={() => scrollBy(340)}
-                className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-gray-700 rounded-full p-2 shadow transition items-center justify-center"
-                style={{ marginRight: -16 }}
-              >
-                <ChevronRight className="w-6 h-6" />
-              </button>
-
-              {/* Mobile scroll indicator */}
-              <div className="md:hidden flex justify-center mt-4 space-x-2">
-                <div className="text-xs text-gray-300 bg-white/10 px-3 py-1 rounded-full">
-                  Swipe to explore →
-                </div>
-              </div>
+                <Compass className="w-5 h-5" />
+                <span>Explore Destinations</span>
+              </Link>
             </div>
           </motion.div>
         </div>
       </div>
 
+      {/* Loading Overlay */}
       {isLoading && (
         <>
-          {/* Full page overlay */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
           />
-          {/* Centered loader */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50"
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 text-center"
           >
-            <LoaderCircle className="w-12 h-12 text-white animate-spin" />
-            <p className="text-white mt-4 text-center">
+            <LoaderCircle className="w-12 h-12 sm:w-16 sm:h-16 text-white animate-spin mx-auto" />
+            <p className="text-white mt-4 text-sm sm:text-base">
               Loading your destination...
             </p>
           </motion.div>
