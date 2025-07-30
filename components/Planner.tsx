@@ -20,6 +20,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import Link from "next/link";
 import { FaUmbrellaBeach } from "react-icons/fa";
+import { Span } from "next/dist/trace";
 
 export default function Planner() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -39,8 +40,6 @@ export default function Planner() {
   const [itinerary, setItinerary] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  // User state management (same as Navbar) - Updated to include avatar
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userInfo, setUserInfo] = useState<{
     name?: string;
@@ -49,6 +48,8 @@ export default function Planner() {
   } | null>(null);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [token, setToken] = useState<number | undefined>();
+
   const SiteUrl: string = process.env.SITE_URL || "http://localhost:8080";
 
   const router = useRouter();
@@ -115,7 +116,6 @@ export default function Planner() {
     }
   };
 
-  // Fetch user info function (updated to include avatar handling)
   const fetchUserInfo = async () => {
     try {
       const response = await axios.get(`${SiteUrl}/api/v1/user/profile`, {
@@ -127,7 +127,6 @@ export default function Planner() {
 
       const userData = response.data;
 
-      // If no avatar provided, generate one using UI Avatars
       if (!userData.avatar && userData.name) {
         userData.avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(
           userData.name
@@ -147,7 +146,6 @@ export default function Planner() {
     }
   };
 
-  // Check login status (same as Navbar)
   useEffect(() => {
     const checkLogin = () => {
       const loggedIn = !!Cookies.get("auth-token");
@@ -163,6 +161,24 @@ export default function Planner() {
     window.addEventListener("focus", checkLogin);
     return () => window.removeEventListener("focus", checkLogin);
   }, [userInfo]);
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/api/v1/tokens/remaining",
+          {
+            withCredentials: true,
+          }
+        );
+        console.log("Remaining tokens:",  response.data.remainingTokens);
+        setToken(response.data.remainingTokens ?? alert('Error fetching tokens'));
+      } catch (error) {
+        setToken(0);
+      }
+    };
+    fetchToken();
+  }, []);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -535,8 +551,21 @@ export default function Planner() {
           </Drawer.Portal>
         </Drawer.Root>
 
+        {typeof token !== "undefined" && (
+          <div className="hidden sm:flex items-center bg-blue-800/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium border border-blue-700">
+            <span className="text-yellow-300 mr-1">⚡</span>
+            <span>{token} tokens</span>
+          </div>
+        )}
+
         {/* User Profile Section remains the same */}
         <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center space-x-2">
+          {typeof token !== "undefined" && isLoggedIn && (
+            <div className="sm:hidden bg-blue-800/90 text-white px-2 py-1 rounded text-xs font-medium">
+              ⚡{token}
+            </div>
+          )}
+
           {isLoggedIn ? (
             <div className="relative profile-dropdown">
               <button
@@ -716,7 +745,6 @@ async function generateMonthBasedTrip(monthData: {
     console.log("Axios response status:", response.status);
     console.log("Full response data:", response.data);
 
-    // Check what format the result is in and handle it properly
     let result;
     if (response.data && response.data.result) {
       result = response.data.result;
