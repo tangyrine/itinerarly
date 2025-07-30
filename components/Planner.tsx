@@ -171,8 +171,9 @@ export default function Planner() {
             withCredentials: true,
           }
         );
-        console.log("Remaining tokens:",  response.data.remainingTokens);
-        setToken(response.data.remainingTokens ?? alert('Error fetching tokens'));
+        setToken(
+          response.data.remainingTokens ?? alert("Error fetching tokens")
+        );
       } catch (error) {
         setToken(0);
       }
@@ -180,7 +181,6 @@ export default function Planner() {
     fetchToken();
   }, []);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
@@ -551,21 +551,7 @@ export default function Planner() {
           </Drawer.Portal>
         </Drawer.Root>
 
-        {typeof token !== "undefined" && (
-          <div className="hidden sm:flex items-center bg-blue-800/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium border border-blue-700">
-            <span className="text-yellow-300 mr-1">⚡</span>
-            <span>{token} tokens</span>
-          </div>
-        )}
-
-        {/* User Profile Section remains the same */}
         <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center space-x-2">
-          {typeof token !== "undefined" && isLoggedIn && (
-            <div className="sm:hidden bg-blue-800/90 text-white px-2 py-1 rounded text-xs font-medium">
-              ⚡{token}
-            </div>
-          )}
-
           {isLoggedIn ? (
             <div className="relative profile-dropdown">
               <button
@@ -592,6 +578,7 @@ export default function Planner() {
                     <User className="w-5 h-5 text-blue-600" />
                   )}
                 </div>
+                {/* Hide name on small screens, show only on medium+ screens */}
                 <span className="text-sm font-medium hidden md:block">
                   {userInfo?.name ? userInfo.name.split(" ")[0] : "User"}
                 </span>
@@ -639,6 +626,18 @@ export default function Planner() {
                     </div>
                   </div>
 
+                  {/* Add token info in dropdown as well */}
+                  {typeof token !== "undefined" && (
+                    <div className="px-4 py-2 text-sm text-gray-600 border-b border-gray-100 bg-gray-50">
+                      <div className="flex items-center justify-between">
+                        <span>Available Tokens:</span>
+                        <span className="font-medium text-blue-600">
+                          ⚡{token}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
                   <Link
                     href="/profile"
                     className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -656,6 +655,17 @@ export default function Planner() {
                     <Settings className="w-4 h-4 mr-3" />
                     Settings
                   </Link>
+
+                  <a
+                    href="https://coff.ee/heisen47"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="sm:hidden flex items-center px-4 py-2 bg-yellow-400 text-sm text-white hover:bg-gray-100"
+                    onClick={() => setIsProfileDropdownOpen(false)}
+                  >
+                    <Coffee className="w-4 h-4 mr-3" />
+                    Buy Me Coffee
+                  </a>
 
                   <hr className="my-1" />
 
@@ -685,7 +695,7 @@ export default function Planner() {
             href="https://coff.ee/heisen47"
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600 transition flex items-center space-x-2"
+            className="hidden sm:flex bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600 transition items-center space-x-2"
           >
             <Coffee className="w-4 h-4" />
             <span className="hidden md:block">Coffee</span>
@@ -707,11 +717,8 @@ export default function Planner() {
       <SignInModal openModal={openModal} onClose={handleModal} />
     </>
   );
-
-  // ...rest of the component remains the same...
 }
 
-// generateMonthBasedTrip function remains the same
 async function generateMonthBasedTrip(monthData: {
   month: string;
   people: string;
