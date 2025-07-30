@@ -96,6 +96,8 @@ const Navbar = () => {
       alert(
         "Logout completed locally. Please refresh if you experience any issues."
       );
+
+      window.location.href = "/";
     }
   };
 

@@ -80,8 +80,6 @@ export default function Planner() {
         }
       );
 
-      console.log("Logout successful:", response.status);
-
       Cookies.remove("auth-token", { path: "/" });
       Cookies.remove("JSESSIONID", { path: "/" });
 
@@ -174,6 +172,7 @@ export default function Planner() {
         setToken(
           response.data.remainingTokens ?? alert("Error fetching tokens")
         );
+        console.log(response.data.remainingTokens )
       } catch (error) {
         setToken(0);
       }
