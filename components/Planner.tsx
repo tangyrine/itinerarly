@@ -95,9 +95,6 @@ export default function Planner() {
           data: err.response?.data,
         });
 
-        if (err.response?.status === 403) {
-          console.log("403 error - clearing local auth state anyway");
-        }
       }
 
       Cookies.remove("auth-token", { path: "/" });
@@ -161,16 +158,12 @@ export default function Planner() {
   useEffect(() => {
     const fetchToken = async () => {
       try {
-        const response = await axios.get(
-          `${SiteUrl}/api/v1/tokens/remaining`,
-          {
-            withCredentials: true,
-          }
-        );
+        const response = await axios.get(`${SiteUrl}/api/v1/tokens/remaining`, {
+          withCredentials: true,
+        });
         setToken(
           response.data.remainingTokens ?? alert("Error fetching tokens")
         );
-        console.log(response.data.remainingTokens )
       } catch (error) {
         setToken(0);
       }
@@ -210,9 +203,11 @@ export default function Planner() {
       setOpenModal(true);
       return false;
     }
-    
-    if (typeof token === 'number' && token <= 0) {
-      alert("You don't have enough tokens to generate an itinerary. Please purchase more tokens.");
+
+    if (typeof token === "number" && token <= 0) {
+      alert(
+        "You don't have enough tokens to generate an itinerary. Please purchase more tokens."
+      );
       return false;
     }
 
@@ -223,137 +218,167 @@ export default function Planner() {
     fetchTokenCount();
   }, []);
 
- const generateItinerary = async () => {
-  setLoading(true);
-  
-  try {
-    const canProceed = await checkAndConsumeToken();
-    
-    if (!canProceed) {
-      setLoading(false);
-      return;
-    }
 
-    const result = await ItineraryGeneration(formData);
-    setItinerary(result ?? "");
-    setShowModal(true);
-    setDrawerOpen(false);
-  } catch (error) {
-    console.error("Error generating itinerary:", error);
-    setItinerary(
-      "Sorry, we couldn't generate an itinerary. Please try again."
-    );
-    setShowModal(true);
-    setDrawerOpen(false);
-  } finally {
-    setLoading(false);
-  }
-};
+  const generateItinerary = async () => {
+    setLoading(true);
+
+    try {
+      if (!isLoggedIn) {
+        alert("Please sign in to generate itineraries.");
+        setOpenModal(true);
+        setLoading(false);
+        return;
+      }
+      // Check if user has tokens before attempting to consume
+      if (typeof token === "number" && token <= 0) {
+        alert(
+          "You don't have enough tokens to generate an itinerary. Please purchase more tokens."
+        );
+        setLoading(false);
+        return;
+      }
+
+      // Try to consume a token first
+      const tokenConsumed = await consumeToken();
+
+      if (!tokenConsumed) {
+        setLoading(false);
+        return;
+      }
+
+
+      // Now generate the itinerary
+      const result = await ItineraryGeneration(formData);
+      setItinerary(result ?? "");
+      setShowModal(true);
+      setDrawerOpen(false);
+    } catch (error) {
+      console.error("Error in itinerary generation process:", error);
+      setItinerary(
+        "Sorry, we couldn't generate an itinerary. Please try again."
+      );
+      setShowModal(true);
+      setDrawerOpen(false);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const generateMonthBasedItinerary = async () => {
-  console.log("=== generateMonthBasedItinerary called ===");
-  console.log("Current monthData state:", monthData);
 
-  setLoading(true);
-  
-  try {
-    const canProceed = await checkAndConsumeToken();
-    
-    if (!canProceed) {
-      setLoading(false);
-      return;
-    }
-    
-    const result = await generateMonthBasedTrip(monthData);
-    console.log("Result received:", result);
+    setLoading(true);
 
-    setItinerary(result ?? "");
-    setShowModal(true);
-    setDrawerOpen(false);
-  } catch (error) {
-    console.error("Error generating month-based itinerary:", error);
-    const errorMessage =
-      "Sorry, we couldn't generate an itinerary for your selected month. Please try again.";
-    setItinerary(errorMessage);
-    setShowModal(true);
-    setDrawerOpen(false);
-  } finally {
-    setLoading(false);
-  }
-  
-  console.log("=== generateMonthBasedItinerary completed ===");
-};
-
-async function generateMonthBasedTrip(monthData: {
-  month: string;
-  people: string;
-  days: string;
-  budget: string;
-}) {
-  console.log("=== Starting generateMonthBasedTrip ===");
-  console.log("Input monthData:", monthData);
-
-  try {
-    console.log("Preparing request for /api/RandomItinerary");
-
-    const requestBody = {
-      formData: {
-        destination: "Best destination for " + monthData.month,
-        people: monthData.people,
-        days: monthData.days,
-        budget: monthData.budget,
-        month: monthData.month,
-      },
-    };
-
-    console.log("Request body:", requestBody);
-
-    const response = await axios.post("/api/RandomItinerary", requestBody, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    console.log("Axios response status:", response.status);
-    console.log("Full response data:", response.data);
-
-    let result;
-    if (response.data && response.data.result) {
-      result = response.data.result;
-      console.log("Extracted result:", result);
-    } else if (typeof response.data === "string") {
-      result = response.data;
-      console.log("Using response.data as string:", result);
-    } else {
-      result = JSON.stringify(response.data, null, 2);
-      console.log("Stringified response data:", result);
-    }
-
-    if (!result) {
-      throw new Error("API returned empty result");
-    }
-
-    return result;
-  } catch (error) {
-    console.error("Error in generateMonthBasedTrip:", error);
-
-    if (axios.isAxiosError(error)) {
-      console.error("Axios error details:", {
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        message: error.message,
-      });
-    } else {
-      console.error("Non-axios error:", error);
-    }
-
-    throw new Error("Failed to generate month-based itinerary");
-  }
-}
-
-const consumeToken = async (): Promise<boolean> => {
     try {
+      // First check if user is logged in
+      if (!isLoggedIn) {
+        alert("Please sign in to generate itineraries.");
+        setOpenModal(true);
+        setLoading(false);
+        return;
+      }
+
+      // Check if user has tokens before attempting to consume
+      if (typeof token === "number" && token <= 0) {
+        alert(
+          "You don't have enough tokens to generate an itinerary. Please purchase more tokens."
+        );
+        setLoading(false);
+        return;
+      }
+
+      const tokenConsumed = await consumeToken();
+
+      if (!tokenConsumed) {
+
+        setLoading(false);
+        return;
+      }
+
+      // Now generate the itinerary
+      const result = await generateMonthBasedTrip(monthData);
+      setItinerary(result ?? "");
+      setShowModal(true);
+      setDrawerOpen(false);
+    } catch (error) {
+      console.error("Error generating month-based itinerary:", error);
+      const errorMessage =
+        "Sorry, we couldn't generate an itinerary for your selected month. Please try again.";
+      setItinerary(errorMessage);
+      setShowModal(true);
+      setDrawerOpen(false);
+    } finally {
+      setLoading(false);
+    }
+
+  };
+
+  async function generateMonthBasedTrip(monthData: {
+    month: string;
+    people: string;
+    days: string;
+    budget: string;
+  }) {
+
+
+    try {
+
+
+      const requestBody = {
+        formData: {
+          destination: "Best destination for " + monthData.month,
+          people: monthData.people,
+          days: monthData.days,
+          budget: monthData.budget,
+          month: monthData.month,
+        },
+      };
+
+  
+
+      const response = await axios.post("/api/RandomItinerary", requestBody, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+
+      let result;
+      if (response.data && response.data.result) {
+        result = response.data.result;
+      } else if (typeof response.data === "string") {
+        result = response.data;
+      } else {
+        result = JSON.stringify(response.data, null, 2);
+            
+      }
+
+      if (!result) {
+        throw new Error("API returned empty result");
+      }
+
+      return result;
+    } catch (error) {
+      console.error("Error in generateMonthBasedTrip:", error);
+
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error details:", {
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+          message: error.message,
+        });
+      } else {
+        console.error("Non-axios error:", error);
+      }
+
+      throw new Error("Failed to generate month-based itinerary");
+    }
+  }
+
+  const consumeToken = async (): Promise<boolean> => {
+    try {
+      
+
       const response = await axios.post(
         `${SiteUrl}/api/v1/tokens/consume`,
         {},
@@ -361,75 +386,70 @@ const consumeToken = async (): Promise<boolean> => {
           withCredentials: true,
           headers: {
             "Content-Type": "application/json",
+            "X-Requested-With": "XMLHttpRequest",
           },
           timeout: 10000,
         }
       );
 
-      console.log("Token consume response:", response.data);
 
-      if (response.status === 200 && response.data?.success) {
-        // Update token count from response
+
+      if (response.data?.success === true) {
+
         if (response.data?.remainingTokens !== undefined) {
           setToken(response.data.remainingTokens);
-          console.log("Token count updated to:", response.data.remainingTokens);
-        } else {
-          // Fallback: refetch token count
-          await fetchTokenCount();
+   
         }
         return true;
       } else {
-        // Handle API error response
-        const errorMessage = response.data?.message || "Failed to consume token";
-        alert(errorMessage);
+        alert(response.data?.message || "No tokens remaining for today");
         return false;
       }
-      
     } catch (error) {
       console.error("Error consuming token:", error);
-      
+
       if (axios.isAxiosError(error)) {
         console.error("Axios error details:", {
           status: error.response?.status,
           statusText: error.response?.statusText,
           data: error.response?.data,
-          message: error.message
+          message: error.message,
+          config: {
+            url: error.config?.url,
+            withCredentials: error.config?.withCredentials,
+            headers: error.config?.headers,
+          },
         });
-        
-        if (error.response?.status === 500) {
-          alert("Server error occurred. Please try again later.");
-        } else if (error.response?.status === 401) {
-          alert("Please sign in again to continue.");
+
+        if (error.response?.status === 401 || error.response?.status === 403) {
+          alert("Authentication error. Please sign in again.");
           setOpenModal(true);
-        } else if (error.response?.status === 403) {
-          const errorMessage = error.response?.data?.message || "No tokens remaining for today";
-          alert(errorMessage);
-        } else if (error.response?.status === 400) {
-          alert(error.response?.data?.message || "Invalid request");
-        } else if (error.code === 'ECONNABORTED') {
-          alert("Request timed out. Please try again.");
+          return false;
+        }
+
+        else if (error.response?.status === 500) {
+          alert(
+            "The server encountered an error. Please try again later or contact support."
+          );
+          fetchTokenCount();
+          return false;
         } else {
           alert(`Error: ${error.response?.data?.message || error.message}`);
+          return false;
         }
       } else {
         alert("Unexpected error occurred. Please try again.");
+        return false;
       }
-      
-      return false;
     }
   };
 
-
   const fetchTokenCount = async () => {
     try {
-      const response = await axios.get(
-        `${SiteUrl}/api/v1/tokens/remaining`,
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get(`${SiteUrl}/api/v1/tokens/remaining`, {
+        withCredentials: true,
+      });
       setToken(response.data.remainingTokens ?? 0);
-      console.log("Updated token count:", response.data.remainingTokens);
     } catch (error) {
       console.error("Error fetching token count:", error);
       setToken(0);
@@ -900,7 +920,3 @@ const consumeToken = async (): Promise<boolean> => {
     </>
   );
 }
-
-
-
-
