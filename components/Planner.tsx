@@ -197,22 +197,6 @@ export default function Planner() {
     setMonthData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const checkAndConsumeToken = async (): Promise<boolean> => {
-    if (!isLoggedIn) {
-      alert("Please sign in to generate itineraries.");
-      setOpenModal(true);
-      return false;
-    }
-
-    if (typeof token === "number" && token <= 0) {
-      alert(
-        "You don't have enough tokens to generate an itinerary. Please purchase more tokens."
-      );
-      return false;
-    }
-
-    return await consumeToken();
-  };
 
   useEffect(() => {
     fetchTokenCount();
@@ -376,85 +360,56 @@ export default function Planner() {
   }
 
   const consumeToken = async (): Promise<boolean> => {
-    try {
-      
-
-      const response = await axios.post(
-        `${SiteUrl}/api/v1/tokens/consume`,
-        {},
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-          },
-          timeout: 10000,
-        }
-      );
-
-
-
-      if (response.data?.success === true) {
-
-        if (response.data?.remainingTokens !== undefined) {
-          setToken(response.data.remainingTokens);
-   
-        }
-        return true;
-      } else {
-        alert(response.data?.message || "No tokens remaining for today");
-        return false;
-      }
-    } catch (error) {
-      console.error("Error consuming token:", error);
-
-      if (axios.isAxiosError(error)) {
-        console.error("Axios error details:", {
-          status: error.response?.status,
-          statusText: error.response?.statusText,
-          data: error.response?.data,
-          message: error.message,
-          config: {
-            url: error.config?.url,
-            withCredentials: error.config?.withCredentials,
-            headers: error.config?.headers,
-          },
-        });
-
-        if (error.response?.status === 401 || error.response?.status === 403) {
-          alert("Authentication error. Please sign in again.");
-          setOpenModal(true);
-          return false;
-        }
-
-        else if (error.response?.status === 500) {
-          alert(
-            "The server encountered an error. Please try again later or contact support."
-          );
-          fetchTokenCount();
-          return false;
-        } else {
-          alert(`Error: ${error.response?.data?.message || error.message}`);
-          return false;
-        }
-      } else {
-        alert("Unexpected error occurred. Please try again.");
-        return false;
-      }
-    }
-  };
-
-  const fetchTokenCount = async () => {
-    try {
-      const response = await axios.get(`${SiteUrl}/api/v1/tokens/remaining`, {
+  try {
+    const response = await axios.post(
+      `${SiteUrl}/api/v1/tokens/consume`,
+      {},
+      {
         withCredentials: true,
-      });
-      setToken(response.data.remainingTokens ?? 0);
-    } catch (error) {
-      console.error("Error fetching token count:", error);
-      setToken(0);
+        headers: {
+          "Content-Type": "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+        timeout: 10000,
+      }
+    );
+
+    console.log("Token consume response:", response.data);
+
+    if (response.data?.success === true) {
+      if (response.data?.remainingTokens !== undefined) {
+        setToken(prevToken => {
+          console.log(`Updating token: ${prevToken} → ${response.data.remainingTokens}`);
+          return response.data.remainingTokens;
+        });
+      } else {
+        await fetchTokenCount();
+      }
+      return true;
+    } else {
+      alert(response.data?.message || "No tokens remaining for today");
+      return false;
     }
-  };
+  } catch (error) {
+    console.error("token count " + error);
+    return false;
+  }
+};
+
+const fetchTokenCount = async () => {
+  try {
+    const response = await axios.get(`${SiteUrl}/api/v1/tokens/remaining`, {
+      withCredentials: true,
+    });
+    
+    setToken(prevToken => {
+      return response.data.remainingTokens ?? 0;
+    });
+  } catch (error) {
+    console.error("Error fetching token count:", error);
+    setToken(0);
+  }
+};
 
   const months = [
     "January",

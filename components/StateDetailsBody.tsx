@@ -21,7 +21,6 @@ const StateDetailsBody: React.FC<PlaceDetailsProps> = ({
   details,
   onClose,
 }) => {
-  // Add these missing state variables
   const [parsed, setParsed] = useState<ParsedDetails | null>(null);
   const [parseError, setParseError] = useState<string | null>(null);
 
