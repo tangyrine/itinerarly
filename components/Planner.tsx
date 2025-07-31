@@ -20,8 +20,6 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import Link from "next/link";
 import { FaUmbrellaBeach } from "react-icons/fa";
-import { Span } from "next/dist/trace";
-
 export default function Planner() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [plannerMode, setPlannerMode] = useState<"manual" | "month">("manual");
