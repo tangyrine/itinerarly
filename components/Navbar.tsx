@@ -13,6 +13,7 @@ import {
 import { SignInModal } from "./SignInModal";
 import Cookies from "js-cookie";
 import axios from "axios";
+import { useToken } from "@/lib/TokenProvider";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -24,7 +25,10 @@ const Navbar = () => {
     email?: string;
     avatar?: string;
   } | null>(null);
-  const SiteUrl: string = process.env.SITE_URL || "http://localhost:8080";
+  const SiteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:8080";
+  
+  // Use global token context
+  const { token, isLoading: tokenLoading, refreshTokenCount } = useToken();
 
   const handleModal = () => {
     setOpenModal(!openModal);
@@ -71,6 +75,10 @@ const Navbar = () => {
       setIsLoggedIn(false);
       setUserInfo(null);
       setIsProfileDropdownOpen(false);
+      
+      // Refresh token count after logout
+      refreshTokenCount();
+      
       window.location.href = "/";
     } catch (err) {
       console.error("Logout error:", err);
@@ -92,6 +100,9 @@ const Navbar = () => {
       setIsLoggedIn(false);
       setUserInfo(null);
       setIsProfileDropdownOpen(false);
+      
+      // Refresh token count after logout cleanup
+      refreshTokenCount();
 
       alert(
         "Logout completed locally. Please refresh if you experience any issues."
@@ -123,6 +134,8 @@ const Navbar = () => {
 
       if (loggedIn && !userInfo) {
         fetchUserInfo();
+        // Refresh token count when user logs in
+        refreshTokenCount();
       }
     };
 
@@ -130,7 +143,7 @@ const Navbar = () => {
 
     window.addEventListener("focus", checkLogin);
     return () => window.removeEventListener("focus", checkLogin);
-  }, [userInfo]);
+  }, [userInfo]); // Removed refreshTokenCount from dependencies to prevent infinite loops
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -248,6 +261,19 @@ const Navbar = () => {
                         )}
                       </div>
 
+                      {/* Token Display */}
+                      {isLoggedIn && typeof token !== "undefined" && (
+                        <div className="px-4 py-2 text-sm text-gray-600 border-b border-gray-100 bg-gray-50">
+                          <div className="flex items-center justify-between">
+                            <span>Available Tokens:</span>
+                            <span className="font-medium text-blue-600 flex items-center">
+                              <span className="text-yellow-500 mr-1">⚡</span>
+                              {tokenLoading ? "..." : token}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+
                       <Link
                         href="/profile"
                         className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -346,6 +372,19 @@ const Navbar = () => {
                           {userInfo?.name || "User"}
                         </div>
                       </div>
+
+                      {/* Mobile Token Display */}
+                      {isLoggedIn && typeof token !== "undefined" && (
+                        <div className="px-3 py-2 text-xs text-gray-600 border-b border-gray-100 bg-gray-50">
+                          <div className="flex items-center justify-between">
+                            <span>Tokens:</span>
+                            <span className="font-medium text-blue-600 flex items-center">
+                              <span className="text-yellow-500 mr-1">⚡</span>
+                              {tokenLoading ? "..." : token}
+                            </span>
+                          </div>
+                        </div>
+                      )}
 
                       <Link
                         href="/profile"

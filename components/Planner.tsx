@@ -14,12 +14,24 @@ import {
   LogOut,
   LogIn,
   Coffee,
+  Clock,
 } from "lucide-react";
 import { SignInModal } from "./SignInModal";
 import axios from "axios";
 import Cookies from "js-cookie";
 import Link from "next/link";
 import { FaUmbrellaBeach } from "react-icons/fa";
+import { useToken } from "@/lib/TokenProvider";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 export default function Planner() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [plannerMode, setPlannerMode] = useState<"manual" | "month">("manual");
@@ -46,9 +58,11 @@ export default function Planner() {
   } | null>(null);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-  const [token, setToken] = useState<number | undefined>();
+  const [showTokenModal, setShowTokenModal] = useState(false);
 
-  const SiteUrl: string = process.env.SITE_URL || "http://localhost:8080";
+  const SiteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:8080";
+  
+  const { token, isLoading: tokenLoading, consumeToken, refreshTokenCount, isTokenAvailable } = useToken();
 
   const router = useRouter();
 
@@ -84,6 +98,9 @@ export default function Planner() {
       setIsLoggedIn(false);
       setUserInfo(null);
       setIsProfileDropdownOpen(false);
+      
+      refreshTokenCount();
+      
       window.location.href = "/";
     } catch (err) {
       console.error("Logout error:", err);
@@ -103,9 +120,6 @@ export default function Planner() {
       setUserInfo(null);
       setIsProfileDropdownOpen(false);
 
-      alert(
-        "Logout completed locally. Please refresh if you experience any issues."
-      );
     }
   };
 
@@ -146,6 +160,7 @@ export default function Planner() {
 
       if (loggedIn && !userInfo) {
         fetchUserInfo();
+        refreshTokenCount();
       }
     };
 
@@ -153,23 +168,7 @@ export default function Planner() {
 
     window.addEventListener("focus", checkLogin);
     return () => window.removeEventListener("focus", checkLogin);
-  }, [userInfo]);
-
-  useEffect(() => {
-    const fetchToken = async () => {
-      try {
-        const response = await axios.get(`${SiteUrl}/api/v1/tokens/remaining`, {
-          withCredentials: true,
-        });
-        setToken(
-          response.data.remainingTokens ?? alert("Error fetching tokens")
-        );
-      } catch (error) {
-        setToken(0);
-      }
-    };
-    fetchToken();
-  }, []);
+  }, [userInfo]); 
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -198,31 +197,20 @@ export default function Planner() {
   };
 
 
-  useEffect(() => {
-    fetchTokenCount();
-  }, []);
-
-
   const generateItinerary = async () => {
     setLoading(true);
-
+    setDrawerOpen(false); 
     try {
       if (!isLoggedIn) {
-        alert("Please sign in to generate itineraries.");
         setOpenModal(true);
         setLoading(false);
         return;
-      }
-      // Check if user has tokens before attempting to consume
-      if (typeof token === "number" && token <= 0) {
-        alert(
-          "You don't have enough tokens to generate an itinerary. Please purchase more tokens."
-        );
+      }      if (!isTokenAvailable) {
+        setShowTokenModal(true);
         setLoading(false);
         return;
       }
 
-      // Try to consume a token first
       const tokenConsumed = await consumeToken();
 
       if (!tokenConsumed) {
@@ -230,8 +218,6 @@ export default function Planner() {
         return;
       }
 
-
-      // Now generate the itinerary
       const result = await ItineraryGeneration(formData);
       setItinerary(result ?? "");
       setShowModal(true);
@@ -249,23 +235,18 @@ export default function Planner() {
   };
 
   const generateMonthBasedItinerary = async () => {
-
     setLoading(true);
+    setDrawerOpen(false); 
 
     try {
-      // First check if user is logged in
       if (!isLoggedIn) {
-        alert("Please sign in to generate itineraries.");
         setOpenModal(true);
         setLoading(false);
         return;
       }
 
-      // Check if user has tokens before attempting to consume
-      if (typeof token === "number" && token <= 0) {
-        alert(
-          "You don't have enough tokens to generate an itinerary. Please purchase more tokens."
-        );
+      if (!isTokenAvailable) {
+        setShowTokenModal(true);
         setLoading(false);
         return;
       }
@@ -278,7 +259,6 @@ export default function Planner() {
         return;
       }
 
-      // Now generate the itinerary
       const result = await generateMonthBasedTrip(monthData);
       setItinerary(result ?? "");
       setShowModal(true);
@@ -358,58 +338,6 @@ export default function Planner() {
       throw new Error("Failed to generate month-based itinerary");
     }
   }
-
-  const consumeToken = async (): Promise<boolean> => {
-  try {
-    const response = await axios.post(
-      `${SiteUrl}/api/v1/tokens/consume`,
-      {},
-      {
-        withCredentials: true,
-        headers: {
-          "Content-Type": "application/json",
-          "X-Requested-With": "XMLHttpRequest",
-        },
-        timeout: 10000,
-      }
-    );
-
-    console.log("Token consume response:", response.data);
-
-    if (response.data?.success === true) {
-      if (response.data?.remainingTokens !== undefined) {
-        setToken(prevToken => {
-          console.log(`Updating token: ${prevToken} → ${response.data.remainingTokens}`);
-          return response.data.remainingTokens;
-        });
-      } else {
-        await fetchTokenCount();
-      }
-      return true;
-    } else {
-      alert(response.data?.message || "No tokens remaining for today");
-      return false;
-    }
-  } catch (error) {
-    console.error("token count " + error);
-    return false;
-  }
-};
-
-const fetchTokenCount = async () => {
-  try {
-    const response = await axios.get(`${SiteUrl}/api/v1/tokens/remaining`, {
-      withCredentials: true,
-    });
-    
-    setToken(prevToken => {
-      return response.data.remainingTokens ?? 0;
-    });
-  } catch (error) {
-    console.error("Error fetching token count:", error);
-    setToken(0);
-  }
-};
 
   const months = [
     "January",
@@ -783,13 +711,14 @@ const fetchTokenCount = async () => {
                     </div>
                   </div>
 
-                  {/* Add token info in dropdown as well */}
+                  {/* Add token info in dropdown using global context */}
                   {typeof token !== "undefined" && (
                     <div className="px-4 py-2 text-sm text-gray-600 border-b border-gray-100 bg-gray-50">
                       <div className="flex items-center justify-between">
                         <span>Available Tokens:</span>
-                        <span className="font-medium text-blue-600">
-                          ⚡{token}
+                        <span className="font-medium text-blue-600 flex items-center">
+                          <span className="text-yellow-500 mr-1">⚡</span>
+                          {tokenLoading ? "..." : token}
                         </span>
                       </div>
                     </div>
@@ -872,6 +801,35 @@ const fetchTokenCount = async () => {
       />
 
       <SignInModal openModal={openModal} onClose={handleModal} />
+
+      {/* Token Limit Modal */}
+      <Dialog open={showTokenModal} onOpenChange={setShowTokenModal}>
+        <DialogContent className="sm:max-w-[425px] bg-white shadow-xl rounded-lg border border-gray-300">
+          <DialogHeader>
+            <div className="flex flex-col items-center text-center py-4">
+              <div className="bg-blue-50 p-3 rounded-full mb-4">
+                <Clock className="h-10 w-10 text-blue-500" />
+              </div>
+              <DialogTitle className="text-xl mb-2">
+                Token Limit Reached
+              </DialogTitle>
+              <DialogDescription className="text-center max-w-xs mx-auto">
+                You don't have enough tokens to generate an itinerary. Please wait 24 hours for your tokens to refresh.
+              </DialogDescription>
+              <p className="mt-2 text-sm font-medium text-blue-600 text-center">
+                Your tokens will refresh automatically in 24 hours.
+              </p>
+            </div>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-center">
+            <DialogClose asChild>
+              <Button className="min-w-[100px]">
+                OK, got it
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

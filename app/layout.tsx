@@ -1,8 +1,7 @@
 import '../styles/global.css';
 import React from 'react';
 import { Analytics } from '@vercel/analytics/react'
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+import { TokenProvider } from '@/lib/TokenProvider';
 
 
 export const metadata = {
@@ -10,7 +9,6 @@ export const metadata = {
   description: 'Plan and organize your trips effortlessly',
 };
 
-// const supabase = createServerComponentClient({ cookies });
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -20,7 +18,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <meta name="description" content={metadata.description} />
       </head>
       <body>
-        {children}
+        <TokenProvider>
+          {children}
+        </TokenProvider>
         <Analytics />
       </body>
     </html>

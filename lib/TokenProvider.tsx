@@ -4,7 +4,7 @@ import React, { createContext, useState, useContext, useEffect, ReactNode } from
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const SiteUrl: string = process.env.SITE_URL || "http://localhost:8080";
+const SiteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:8080";
 
 interface TokenContextType {
   token: number | undefined;
@@ -24,13 +24,11 @@ const TokenContext = createContext<TokenContextType>({
   isTokenAvailable: false,
 });
 
- 
 export function TokenProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<number | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const isTokenAvailable = typeof token === 'number' && token > 0;
-
 
   const refreshTokenCount = async (): Promise<void> => {
     if (!Cookies.get("auth-token")) {
@@ -67,14 +65,13 @@ export function TokenProvider({ children }: { children: ReactNode }) {
   };
 
   const consumeToken = async (): Promise<boolean> => {
-
     if (!Cookies.get("auth-token")) {
       setError("Please sign in to continue");
       return false;
     }
 
-    if (token !== undefined && token <= 0) {
-      setError("No tokens remaining");
+    if (token === undefined || token <= 0) {
+      setError("No tokens remaining or token count not yet loaded");
       return false;
     }
 
@@ -102,7 +99,6 @@ export function TokenProvider({ children }: { children: ReactNode }) {
           setToken(response.data.remainingTokens);
           console.log(`Token consumed. Remaining: ${response.data.remainingTokens}`);
         } else {
-          // If API doesn't return the new count, refresh manually
           await refreshTokenCount();
         }
         return true;
@@ -138,7 +134,12 @@ export function TokenProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    refreshTokenCount();
+    const authToken = Cookies.get("auth-token");
+    if (authToken) {
+      refreshTokenCount();
+    } else {
+      setToken(0); 
+    }
   }, []);
 
   useEffect(() => {
@@ -167,7 +168,6 @@ export function TokenProvider({ children }: { children: ReactNode }) {
   return <TokenContext.Provider value={value}>{children}</TokenContext.Provider>;
 }
 
-// Custom hook for easy access to token context
 export function useToken() {
   return useContext(TokenContext);
 }
