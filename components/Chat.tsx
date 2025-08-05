@@ -84,7 +84,7 @@ const Chat = ({ open, onClose }: ChatProps) => {
   };
 
   const deleteSession = (sessionId: string) => {
-    if (sessions.length === 1) return; // Keep at least one session
+    if (sessions.length === 1) return; 
     
     setSessions(prev => prev.filter(s => s.id !== sessionId));
     
