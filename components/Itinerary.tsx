@@ -1,6 +1,6 @@
-import { Check, Coffee, Copy } from "lucide-react";
+import { Check, Coffee, Copy, MapPin, Calendar, DollarSign, Home, Utensils, Sparkles, AlignLeft } from "lucide-react";
 import React, { useState } from "react";
-import ReactMarkdown from "react-markdown";  // You'll need to install this
+import ReactMarkdown from "react-markdown";
 
 interface ItineraryProps {
   open: boolean;
@@ -140,221 +140,237 @@ const Itinerary: React.FC<ItineraryProps> = ({
         aria-label="Close itinerary modal"
       />
       <div
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-lg md:max-w-2xl h-[80vh] max-h-[90vh] p-8 relative animate-slide-up flex flex-col z-[4100]"
-        style={{ scrollbarGutter: "stable" }}
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-lg md:max-w-2xl h-[80vh] max-h-[90vh] overflow-hidden relative animate-slide-up z-[4100]"
         tabIndex={0}
       >
-        <button
-          className="absolute top-3 right-4 text-gray-400 hover:text-gray-700 text-2xl"
-          onClick={onClose}
-          aria-label="Close"
-        >
-          ×
-        </button>
-        <h2 className="text-2xl font-bold mb-4 text-blue-700">
-          Your {parsed?.destination || destination || ""} Itinerary
-        </h2>
-        <div
-          className="flex-1 overflow-y-auto itinerary-scroll"
-          style={{
-            minHeight: 0,
-            paddingRight: "0.5rem",
-          }}
-        >
+        {/* Header */}
+        <div className="bg-blue-600 text-white p-4 flex items-center justify-between">
+          <div className="flex items-center">
+            <MapPin className="w-5 h-5 mr-2" />
+            <h2 className="text-xl font-bold">
+              {parsed?.destination || destination || "Your Itinerary"}
+            </h2>
+          </div>
+          <button
+            className="text-white hover:text-blue-200 hover:bg-blue-500 p-1 rounded-full transition"
+            onClick={onClose}
+            aria-label="Close"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        
+        {/* Main Content */}
+        <div className="p-6 overflow-y-auto itinerary-scroll" style={{ height: "calc(100% - 140px)" }}>
           {parseError ? (
-            <div className="text-red-500">{parseError}</div>
+            <div className="text-red-500 p-4 bg-red-50 rounded-lg flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+              {parseError}
+            </div>
           ) : !parsed ? (
-            <div className="text-gray-500">Loading...</div>
+            <div className="flex justify-center items-center h-full">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
           ) : parsed.error ? (
-            <div className="text-red-500">{parsed.error}</div>
+            <div className="text-red-500 p-4 bg-red-50 rounded-lg flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+              {parsed.error}
+            </div>
           ) : parsed.isDelimitedFormat ? (
-            // Original formatted display for delimited content
-            <>
+            <div className="space-y-6">
+              {/* Summary Section */}
               {parsed.summary && (
-                <div className="mb-2 italic text-gray-600">
-                  {parsed.summary}
+                <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
+                  <div className="flex items-center text-blue-700 font-medium mb-2">
+                    <AlignLeft className="mr-2 h-4 w-4" />
+                    Overview
+                  </div>
+                  <p className="text-gray-700">{parsed.summary}</p>
                 </div>
               )}
+              
+              {/* Budget Section */}
               {parsed.budget && (
-                <div className="mb-4">
-                  <span className="font-semibold">Approximate Budget:</span>{" "}
-                  <span className="text-green-700">{parsed.budget}</span>
+                <div className="bg-white border border-blue-100 rounded-lg p-4 shadow-sm">
+                  <div className="flex items-center text-blue-700 font-medium mb-2">
+                    <DollarSign className="mr-2 h-4 w-4" />
+                    Approximate Budget
+                  </div>
+                  <p className="text-green-700 font-medium">{parsed.budget}</p>
                 </div>
               )}
-              {/* Flex row for hotels and restaurants */}
-              <div className="flex flex-col md:flex-row gap-6 mb-4">
-                {parsed.hotels && (
-                  <div className="flex-1">
-                    <span className="font-semibold block mb-1">
-                      Recommended Hotels:
-                    </span>
-                    <ul className="list-disc list-inside pl-4">
-                      {parsed.hotels.map((h: string, i: number) => (
-                        <li key={i}>{h}</li>
-                      ))}
-                    </ul>
+              
+              {/* Hotels Section */}
+              {parsed.hotels && (
+                <div className="bg-white border border-blue-100 rounded-lg p-4 shadow-sm">
+                  <div className="flex items-center text-blue-700 font-medium mb-3">
+                    <Home className="mr-2 h-4 w-4" />
+                    Recommended Hotels
                   </div>
-                )}
-                {parsed.restaurants && (
-                  <div className="flex-1">
-                    <span className="font-semibold block mb-1">
-                      Recommended Restaurants:
-                    </span>
-                    <ul className="list-disc list-inside pl-4">
-                      {parsed.restaurants.map((r: string, i: number) => (
-                        <li key={i}>{r}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-              {parsed.attractions && (
-                <div className="mb-4">
-                  <span className="font-semibold">Must-Visit Attractions:</span>
-                  <ul className="list-disc list-inside pl-4">
-                    {parsed.attractions.map((a: string, i: number) => (
-                      <li key={i}>{a}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {parsed.daysPlan && (
-                <div>
-                  <span className="font-semibold">Day-wise Plan:</span>
-                  <ul className="list-disc list-inside pl-4">
-                    {parsed.daysPlan.map((d: any, i: number) => (
-                      <li key={i}>
-                        <span className="font-semibold">Day {d.day}:</span>{" "}
-                        {d.activities}
+                  <ul className="space-y-2">
+                    {parsed.hotels.map((h: string, i: number) => (
+                      <li key={i} className="flex items-start">
+                        <span className="inline-flex items-center justify-center bg-blue-100 text-blue-700 h-5 w-5 rounded-full text-xs font-bold mr-2 mt-0.5">
+                          {i+1}
+                        </span>
+                        <span className="text-gray-700">{h}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
               )}
-            </>
-          ) : (
-            // For raw content from the AI, display as markdown
-            <div className="prose prose-sm max-w-full">
-              {/* If you have react-markdown installed */}
-              {parsed.rawContent && (
-                <div className="markdown-content">
-                  <ReactMarkdown>{parsed.rawContent}</ReactMarkdown>
+              
+              {/* Restaurants Section */}
+              {parsed.restaurants && (
+                <div className="bg-white border border-blue-100 rounded-lg p-4 shadow-sm">
+                  <div className="flex items-center text-blue-700 font-medium mb-3">
+                    <Utensils className="mr-2 h-4 w-4" />
+                    Recommended Restaurants
+                  </div>
+                  <ul className="space-y-2">
+                    {parsed.restaurants.map((r: string, i: number) => (
+                      <li key={i} className="flex items-start">
+                        <span className="inline-flex items-center justify-center bg-blue-100 text-blue-700 h-5 w-5 rounded-full text-xs font-bold mr-2 mt-0.5">
+                          {i+1}
+                        </span>
+                        <span className="text-gray-700">{r}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               )}
               
-              {/* If you don't have react-markdown, use this instead: */}
-              {!parsed.rawContent && (
-                <pre className="whitespace-pre-wrap text-gray-800">
-                  {itinerary}
-                </pre>
+              {/* Attractions Section */}
+              {parsed.attractions && (
+                <div className="bg-white border border-blue-100 rounded-lg p-4 shadow-sm">
+                  <div className="flex items-center text-blue-700 font-medium mb-3">
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    Must-Visit Attractions
+                  </div>
+                  <ul className="space-y-2">
+                    {parsed.attractions.map((a: string, i: number) => (
+                      <li key={i} className="flex items-start">
+                        <span className="inline-flex items-center justify-center bg-blue-100 text-blue-700 h-5 w-5 rounded-full text-xs font-bold mr-2 mt-0.5">
+                          {i+1}
+                        </span>
+                        <span className="text-gray-700">{a}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               )}
+              
+              {/* Day-wise Plan Section */}
+              {parsed.daysPlan && (
+                <div className="bg-white border border-blue-100 rounded-lg p-4 shadow-sm">
+                  <div className="flex items-center text-blue-700 font-medium mb-3">
+                    <Calendar className="mr-2 h-4 w-4" />
+                    Day-wise Plan
+                  </div>
+                  <div className="space-y-3">
+                    {parsed.daysPlan.map((d: any, i: number) => (
+                      <div key={i} className="border-l-2 border-blue-300 pl-3 py-1">
+                        <div className="font-medium text-blue-700 mb-1">Day {d.day}</div>
+                        <div className="text-gray-700">{d.activities}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="prose prose-blue prose-headings:text-blue-700 prose-a:text-blue-600 max-w-none">
+              <ReactMarkdown>{parsed.rawContent}</ReactMarkdown>
             </div>
           )}
         </div>
+        
+        {/* Footer */}
+        <div className="border-t border-gray-200 p-4 bg-gray-50">
+          <div className="text-gray-500 text-xs text-center italic mb-3">
+            Hope you enjoyed this itinerary! If you found it helpful, consider supporting my work.
+          </div>
+          
+          <div className="grid grid-cols-2 gap-3">
+            <a
+              href="https://coff.ee/heisen47"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="py-2 px-4 flex items-center justify-center bg-yellow-500 hover:bg-yellow-600 text-white font-medium rounded-lg shadow transition-all duration-300"
+            >
+              <Coffee className="w-4 h-4 mr-2" />
+              Buy me a coffee
+            </a>
 
-        <hr/>
-        <span className="text-gray-500 text-xs text-center italic">
-          Hope you enjoyed this itinerary! If you found it helpful, consider supporting my work.
-        </span>
-        <div className="p-2">
-          <a
-            href="https://coff.ee/heisen47"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-2 w-full py-1 px-4 flex items-center justify-center bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg shadow transition-all duration-300"
-          >
-            <Coffee className="w-5 h-5 mr-2" />
-            Buy me a coffee
-          </a>
-
-          <button
-            className={`mt-2 w-full py-1 px-4 flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow transition-all duration-300 ${
-              copied ? "bg-green-600 hover:bg-green-700" : ""
-            }`}
-            onClick={handleCopy}
-          >
-            {copied ? (
-              <>
-                <Check className="w-5 h-5 mr-2 animate-bounce" />
-                Copied!
-              </>
-            ) : (
-              <>
-                <Copy className="w-5 h-5 mr-2" />
-                Copy to Clipboard
-              </>
-            )}
-          </button>
+            <button
+              className={`py-2 px-4 flex items-center justify-center text-white font-medium rounded-lg shadow transition-all duration-300 ${
+                copied ? "bg-green-600 hover:bg-green-700" : "bg-blue-600 hover:bg-blue-700"
+              }`}
+              onClick={handleCopy}
+            >
+              {copied ? (
+                <>
+                  <Check className="w-4 h-4 mr-2" />
+                  Copied!
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4 mr-2" />
+                  Copy
+                </>
+              )}
+            </button>
+          </div>
         </div>
-
-        <style jsx global>{`
-          .animate-fade-in {
-            animation: fadeIn 0.3s;
-          }
-          .animate-slide-up {
-            animation: slideUp 0.4s cubic-bezier(0.4, 2, 0.6, 1);
-          }
-          @keyframes fadeIn {
-            from {
-              opacity: 0;
-            }
-            to {
-              opacity: 1;
-            }
-          }
-          @keyframes slideUp {
-            from {
-              transform: translateY(60px);
-              opacity: 0;
-            }
-            to {
-              transform: translateY(0);
-              opacity: 1;
-            }
-          }
-          .itinerary-scroll {
-            scrollbar-width: thin;
-            scrollbar-color: #cbd5e1 #f1f5f9;
-          }
-          .itinerary-scroll::-webkit-scrollbar {
-            width: 8px;
-          }
-          .itinerary-scroll::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-          }
-          .markdown-content h1, 
-          .markdown-content h2, 
-          .markdown-content h3 {
-            font-weight: bold;
-            margin-top: 1rem;
-            margin-bottom: 0.5rem;
-          }
-          .markdown-content h1 {
-            font-size: 1.5rem;
-          }
-          .markdown-content h2 {
-            font-size: 1.3rem;
-          }
-          .markdown-content h3 {
-            font-size: 1.1rem;
-          }
-          .markdown-content ul {
-            list-style-type: disc;
-            padding-left: 1.5rem;
-          }
-          .markdown-content ol {
-            list-style-type: decimal;
-            padding-left: 1.5rem;
-          }
-          .markdown-content p {
-            margin-bottom: 0.75rem;
-          }
-          .markdown-content strong {
-            font-weight: bold;
-          }
-        `}</style>
       </div>
+
+      <style jsx global>{`
+        .animate-fade-in {
+          animation: fadeIn 0.3s;
+        }
+        .animate-slide-up {
+          animation: slideUp 0.4s cubic-bezier(0.4, 2, 0.6, 1);
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes slideUp {
+          from {
+            transform: translateY(60px);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+        .itinerary-scroll {
+          scrollbar-width: thin;
+          scrollbar-color: #cbd5e1 #f1f5f9;
+        }
+        .itinerary-scroll::-webkit-scrollbar {
+          width: 8px;
+        }
+        .itinerary-scroll::-webkit-scrollbar-thumb {
+          background: #cbd5e1;
+          border-radius: 4px;
+        }
+        .itinerary-scroll::-webkit-scrollbar-track {
+          background: #f1f5f9;
+        }
+      `}</style>
     </div>
   );
 };

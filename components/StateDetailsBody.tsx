@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Loader } from "lucide-react";
+import { Loader, MapPin, Calendar, Shield, Users, AlertTriangle, Info } from "lucide-react";
 
 type ParsedDetails = {
   attractions: string[];
@@ -86,100 +86,174 @@ const StateDetailsBody: React.FC<PlaceDetailsProps> = ({
     }
   }, [details]);
 
+  const renderSafetyStars = (rating: number) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <span 
+          key={i} 
+          className={`text-lg ${i <= rating ? 'text-blue-600' : 'text-gray-300'}`}
+        >
+          ★
+        </span>
+      );
+    }
+    return stars;
+  };
+
   return (
     <div
       className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[1000]"
       onClick={onClose}
     >
       <div
-        className="bg-white p-6 rounded-lg shadow-xl max-w-lg w-full m-4"
+        className="bg-white rounded-xl shadow-2xl max-w-lg w-full m-4 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-between items-start mb-4">
-          <h2 className="text-xl font-bold">{place}</h2>
-          <button
+        <div className="bg-blue-600 text-white p-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-bold flex items-center">
+              <MapPin className="mr-2 h-5 w-5" />
+              {place}
+            </h2>
+            <button
+              onClick={onClose}
+              className="text-white hover:text-blue-200 text-2xl focus:outline-none"
+              aria-label="Close"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+
+        <div className="p-5 max-h-[70vh] overflow-y-auto">
+          {/* Show error or loading state */}
+          {parseError ? (
+            <div className="flex items-center gap-2 text-red-500 p-4 bg-red-50 rounded-lg mb-4">
+              <AlertTriangle className="h-5 w-5" />
+              {parseError}
+            </div>
+          ) : !parsed ? (
+            <div className="flex items-center justify-center gap-2 text-blue-600 p-8">
+              <Loader className="animate-spin h-6 w-6" /> 
+              <span className="font-medium">Loading details...</span>
+            </div>
+          ) : null}
+
+          {/* Show parsed data */}
+          {parsed && (
+            <div className="space-y-4">
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="bg-white border border-blue-100 rounded-lg p-4 shadow-sm flex-1">
+                  <div className="flex items-center text-blue-600 font-medium mb-2">
+                    <Calendar className="mr-2 h-4 w-4" />
+                    Best Time to Visit
+                  </div>
+                  <div className="text-gray-700">{parsed.best_time}</div>
+                </div>
+
+                <div className="bg-white border border-blue-100 rounded-lg p-4 shadow-sm flex-1">
+                  <div className="flex items-center text-blue-600 font-medium mb-2">
+                    <Shield className="mr-2 h-4 w-4" />
+                    Safety & Security
+                  </div>
+                  <div className="flex items-center">
+                    {renderSafetyStars(parsed.safety_security)}
+                    <span className="ml-2 text-sm text-gray-500">({parsed.safety_security}/5)</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white border border-blue-100 rounded-lg p-4 shadow-sm">
+                <div className="flex items-center text-blue-600 font-medium mb-2">
+                  <Users className="mr-2 h-4 w-4" />
+                  Tourist Footfall
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-blue-50 p-3 rounded-lg">
+                    <div className="text-sm text-gray-500">Domestic</div>
+                    <div className="text-lg font-medium text-blue-700">
+                      {parsed.footfall.domestic.toLocaleString()}
+                    </div>
+                  </div>
+                  <div className="bg-blue-50 p-3 rounded-lg">
+                    <div className="text-sm text-gray-500">International</div>
+                    <div className="text-lg font-medium text-blue-700">
+                      {parsed.footfall.international.toLocaleString()}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white border border-blue-100 rounded-lg p-4 shadow-sm">
+                <div className="flex items-center text-blue-600 font-medium mb-3">
+                  <MapPin className="mr-2 h-4 w-4" />
+                  Top Attractions
+                </div>
+                <ul className="space-y-2">
+                  {parsed.attractions.map((attraction, i) => (
+                    <li key={i} className="flex items-start">
+                      <span className="inline-flex items-center justify-center bg-blue-100 text-blue-700 h-5 w-5 rounded-full text-xs font-bold mr-2 mt-0.5">
+                        {i+1}
+                      </span>
+                      <span className="text-gray-700">{attraction}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="bg-white border border-blue-100 rounded-lg p-4 shadow-sm">
+                <div className="flex items-center text-blue-600 font-medium mb-3">
+                  <AlertTriangle className="mr-2 h-4 w-4" />
+                  Places & Food to Avoid
+                </div>
+                
+                <div className="mb-3">
+                  <div className="text-sm font-medium text-gray-600 mb-1">Places:</div>
+                  {parsed.avoid.places && parsed.avoid.places.length ? (
+                    <ul className="list-disc list-inside text-gray-700 pl-2 space-y-1">
+                      {parsed.avoid.places.map((place, i) => (
+                        <li key={i}>{place}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <span className="text-gray-500 italic">None specified</span>
+                  )}
+                </div>
+                
+                <div>
+                  <div className="text-sm font-medium text-gray-600 mb-1">Food:</div>
+                  {parsed.avoid.food && parsed.avoid.food.length ? (
+                    <ul className="list-disc list-inside text-gray-700 pl-2 space-y-1">
+                      {parsed.avoid.food.map((food, i) => (
+                        <li key={i}>{food}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <span className="text-gray-500 italic">None specified</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="bg-white border border-blue-100 rounded-lg p-4 shadow-sm">
+                <div className="flex items-center text-blue-600 font-medium mb-2">
+                  <Info className="mr-2 h-4 w-4" />
+                  Other Information
+                </div>
+                <div className="text-gray-700 whitespace-pre-line">{parsed.info}</div>
+              </div>
+            </div>
+          )}
+        </div>
+        
+        <div className="bg-gray-50 p-4 border-t border-gray-200 flex justify-end">
+          <button 
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 text-2xl"
-            aria-label="Close"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
           >
-            ×
+            Close
           </button>
         </div>
-        <hr className="my-4" />
-
-        {/* Show error or loading state */}
-        {parseError ? (
-          <div className="text-red-500 mb-4">{parseError}</div>
-        ) : !parsed ? (
-          <div className="flex items-center gap-2 text-gray-500 mb-4">
-            <Loader className="animate-spin" /> Loading details...
-          </div>
-        ) : null}
-
-        {/* Show parsed data */}
-        {parsed && (
-          <div className="space-y-4">
-            <div className="bg-blue-50 rounded p-3 shadow">
-              <div className="font-semibold text-blue-700 mb-1">
-                Best Time to Visit
-              </div>
-              <div className="text-gray-800">{parsed.best_time}</div>
-            </div>
-
-            <div className="bg-green-50 rounded p-3 shadow">
-              <div className="font-semibold text-green-700 mb-1">
-                Top Attractions
-              </div>
-              <ul className="list-disc list-inside text-gray-800">
-                {parsed.attractions.map((a, i) => (
-                  <li key={i}>{a}</li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="bg-purple-50 rounded p-3 shadow">
-              <div className="font-semibold text-purple-700 mb-1">
-                Tourist Footfall
-              </div>
-              <div className="text-gray-800">
-                Domestic: {parsed.footfall.domestic.toLocaleString()} <br />
-                International: {parsed.footfall.international.toLocaleString()}
-              </div>
-            </div>
-
-            <div className="bg-yellow-50 rounded p-3 shadow">
-              <div className="font-semibold text-yellow-700 mb-1">
-                Places & Food to Avoid
-              </div>
-              <div>
-                <b>Places:</b>{" "}
-                {parsed.avoid.places && parsed.avoid.places.length
-                  ? parsed.avoid.places.join(", ")
-                  : "None"}
-              </div>
-              <div>
-                <b>Food:</b>{" "}
-                {parsed.avoid.food && parsed.avoid.food.length
-                  ? parsed.avoid.food.join(", ")
-                  : "None"}
-              </div>
-            </div>
-
-            <div className="bg-red-50 rounded p-3 shadow">
-              <div className="font-semibold text-red-700 mb-1">
-                Safety & Security
-              </div>
-              <div className="text-gray-800">{parsed.safety_security} / 5</div>
-            </div>
-
-            <div className="bg-gray-50 rounded p-3 shadow">
-              <div className="font-semibold text-gray-700 mb-1">
-                Other Information
-              </div>
-              <div className="text-gray-800">{parsed.info}</div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
