@@ -30,9 +30,27 @@ export async function POST(req: Request) {
       try {
         const response = await ai.models.generateContent({
           model: models[currentModelIndex],
-          contents: `Return ONLY a valid JSON object in 50 words with these exact keys: "attractions" (array), "footfall" (object with "domestic" and "international" numbers), "best_time" (string), "avoid" (object with "places" array and "food" array), "safety_security" (give feedback based on user experience in number 1-5 ), "info" (string). 
+          contents: `Return ONLY a valid JSON object with these exact keys:
+          
+          - "attractions": array of objects with each having "name" (string), "description" (string), and "maps_link" (string with Google Maps URL)
+          - "hidden_gems": array of objects with each having "name" (string), "description" (string), and "maps_link" (string with Google Maps URL)
+          - "footfall": object with "domestic" and "international" numbers
+          - "best_time": string
+          - "avoid": object with "places" array and "food" array
+          - "safety_security": number from 1-5 based on tourist safety
+          - "info": string with general travel advice
 
-          Include current tourist footfall and popular attractions in ${placeName}. No markdown, no code blocks, no backticks. Raw JSON only.`,
+          Focus on ${placeName} and include:
+          1. Top 5 tourist attractions with exact Google Maps links
+          2. Top 3 non-touristy hidden gems that locals love
+          3. Current tourist footfall estimates
+          4. Best time to visit
+          5. Places and foods to avoid
+          6. Safety rating (1-5)
+          7. Additional travel information
+
+          Format maps links as proper Google Maps URLs (https://maps.google.com/?q=...).
+          Return raw JSON only, no markdown, no code blocks, no backticks.`,
         });
         return response.text;
       } catch (error) {

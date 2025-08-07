@@ -1,8 +1,15 @@
 import { useState, useEffect } from "react";
 import { Loader, MapPin, Calendar, Shield, Users, AlertTriangle, Info } from "lucide-react";
 
+type Attraction = {
+  name: string;
+  description: string;
+  maps_link: string;
+};
+
 type ParsedDetails = {
-  attractions: string[];
+  attractions: Attraction[] | string[];
+  hidden_gems?: Attraction[] | string[];
   footfall: { domestic: number; international: number };
   best_time: string;
   avoid: { places: string[]; food: string[] };
@@ -70,7 +77,8 @@ const StateDetailsBody: React.FC<PlaceDetailsProps> = ({
             data.info ||
             "No additional information available",
         };
-        setParsed(data);
+
+        setParsed(transformedData);
         setParseError(null);
       } else {
         console.error("Invalid data structure:", data);
@@ -99,6 +107,16 @@ const StateDetailsBody: React.FC<PlaceDetailsProps> = ({
       );
     }
     return stars;
+  };
+
+  // Helper function to get attraction name regardless of format
+  const getAttractionDisplay = (attraction: any): string => {
+    if (typeof attraction === 'string') {
+      return attraction;
+    } else if (attraction && typeof attraction === 'object' && attraction.name) {
+      return attraction.name;
+    }
+    return 'Unknown attraction';
   };
 
   return (
@@ -191,12 +209,13 @@ const StateDetailsBody: React.FC<PlaceDetailsProps> = ({
                   Top Attractions
                 </div>
                 <ul className="space-y-2">
+               
                   {parsed.attractions.map((attraction, i) => (
                     <li key={i} className="flex items-start">
                       <span className="inline-flex items-center justify-center bg-blue-100 text-blue-700 h-5 w-5 rounded-full text-xs font-bold mr-2 mt-0.5">
                         {i+1}
                       </span>
-                      <span className="text-gray-700">{attraction}</span>
+                      <span className="text-gray-700">{getAttractionDisplay(attraction)}</span>
                     </li>
                   ))}
                 </ul>
