@@ -60,9 +60,16 @@ export default function Planner() {
   const [openModal, setOpenModal] = useState(false);
   const [showTokenModal, setShowTokenModal] = useState(false);
 
-  const SiteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:8080";
-  
-  const { token, isLoading: tokenLoading, consumeToken, refreshTokenCount, isTokenAvailable } = useToken();
+  const SiteUrl: string =
+    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:8080";
+
+  const {
+    token,
+    isLoading: tokenLoading,
+    consumeToken,
+    refreshTokenCount,
+    isTokenAvailable,
+  } = useToken();
 
   const router = useRouter();
 
@@ -98,9 +105,9 @@ export default function Planner() {
       setIsLoggedIn(false);
       setUserInfo(null);
       setIsProfileDropdownOpen(false);
-      
+
       refreshTokenCount();
-      
+
       window.location.href = "/";
     } catch (err) {
       console.error("Logout error:", err);
@@ -111,7 +118,6 @@ export default function Planner() {
           statusText: err.response?.statusText,
           data: err.response?.data,
         });
-
       }
 
       Cookies.remove("auth-token", { path: "/" });
@@ -119,7 +125,6 @@ export default function Planner() {
       setIsLoggedIn(false);
       setUserInfo(null);
       setIsProfileDropdownOpen(false);
-
     }
   };
 
@@ -168,7 +173,7 @@ export default function Planner() {
 
     window.addEventListener("focus", checkLogin);
     return () => window.removeEventListener("focus", checkLogin);
-  }, [userInfo]); 
+  }, [userInfo]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -196,16 +201,16 @@ export default function Planner() {
     setMonthData((prev) => ({ ...prev, [name]: value }));
   };
 
-
   const generateItinerary = async () => {
     setLoading(true);
-    setDrawerOpen(false); 
+    setDrawerOpen(false);
     try {
       if (!isLoggedIn) {
         setOpenModal(true);
         setLoading(false);
         return;
-      }      if (!isTokenAvailable) {
+      }
+      if (!isTokenAvailable) {
         setShowTokenModal(true);
         setLoading(false);
         return;
@@ -220,8 +225,9 @@ export default function Planner() {
 
       const result = await ItineraryGeneration(formData);
       setItinerary(result ?? "");
-      setShowModal(true);
+
       setDrawerOpen(false);
+      setShowModal(true);
     } catch (error) {
       console.error("Error in itinerary generation process:", error);
       setItinerary(
@@ -236,7 +242,7 @@ export default function Planner() {
 
   const generateMonthBasedItinerary = async () => {
     setLoading(true);
-    setDrawerOpen(false); 
+    setDrawerOpen(false);
 
     try {
       if (!isLoggedIn) {
@@ -254,15 +260,15 @@ export default function Planner() {
       const tokenConsumed = await consumeToken();
 
       if (!tokenConsumed) {
-
         setLoading(false);
         return;
       }
 
       const result = await generateMonthBasedTrip(monthData);
       setItinerary(result ?? "");
-      setShowModal(true);
+
       setDrawerOpen(false);
+      setShowModal(true);
     } catch (error) {
       console.error("Error generating month-based itinerary:", error);
       const errorMessage =
@@ -273,7 +279,6 @@ export default function Planner() {
     } finally {
       setLoading(false);
     }
-
   };
 
   async function generateMonthBasedTrip(monthData: {
@@ -282,11 +287,7 @@ export default function Planner() {
     days: string;
     budget: string;
   }) {
-
-
     try {
-
-
       const requestBody = {
         formData: {
           destination: "Best destination for " + monthData.month,
@@ -297,14 +298,11 @@ export default function Planner() {
         },
       };
 
-  
-
       const response = await axios.post("/api/RandomItinerary", requestBody, {
         headers: {
           "Content-Type": "application/json",
         },
       });
-
 
       let result;
       if (response.data && response.data.result) {
@@ -313,7 +311,6 @@ export default function Planner() {
         result = response.data;
       } else {
         result = JSON.stringify(response.data, null, 2);
-            
       }
 
       if (!result) {
@@ -513,7 +510,33 @@ export default function Planner() {
                       disabled={loading}
                       className="mt-6 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition disabled:opacity-50"
                     >
-                      {loading ? "Generating..." : "Generate Itinerary"}
+                      {loading ? (
+                        <div className="flex items-center justify-center">
+                          <svg
+                            className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                          </svg>
+                          Generating...
+                        </div>
+                      ) : (
+                        "Generate Itinerary"
+                      )}
                     </button>
                   </form>
                 ) : (
@@ -625,9 +648,33 @@ export default function Planner() {
                       disabled={loading}
                       className="mt-6 w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition disabled:opacity-50"
                     >
-                      {loading
-                        ? "Finding Best Destination..."
-                        : "Find Best Destination & Generate Itinerary"}
+                      {loading ? (
+                        <div className="flex items-center justify-center">
+                          <svg
+                            className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                          </svg>
+                          Finding Best Destination...
+                        </div>
+                      ) : (
+                        "Find Best Destination & Generate Itinerary"
+                      )}
                     </button>
                   </form>
                 )}
@@ -814,7 +861,8 @@ export default function Planner() {
                 Token Limit Reached
               </DialogTitle>
               <DialogDescription className="text-center max-w-xs mx-auto">
-                You don't have enough tokens to generate an itinerary. Please wait 24 hours for your tokens to refresh.
+                You don't have enough tokens to generate an itinerary. Please
+                wait 24 hours for your tokens to refresh.
               </DialogDescription>
               <p className="mt-2 text-sm font-medium text-blue-600 text-center">
                 Your tokens will refresh automatically in 24 hours.
@@ -823,9 +871,7 @@ export default function Planner() {
           </DialogHeader>
           <DialogFooter className="sm:justify-center">
             <DialogClose asChild>
-              <Button className="min-w-[100px]">
-                OK, got it
-              </Button>
+              <Button className="min-w-[100px]">OK, got it</Button>
             </DialogClose>
           </DialogFooter>
         </DialogContent>

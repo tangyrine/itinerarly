@@ -89,12 +89,11 @@ const Itinerary: React.FC<ItineraryProps> = ({
   const getCopyText = () => {
     if (!parsed) return "";
     
-    // If raw content, return it directly
     if (!parsed.isDelimitedFormat && parsed.rawContent) {
       return parsed.rawContent;
     }
     
-    // Otherwise format the structured data
+  
     let lines: string[] = [];
     if (parsed.destination) lines.push(`Destination: ${parsed.destination}`);
     if (parsed.budget) lines.push(`Budget: ${parsed.budget}`);
