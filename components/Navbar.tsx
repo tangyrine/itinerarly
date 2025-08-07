@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import {
@@ -7,7 +5,6 @@ import {
   LogIn,
   User,
   ChevronDown,
-  Settings,
   LogOut,
 } from "lucide-react";
 import { SignInModal } from "./SignInModal";
@@ -274,23 +271,6 @@ const Navbar = () => {
                         </div>
                       )}
 
-                      <Link
-                        href="/profile"
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={() => setIsProfileDropdownOpen(false)}
-                      >
-                        <User className="w-4 h-4 mr-3" />
-                        Profile
-                      </Link>
-
-                      <Link
-                        href="/settings"
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={() => setIsProfileDropdownOpen(false)}
-                      >
-                        <Settings className="w-4 h-4 mr-3" />
-                        Settings
-                      </Link>
 
                       <hr className="my-1" />
 
@@ -386,14 +366,7 @@ const Navbar = () => {
                         </div>
                       )}
 
-                      <Link
-                        href="/profile"
-                        className="flex items-center px-3 py-2 text-xs text-gray-700 hover:bg-gray-100"
-                        onClick={() => setIsProfileDropdownOpen(false)}
-                      >
-                        <User className="w-3 h-3 mr-2" />
-                        Profile
-                      </Link>
+                      {/* Profile link removed from mobile menu */}
 
                       <button
                         className="flex items-center w-full px-3 py-2 text-xs text-gray-700 hover:bg-gray-100"
