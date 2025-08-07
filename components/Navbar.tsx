@@ -101,7 +101,7 @@ const Navbar = () => {
       setUserInfo(null);
       setIsProfileDropdownOpen(false);
       
-      // Refresh token count after logout cleanup
+      
       refreshTokenCount();
 
       alert(
