@@ -1,7 +1,9 @@
 # Itinerarly - Travel Planning Made Simple
 
 ## Overview
-Itinerarly is a modern travel planning application built with Next.js 13+, React, and TypeScript. It helps users plan and organize their trips effortlessly with an interactive map interface and intuitive planning tools.
+This is a fun project because all my friends couldn't decide where to go for our next trip and the itinerary of the trip isn't decided which wastes all of our time . Thus this is my attempt to solve my little problem , along with learning ,using and showcasing the skills i have gathered over the years. 
+
+If you guys have any similar issues , feel free to use the tool which i have developed using a significant amount of my time. 
 
 ## Features
 - Interactive India map visualization using react-simple-maps
