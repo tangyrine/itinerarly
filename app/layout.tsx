@@ -2,6 +2,7 @@ import '../styles/global.css';
 import React from 'react';
 import { Analytics } from '@vercel/analytics/react'
 import { TokenProvider } from '@/lib/TokenProvider';
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 
 export const metadata = {
@@ -11,6 +12,9 @@ export const metadata = {
 
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+
+  const gaId = process.env.GA_ID ;
+
   return (
     <html lang="en">
       <head>
@@ -22,6 +26,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {children}
         </TokenProvider>
         <Analytics />
+        {gaId && <GoogleAnalytics gaId={gaId} />}
       </body>
     </html>
   );

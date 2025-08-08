@@ -5,21 +5,26 @@ Itinerarly is a modern travel planning application built with Next.js 13+, React
 
 ## Features
 - Interactive India map visualization using react-simple-maps
-- Modern, responsive UI with Tailwind CSS
-- Server-side rendering with Next.js
+- Modern, responsive UI with Tailwind CSS and shadcn/ui components
+- Server-side rendering and app router with Next.js 14
 - Type-safe development with TypeScript
-- AI-powered travel insights using Google's Gemini API
-- Interactive state and city selection
-- Dynamic travel information display
+- AI-powered travel recommendations using Google's Gemini API
+- Interactive state and city selection with detailed information
+- Dynamic itinerary creation and management
+- Weather forecasts for destinations
+- Accommodation and attraction suggestions
 
 ## Tech Stack
-- **Framework**: Next.js 13+
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
+- **Framework**: Next.js 14
+- **Language**: TypeScript 5.0+
+- **Styling**: Tailwind CSS 3.3+
+- **UI Components**: shadcn/ui
 - **Maps**: react-simple-maps
 - **Icons**: Lucide React
 - **AI**: Google Gemini API
-- **Testing**: Jest & React Testing Library
+- **State Management**: Zustand
+- **Testing**: Vitest & React Testing Library
+- **Data Fetching**: SWR
 
 ## Getting Started
 
@@ -28,8 +33,8 @@ Itinerarly is a modern travel planning application built with Next.js 13+, React
 Huge shoutout to [Subhash9325](https://github.com/Subhash9325/GeoJson-Data-of-Indian-States/blob/master/Indian_States) for compiling the data of Indian states and geography 
 
 ### Prerequisites
-- Node.js 18+ 
-- npm or yarn
+- Node.js 18.17.0 or later
+- npm 9+ or yarn 1.22+
 - Google Gemini API key
 
 ### Installation
@@ -42,17 +47,22 @@ cd itinerarly-FE
 2. Install dependencies
 ```bash
 npm install
+# or
+yarn install
 ```
 
 3. Set up environment variables
 Create a `.env.local` file in the root directory with the following variables:
 ```env
-NEXT_PUBLIC_Gemini_API=your_gemini_api_key_here
+NEXT_PUBLIC_GEMINI_API_KEY=your_gemini_api_key_here
+NEXT_PUBLIC_API_URL=your_backend_api_url
 ```
 
 4. Start the development server
 ```bash
 npm run dev
+# or
+yarn dev
 ```
 
 5. Open [http://localhost:3000](http://localhost:3000) in your browser
@@ -60,15 +70,21 @@ npm run dev
 ## Project Structure
 ```
 itinerarly-FE/
-├── app/               # Next.js app directory
-│   ├── layout.tsx    # Root layout
-│   └── page.tsx      # Home page
-├── components/        # Reusable components
-├── lib/              # Utility functions and API handlers
-├── styles/           # Global styles
-├── public/           # Static assets
-├── __tests__/        # Test files
-└── types/            # TypeScript type definitions
+├── app/                # Next.js app directory
+│   ├── (routes)/      # Application routes
+│   ├── api/           # API routes
+│   ├── layout.tsx     # Root layout
+│   └── page.tsx       # Home page
+├── components/         # Reusable components
+│   ├── ui/            # UI components
+│   └── map/           # Map-related components
+├── lib/               # Utility functions and API handlers
+├── hooks/             # Custom React hooks
+├── store/             # State management
+├── styles/            # Global styles
+├── public/            # Static assets
+├── __tests__/         # Test files
+└── types/             # TypeScript type definitions
 ```
 
 ## Available Scripts
@@ -79,6 +95,7 @@ npm run start        # Start production server
 npm run lint         # Run ESLint
 npm run test         # Run tests
 npm run test:watch   # Run tests in watch mode
+npm run format       # Format code with Prettier
 ```
 
 ## Environment Variables
@@ -86,7 +103,8 @@ The following environment variables are required:
 
 | Variable | Description | Required |
 |----------|-------------|----------|
-| NEXT_PUBLIC_Gemini_API | Google Gemini API Key | Yes |
+| NEXT_PUBLIC_GEMINI_API_KEY | Google Gemini API Key | Yes |
+| NEXT_PUBLIC_API_URL | Backend API URL | No |
 
 To obtain a Gemini API key:
 1. Visit the [Google AI Studio](https://makersuite.google.com/app/apikey)
@@ -95,7 +113,7 @@ To obtain a Gemini API key:
 4. Copy the key to your `.env.local` file
 
 ## Testing
-The project uses Jest and React Testing Library for testing. To run tests:
+The project uses Vitest and React Testing Library for testing. To run tests:
 ```bash
 npm test
 ```
@@ -113,10 +131,18 @@ npm run test:watch
 5. Open a Pull Request
 
 ## Troubleshooting
-If you encounter rate limiting with the Gemini API:
-- The application automatically switches between models
-- Check your API quota in the Google AI Studio
-- Ensure your API key is correctly set in `.env.local`
+- **API rate limiting**: If encountering rate limiting with the Gemini API:
+    - The application automatically retries with exponential backoff
+    - Check your API quota in the Google AI Studio
+    - Consider implementing a caching strategy for common requests
+
+- **Build errors**:
+    - Ensure Node.js version is 18.17.0 or higher
+    - Clear the `.next` cache directory and rebuild
+
+- **Map rendering issues**:
+    - Check console for any CORS errors
+    - Ensure GeoJSON data is properly formatted
 
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
