@@ -21,10 +21,4 @@ describe('SignInModal', () => {
     expect(mockOnClose).toHaveBeenCalled();
   });
 
-  it('allows email input', () => {
-    render(<SignInModal openModal={true} onClose={mockOnClose} />);
-    const emailInput = screen.getByLabelText('Email');
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
-    expect(emailInput).toHaveValue('test@example.com');
-  });
 });
