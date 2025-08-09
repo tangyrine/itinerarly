@@ -7,10 +7,16 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci --only=production
+RUN npm ci
+
+# Copy TypeScript and Next.js config files first
+COPY tsconfig.json ./
+COPY next.config.* ./
 
 # Copy source code
 COPY . .
+
+COPY .env.local .env.local
 
 # Build the Next.js app
 RUN npm run build
