@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import { FaFacebook, FaGithub, FaGoogle, FaTwitter } from "react-icons/fa";
+import {  FaGithub, FaGoogle } from "react-icons/fa";
 
 
 interface SignInModalProps {
@@ -25,17 +25,14 @@ const signInWithGithub = () => {
   window.location.href = `${SiteUrl}/oauth2/authorization/github`;
 }
 
-const signInWithTwitter = () => {
-  window.location.href = `${SiteUrl}/oauth2/authorization/twitter`;
-}
 
 const signInWithGoogle = () => {
   window.location.href = `${SiteUrl}/oauth2/authorization/google`;
 };
 
-const signInWithFacebook= () => {
-  window.location.href = `${SiteUrl}/oauth2/authorization/facebook`;
-};
+// const signInWithFacebook= () => {
+//   window.location.href = `${SiteUrl}/oauth2/authorization/facebook`;
+// };
 
 export function SignInModal({ openModal, onClose }: SignInModalProps) {
 
@@ -48,7 +45,7 @@ export function SignInModal({ openModal, onClose }: SignInModalProps) {
             Enter your credentials to access your account.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col md:flex-row md:justify-between space-y-4 md:space-y-0 md:space-x-4
+        <div className="flex flex-col md:flex-row md:justify-around space-y-4 md:space-y-0 md:space-x-4
             p-2">
           <button className="cursor-pointer border border-black h-20 w-20 flex justify-center items-center" onClick={signInWithGoogle}>
             <FaGoogle className="h-10 w-10 text-center"/>
@@ -56,12 +53,9 @@ export function SignInModal({ openModal, onClose }: SignInModalProps) {
           <button className="cursor-pointer border border-black h-20 w-20 flex justify-center items-center" onClick={signInWithGithub}>
             <FaGithub className="h-10 w-10 text-center"/>
           </button>
-          <button className="cursor-pointer border border-black h-20 w-20 flex justify-center items-center" onClick={signInWithTwitter}>
-            <FaTwitter className="h-10 w-10 text-center"/>
-          </button>
-          <button className="cursor-pointer border border-black h-20 w-20 flex justify-center items-center" onClick={signInWithFacebook}>
+          {/* <button className="cursor-pointer border border-black h-20 w-20 flex justify-center items-center" onClick={signInWithFacebook}>
             <FaFacebook className="h-10 w-10 text-center"/>
-          </button>
+          </button> */}
         </div>
         <DialogFooter>
           <DialogClose asChild>

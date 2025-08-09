@@ -10,11 +10,10 @@ import {
 } from "react-simple-maps";
 import indiaGeoJson from "../app/start/india-states.json";
 import { sections } from "@/data/sections";
-import { Loader, LoaderCircle, RotateCcw } from "lucide-react";
+import { LoaderCircle, RotateCcw } from "lucide-react";
 import { Plus, Minus } from "lucide-react";
 import Gemini from "../lib/Gemini";
 import PlaceDetails from "./PlaceDetails";
-import axios from "axios";
 import { StateDetailsModal } from "./StateDetailsModal";
 
 interface IndiaMapProps {
@@ -28,7 +27,9 @@ export default function IndiaMap({ type }: IndiaMapProps) {
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<string | null>(null);
   const [position, setPosition] = useState({ coordinates: [82, 22], zoom: 1 });
-  const [markerDetailsMap, setMarkerDetailsMap] = useState<Record<string, string>>({});
+  const [markerDetailsMap, setMarkerDetailsMap] = useState<
+    Record<string, string>
+  >({});
   const [loadingMarker, setLoadingMarker] = useState<string | null>(null);
   const [showPlaceDetails, setShowPlaceDetails] = useState(false);
   const [hoveredState, setHoveredState] = useState<string | null>(null);
@@ -207,6 +208,17 @@ export default function IndiaMap({ type }: IndiaMapProps) {
                 })
               }
             </Geographies>
+
+            <g className="disputed-territories">
+              <path
+                d="M..." // SVG path for correct Kashmir border
+                fill="none"
+                stroke="#FF0000"
+                strokeWidth={1}
+                strokeDasharray="5,5"
+              />
+              {/* Add other disputed borders as needed */}
+            </g>
 
             {highlightedPlaces.map((place: any) => (
               <Marker
