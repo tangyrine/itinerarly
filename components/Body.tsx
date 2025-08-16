@@ -81,27 +81,27 @@ interface BodyProps {
 
 const communityImages = [
   {
-    url: "https://unsplash.com/photos/a-snow-covered-mountain-range-with-a-house-in-the-foreground-qCANb0oBLlY",
+    url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=800&q=80",
     title: "Serene Mountain Views",
     location: "Himachal Pradesh",
   },
   {
-    url: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80",
+    url: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=800&q=80",
     title: "Pristine Beach Paradise",
     location: "Goa",
   },
   {
-    url: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=800&q=80",
+    url: "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=800&q=80",
     title: "Historic Architecture",
-    location: "Rajasthan",
+    location: "Uttar Pradesh",
   },
   {
-    url: "https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=crop&w=800&q=80",
+    url: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=80",
     title: "Cultural Heritage",
     location: "Kerala",
   },
   {
-    url: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&q=80",
+    url: "https://images.unsplash.com/photo-1570168007204-dfb528c6958f?auto=format&fit=crop&w=800&q=80",
     title: "Urban Adventures",
     location: "Mumbai",
   },
