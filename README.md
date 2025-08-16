@@ -32,7 +32,7 @@ If you guys have any similar issues , feel free to use the tool which i have dev
 
 ## Special mention
 
-Huge shoutout to [Subhash9325](https://github.com/Subhash9325/GeoJson-Data-of-Indian-States/blob/master/Indian_States) for compiling the data of Indian states and geography 
+Huge shoutout to [Udit-001](https://github.com/udit-001/india-maps-data)  for compiling the data of Indian states and geography 
 
 ### Prerequisites
 - Node.js 18.17.0 or later

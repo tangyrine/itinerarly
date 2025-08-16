@@ -55,6 +55,7 @@ export default function Page() {
           <option value="beaches">Beaches</option>
           <option value="wildlife">Wildlife Sanctuaries</option>
           <option value="historical">Historical Sites</option>
+          <option value="cities">Cities</option>
           <option value="none">Entire India Map</option>
         </select>
       </motion.div>

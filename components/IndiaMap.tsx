@@ -8,7 +8,7 @@ import {
   Marker,
   ZoomableGroup,
 } from "react-simple-maps";
-import indiaGeoJson from "../app/start/india-states.json";
+import indiaGeoJson from "../app/start/india-geoJson.json";
 import { sections } from "@/data/sections";
 import { LoaderCircle, RotateCcw } from "lucide-react";
 import { Plus, Minus } from "lucide-react";
@@ -163,14 +163,14 @@ export default function IndiaMap({ type }: IndiaMapProps) {
           >
             <Geographies geography={indiaGeoJson}>
               {({ geographies }: { geographies: any[] }) =>
-                geographies.map((geo) => {
-                  const name = geo.properties.NAME_1;
+                geographies.map((geo, index) => {
+                  const name = geo.properties?.NAME_1 || geo.properties?.st_nm || `geography-${index}`;
                   const isSelected = selectedState === name;
                   const isHovered = hoveredState === name;
 
                   return (
                     <Geography
-                      key={name}
+                      key={`${name}-${index}`}
                       geography={geo}
                       onMouseEnter={(
                         e: React.MouseEvent<SVGPathElement, MouseEvent>

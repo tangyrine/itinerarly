@@ -30,8 +30,10 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
-, "app/auth/callback/route.ts"  ],
+    "**/*.geojson",
+    ".next/types/**/*.ts",
+    "app/auth/callback/route.ts"
+  ],
   "exclude": [
     "node_modules"
   ]
