@@ -15,6 +15,8 @@ If you guys have any similar issues , feel free to use the tool which i have dev
 - Dynamic itinerary creation and management
 - Weather forecasts for destinations
 - Accommodation and attraction suggestions
+- Comprehensive database of 1000+ tourist destinations across India
+- Curated collections of hill stations, historical sites, beaches, and wildlife sanctuaries
 
 ## Tech Stack
 - **Framework**: Next.js 14
@@ -27,6 +29,50 @@ If you guys have any similar issues , feel free to use the tool which i have dev
 - **State Management**: Zustand
 - **Testing**: Vitest & React Testing Library
 - **Data Fetching**: SWR
+
+## Data Coverage
+
+### Comprehensive Tourist Destination Database
+Itinerarly features an extensive database of 1000+ carefully curated tourist destinations across India, organized into four main categories:
+
+#### 🏔️ Hill Stations
+- Popular mountain retreats and scenic hill destinations
+- Covering major hill station circuits across all states
+- From the Himalayas to the Western and Eastern Ghats
+
+#### 🏛️ Historical Sites
+- UNESCO World Heritage Sites
+- Ancient monuments, palaces, and forts
+- Archaeological sites and heritage locations
+- Cultural and religious landmarks
+
+#### 🏖️ Beaches (150+ locations)
+- **West Coast**: Gujarat, Maharashtra, Goa, Karnataka, Kerala
+- **East Coast**: Tamil Nadu, Andhra Pradesh, Telangana, Odisha, West Bengal
+- **Islands**: 
+  - **Lakshadweep**: All major islands including Agatti, Bangaram, Kadmat, Kavaratti, Kalpeni, Minicoy
+  - **Andaman & Nicobar**: Havelock, Neil Island, Ross Island, Baratang, Diglipur, and more
+- **Union Territories**: Puducherry, Daman & Diu
+
+#### 🦌 Wildlife Sanctuaries & National Parks (100+ locations)
+Comprehensive coverage across all biogeographic regions of India:
+
+- **Himalayan Region**: Snow leopard habitats, alpine ecosystems
+- **Trans-Himalayan**: High-altitude wildlife reserves
+- **Desert Region**: Rajasthan's unique desert wildlife
+- **Semi-Arid**: Gujarat and western India sanctuaries
+- **Western Ghats**: UNESCO World Heritage biodiversity hotspot
+- **Deccan Peninsula**: Central and southern India parks
+- **Gangetic Plain**: Terai and alluvial plain reserves
+- **Coasts**: Coastal and marine sanctuaries
+- **Islands**: Endemic species of Andaman & Nicobar, Lakshadweep
+- **Northeast India**: Biodiversity-rich sanctuaries across all seven sister states
+
+### State-wise Coverage
+Every Indian state and union territory is comprehensively covered:
+- **28 States**: From Andhra Pradesh to West Bengal
+- **8 Union Territories**: Including specialized coverage for island territories
+- **Special Focus**: Enhanced coverage for tourism-heavy states like Rajasthan, Kerala, Himachal Pradesh, Uttarakhand, and Goa
 
 ## Getting Started
 
@@ -79,7 +125,11 @@ itinerarly-FE/
 │   └── page.tsx       # Home page
 ├── components/         # Reusable components
 │   ├── ui/            # UI components
-│   └── map/           # Map-related components
+│   ├── map/           # Map-related components
+│   ├── IndiaMap.tsx   # Interactive India map component
+│   └── StateDetailsModal.tsx # State details and AI recommendations
+├── data/              # Static data files
+│   └── sections.js    # 1000+ tourist destinations database
 ├── lib/               # Utility functions and API handlers
 ├── hooks/             # Custom React hooks
 ├── store/             # State management
@@ -88,6 +138,24 @@ itinerarly-FE/
 ├── __tests__/         # Test files
 └── types/             # TypeScript type definitions
 ```
+
+## Key Components
+
+### Interactive Map (`IndiaMap.tsx`)
+- Click on any Indian state to view detailed information
+- Seamless state selection with visual feedback
+- Integration with comprehensive destination database
+
+### AI-Powered Recommendations (`StateDetailsModal.tsx`)
+- Google Gemini API integration for intelligent travel suggestions
+- Contextual recommendations based on selected state
+- Dynamic itinerary generation with local insights
+
+### Destination Database (`data/sections.js`)
+- 1000+ curated tourist destinations
+- Organized by category: Hill Stations, Historical Sites, Beaches, Wildlife Sanctuaries
+- Complete coverage of all Indian states and union territories
+- Regular updates with new destinations and seasonal recommendations
 
 ## Available Scripts
 ```bash
@@ -131,6 +199,22 @@ npm run test:watch
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
+
+## Recent Updates
+
+### Version 2.0 - Comprehensive Data Expansion
+- **Expanded Database**: Added 500+ new destinations across all categories
+- **Enhanced Beach Coverage**: 150+ coastal destinations including complete island coverage
+- **Wildlife Sanctuary Addition**: 100+ national parks and wildlife sanctuaries
+- **Bug Fixes**: Resolved state selection issues in interactive map
+- **Code Optimization**: Removed console logs and improved error handling
+- **Complete Coverage**: All 28 states and 8 union territories now have comprehensive data
+
+### Data Quality Improvements
+- Verified and validated all location data
+- Added geographical diversity across all biogeographic regions
+- Enhanced coverage for northeastern states and island territories
+- Seasonal destination recommendations
 
 ## Troubleshooting
 - **API rate limiting**: If encountering rate limiting with the Gemini API:

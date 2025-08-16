@@ -41,9 +41,8 @@ export default function IndiaMap({ type }: IndiaMapProps) {
   const highlightedPlaces = selectedSection?.places || [];
 
   const handleStateClick = (geo: any, e: React.MouseEvent<SVGPathElement>) => {
-    const stateName = geo.properties.NAME_1;
-    const isSelected = selectedState === stateName;
-    setSelectedState(isSelected ? null : stateName);
+    const stateName = geo.properties?.NAME_1 || geo.properties?.st_nm || geo.properties?.name || geo.properties?.NAME || 'Unknown State';
+    setSelectedState(stateName);
     setHoveredState(null);
     setShowStateDetails(true);
     setStateMousePosition({ x: e.clientX, y: e.clientY });
@@ -69,7 +68,6 @@ export default function IndiaMap({ type }: IndiaMapProps) {
         await new Promise((resolve) => setTimeout(resolve, 300));
         setIsMapLoading(false);
       } catch (error) {
-        console.error("Error loading map:", error);
         setIsMapLoading(false);
       }
     };
@@ -164,7 +162,8 @@ export default function IndiaMap({ type }: IndiaMapProps) {
             <Geographies geography={indiaGeoJson}>
               {({ geographies }: { geographies: any[] }) =>
                 geographies.map((geo, index) => {
-                  const name = geo.properties?.NAME_1 || geo.properties?.st_nm || `geography-${index}`;
+                  // Try multiple possible property names for state name
+                  const name = geo.properties?.NAME_1 || geo.properties?.st_nm || geo.properties?.name || geo.properties?.NAME || `geography-${index}`;
                   const isSelected = selectedState === name;
                   const isHovered = hoveredState === name;
 

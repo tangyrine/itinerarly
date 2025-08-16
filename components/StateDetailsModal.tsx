@@ -48,7 +48,6 @@ export function StateDetailsModal({
       if (loggedIn) {
         try {
           refreshTokenCount().catch(error => {
-            console.error("Error refreshing token count:", error);
             if (error instanceof Error && error.message === "Network Error") {
               setIsNetworkError(true);
               setErrorMessage("Unable to connect to the server. Please check your internet connection and try again.");
@@ -56,13 +55,11 @@ export function StateDetailsModal({
             }
           });
         } catch (error) {
-          console.error("Error in token refresh:", error);
         }
       }
     };
     
     checkLogin();
-    // Only depend on showStateModal, not refreshTokenCount which can cause infinite loops
   }, [showStateModal]);
 
   useEffect(() => {
@@ -109,7 +106,6 @@ export function StateDetailsModal({
       try {
         tokenConsumed = await consumeToken();
       } catch (error) {
-        console.error("Error consuming token:", error);
         if (error instanceof Error && error.message === "Network Error") {
           setIsNetworkError(true);
           setErrorMessage("Unable to connect to the server. Please check your internet connection and try again.");
@@ -133,7 +129,6 @@ export function StateDetailsModal({
       setDetails(res.data.result);
       setTimeout(onClose, 15000);
     } catch (err) {
-      console.error("Error generating state details:", err);
       if (err instanceof Error && err.message === "Network Error") {
         setIsNetworkError(true);
         setErrorMessage("Unable to connect to the server. Please check your internet connection and try again.");
