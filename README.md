@@ -78,7 +78,20 @@ Every Indian state and union territory is comprehensively covered:
 
 ## Special mention
 
-Huge shoutout to [Udit-001](https://github.com/udit-001/india-maps-data)  for compiling the data of Indian states and geography 
+Huge shoutout to [Udit-001](https://github.com/udit-001/india-maps-data) for compiling the data of Indian states and geography
+
+## Data Files
+
+### 📍 [Tourist Destinations Database (sections.js)](./data/sections.js)
+Complete database of 1000+ tourist destinations across India, organized by categories:
+- Hill Stations, Historical Sites, Beaches, Wildlife Sanctuaries
+- Comprehensive coverage of all Indian states and union territories
+
+### 🗺️ [India GeoJSON Data (india-geoJson.json)](./app/start/india-geoJson.json)
+Geographic boundary data for interactive map visualization:
+- State and union territory boundaries
+- Coordinates for map rendering with react-simple-maps
+- Optimized for web performance 
 
 ### Prerequisites
 - Node.js 18.17.0 or later
@@ -122,14 +135,16 @@ itinerarly-FE/
 │   ├── (routes)/      # Application routes
 │   ├── api/           # API routes
 │   ├── layout.tsx     # Root layout
-│   └── page.tsx       # Home page
+│   ├── page.tsx       # Home page
+│   └── start/
+│       └── india-geoJson.json # India map data → [View File](./app/start/india-geoJson.json)
 ├── components/         # Reusable components
 │   ├── ui/            # UI components
 │   ├── map/           # Map-related components
 │   ├── IndiaMap.tsx   # Interactive India map component
 │   └── StateDetailsModal.tsx # State details and AI recommendations
 ├── data/              # Static data files
-│   └── sections.js    # 1000+ tourist destinations database
+│   └── sections.js    # 1000+ tourist destinations database → [View File](./data/sections.js)
 ├── lib/               # Utility functions and API handlers
 ├── hooks/             # Custom React hooks
 ├── store/             # State management
@@ -152,7 +167,7 @@ itinerarly-FE/
 - Dynamic itinerary generation with local insights
 
 ### Destination Database (`data/sections.js`)
-- 1000+ curated tourist destinations
+- 1000+ curated tourist destinations → [**View Database**](./data/sections.js)
 - Organized by category: Hill Stations, Historical Sites, Beaches, Wildlife Sanctuaries
 - Complete coverage of all Indian states and union territories
 - Regular updates with new destinations and seasonal recommendations
