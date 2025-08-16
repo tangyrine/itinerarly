@@ -29,33 +29,19 @@ const Page: React.FC = () => {
   }, [...inViewStates]);
 
   return (
-    <div>
-      <div
-        className="relative min-h-screen flex flex-col"
-        style={{
-          backgroundImage: `url(${currentBackground})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          transition: 'background-image 0.5s ease-in-out'
-        }}
-      >
-        <div className="absolute inset-0 bg-black/50" />
-
-        <div className="relative z-10 flex flex-col min-h-screen">
-          <Navbar />
-          <main className="flex-grow">
-            <Body
-              sectionRefs={sectionRefs}
-              sections={sections.map(({ id, title, description, places }) => ({
-                id,
-                title,
-                description,
-                places: places.map(place => place.name)
-              }))}
-            />
-          </main>
-        </div>
-      </div>
+    <div className="min-h-screen flex flex-col">
+      <Navbar />
+      <main className="flex-grow">
+        <Body
+          sectionRefs={sectionRefs}
+          sections={sections.map(({ id, title, description, places }) => ({
+            id,
+            title,
+            description,
+            places: places.map(place => place.name)
+          }))}
+        />
+      </main>
       <Footer />
     </div>
   );

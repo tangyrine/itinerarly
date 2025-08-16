@@ -141,7 +141,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="relative">
       {/* Enhanced Background with Video */}
       <div className="absolute inset-0 z-0">
         <video
@@ -169,14 +169,14 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col justify-center min-h-screen text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 space-y-12 sm:space-y-16 lg:space-y-20">
+      <div className="relative z-10 text-white pt-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 space-y-12 sm:space-y-16 lg:space-y-20 min-h-screen">
           {/* Enhanced Hero Section */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
-            className="text-center space-y-6 sm:space-y-8 pt-8 sm:pt-16"
+            className="text-center space-y-6 sm:space-y-8 pt-8 sm:pt-12"
           >
             <motion.div
               initial={{ scale: 0 }}
@@ -376,29 +376,53 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
                 travel community
               </p>
               
-              {/* Imgur Upload Link */}
+              {/* Imgur Upload and Submit Links */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 1 }}
                 className="pt-4"
               >
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <a
-                    href="https://imgur.com/upload"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group inline-flex items-center space-x-3 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-purple-600/80 to-orange-600/80 backdrop-blur-sm rounded-2xl border border-white/20 hover:border-white/40 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20 relative overflow-hidden"
+                <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4">
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-orange-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <Globe className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300 relative z-10" />
-                    <span className="relative z-10">Share Your Travel Photos</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300 relative z-10" />
-                  </a>
-                </motion.div>
+                    <a
+                      href="https://imgur.com/upload"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group inline-flex items-center space-x-3 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-purple-600/80 to-orange-600/80 backdrop-blur-sm rounded-2xl border border-white/20 hover:border-white/40 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20 relative overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-orange-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <Globe className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300 relative z-10" />
+                      <span className="relative z-10">Share Your Travel Photos</span>
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300 relative z-10" />
+                    </a>
+                  </motion.div>
+
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <button
+                      onClick={() => {
+                        const imgurLink = prompt("Paste your Imgur link here:");
+                        if (imgurLink && imgurLink.includes("imgur.com")) {
+                          alert("Thank you for sharing! Your photo will be reviewed and added to our community gallery.");
+                        } else if (imgurLink) {
+                          alert("Please provide a valid Imgur link.");
+                        }
+                      }}
+                      className="group inline-flex items-center space-x-3 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-green-600/80 to-blue-600/80 backdrop-blur-sm rounded-2xl border border-white/20 hover:border-white/40 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20 relative overflow-hidden"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <Star className="w-5 h-5 group-hover:scale-110 transition-transform duration-300 relative z-10" />
+                      <span className="relative z-10">Submit Imgur Link</span>
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300 relative z-10" />
+                    </button>
+                  </motion.div>
+                </div>
                 <p className="text-xs text-gray-400 mt-2">
                   Upload to Imgur and share your incredible India moments with our community
                 </p>

@@ -162,21 +162,15 @@ const Navbar = () => {
 
   return (
     <>
-      <nav
-        className="top-0 z-50"
-        style={{
-          backgroundColor: "#f7e9d5",
-          backgroundImage: `url("data:image/svg+xml;utf8,<svg width='100' height='100' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'><rect width='100' height='100' fill='%23f7e9d5'/><g opacity='0.25'><circle cx='10' cy='10' r='1.5' fill='%23c2b280'/><circle cx='50' cy='50' r='1.2' fill='%23c2b280'/><circle cx='80' cy='80' r='1.1' fill='%23c2b280'/><circle cx='70' cy='20' r='1.3' fill='%23c2b280'/><circle cx='30' cy='70' r='1.1' fill='%23c2b280'/><circle cx='20' cy='80' r='1.2' fill='%23c2b280'/><circle cx='90' cy='40' r='1.3' fill='%23c2b280'/><circle cx='60' cy='10' r='1.1' fill='%23c2b280'/><circle cx='40' cy='90' r='1.2' fill='%23c2b280'/><circle cx='80' cy='30' r='1.3' fill='%23c2b280'/><circle cx='15' cy='60' r='1.1' fill='%23c2b280'/><circle cx='70' cy='70' r='1.2' fill='%23c2b280'/><circle cx='30' cy='30' r='1.3' fill='%23c2b280'/><circle cx='60' cy='80' r='1.1' fill='%23c2b280'/><circle cx='90' cy='90' r='1.2' fill='%23c2b280'/></g></svg>")`,
-          backgroundRepeat: "repeat",
-          backgroundSize: "auto",
-        }}
-      >
+      <nav className="fixed top-0 w-full z-50 bg-black/20 backdrop-blur-md border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             {/* Logo */}
             <div className="flex-shrink-0 flex items-center">
-              <Link href="/" className="font-bold text-xl">
-                Itinerarly
+              <Link href="/" className="font-bold text-xl text-white hover:text-orange-400 transition-colors duration-300">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-green-400">
+                  Itinerarly
+                </span>
               </Link>
             </div>
 
@@ -187,7 +181,7 @@ const Navbar = () => {
                   <button
                     key={item.label}
                     onClick={() => scrollToSection(item.href.slice(1))}
-                    className="text-gray-900 transition-colors cursor-pointer hover:text-blue-600"
+                    className="text-white/90 hover:text-orange-400 transition-colors duration-300 cursor-pointer font-medium"
                   >
                     {item.label}
                   </button>
@@ -195,7 +189,7 @@ const Navbar = () => {
                   <Link
                     key={item.label}
                     href={item.href}
-                    className="text-gray-900 transition-colors hover:text-blue-600"
+                    className="text-white/90 hover:text-orange-400 transition-colors duration-300 font-medium"
                   >
                     {item.label}
                   </Link>
@@ -206,12 +200,12 @@ const Navbar = () => {
               {isLoggedIn ? (
                 <div className="relative profile-dropdown">
                   <button
-                    className="flex items-center space-x-2 text-gray-700 hover:text-gray-900 focus:outline-none"
+                    className="flex items-center space-x-2 text-white/90 hover:text-orange-400 focus:outline-none transition-colors duration-300"
                     onClick={() =>
                       setIsProfileDropdownOpen(!isProfileDropdownOpen)
                     }
                   >
-                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center overflow-hidden">
+                    <div className="w-8 h-8 bg-gradient-to-r from-orange-400 to-green-400 rounded-full flex items-center justify-center overflow-hidden border-2 border-white/20">
                       {userInfo?.avatar ? (
                         <img
                           src={userInfo.avatar}
@@ -246,13 +240,13 @@ const Navbar = () => {
 
                   {/* Dropdown Menu */}
                   {isProfileDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
-                      <div className="px-4 py-2 text-sm text-gray-700 border-b border-gray-100">
-                        <div className="font-medium">
+                    <div className="absolute right-0 mt-2 w-48 bg-black/90 backdrop-blur-md rounded-2xl shadow-2xl py-2 z-50 border border-white/20">
+                      <div className="px-4 py-3 text-sm border-b border-white/20">
+                        <div className="font-medium text-white">
                           {userInfo?.name || "User"}
                         </div>
                         {userInfo?.email && (
-                          <div className="text-gray-500 text-xs">
+                          <div className="text-gray-400 text-xs mt-1">
                             {userInfo.email}
                           </div>
                         )}
@@ -260,11 +254,11 @@ const Navbar = () => {
 
                       {/* Token Display */}
                       {isLoggedIn && typeof token !== "undefined" && (
-                        <div className="px-4 py-2 text-sm text-gray-600 border-b border-gray-100 bg-gray-50">
+                        <div className="px-4 py-3 text-sm border-b border-white/20 bg-gradient-to-r from-orange-500/20 to-green-500/20">
                           <div className="flex items-center justify-between">
-                            <span>Available Tokens:</span>
-                            <span className="font-medium text-blue-600 flex items-center">
-                              <span className="text-yellow-500 mr-1">⚡</span>
+                            <span className="text-gray-300">Available Tokens:</span>
+                            <span className="font-medium text-orange-400 flex items-center">
+                              <span className="text-yellow-400 mr-1">⚡</span>
                               {tokenLoading ? "..." : token}
                             </span>
                           </div>
@@ -272,13 +266,13 @@ const Navbar = () => {
                       )}
 
 
-                      <hr className="my-1" />
+                      <hr className="my-1 border-white/20" />
 
                       <button
-                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        className="flex items-center w-full px-4 py-3 text-sm text-white hover:bg-white/10 transition-colors duration-300 rounded-xl mx-2"
                         onClick={handleLogout}
                       >
-                        <LogOut className="w-4 h-4 mr-3" />
+                        <LogOut className="w-4 h-4 mr-3 text-red-400" />
                         Sign Out
                       </button>
                     </div>
@@ -286,7 +280,7 @@ const Navbar = () => {
                 </div>
               ) : (
                 <button
-                  className="text-sm text-gray-600 hover:bg-gray-100 px-4 py-2 rounded-md"
+                  className="text-sm text-white/90 hover:text-orange-400 hover:bg-white/10 px-4 py-2 rounded-xl transition-all duration-300 border border-white/20 font-medium"
                   onClick={handleAuthClick}
                 >
                   Sign In
@@ -297,10 +291,10 @@ const Navbar = () => {
                 href="https://coff.ee/heisen47"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 flex items-center"
+                className="text-sm bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-4 py-2 rounded-xl hover:from-yellow-400 hover:to-orange-400 flex items-center transition-all duration-300 shadow-lg hover:shadow-xl font-medium"
               >
                 Buy me a coffee
-                <Coffee className="inline ml-2" />
+                <Coffee className="inline ml-2 w-4 h-4" />
               </a>
             </div>
 
@@ -309,12 +303,12 @@ const Navbar = () => {
               {isLoggedIn ? (
                 <div className="relative profile-dropdown">
                   <button
-                    className="flex items-center space-x-1 text-gray-700"
+                    className="flex items-center space-x-1 text-white/90 hover:text-orange-400 transition-colors duration-300"
                     onClick={() =>
                       setIsProfileDropdownOpen(!isProfileDropdownOpen)
                     }
                   >
-                    <div className="w-7 h-7 bg-blue-500 rounded-full flex items-center justify-center overflow-hidden">
+                    <div className="w-7 h-7 bg-gradient-to-r from-orange-400 to-green-400 rounded-full flex items-center justify-center overflow-hidden border border-white/20">
                       {userInfo?.avatar ? (
                         <img
                           src={userInfo.avatar}
@@ -346,20 +340,20 @@ const Navbar = () => {
 
                   {/* Mobile Dropdown Menu */}
                   {isProfileDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
-                      <div className="px-3 py-2 text-xs text-gray-700 border-b border-gray-100">
-                        <div className="font-medium truncate">
+                    <div className="absolute right-0 mt-2 w-40 bg-black/90 backdrop-blur-md rounded-2xl shadow-2xl py-2 z-50 border border-white/20">
+                      <div className="px-3 py-2 text-xs border-b border-white/20">
+                        <div className="font-medium truncate text-white">
                           {userInfo?.name || "User"}
                         </div>
                       </div>
 
                       {/* Mobile Token Display */}
                       {isLoggedIn && typeof token !== "undefined" && (
-                        <div className="px-3 py-2 text-xs text-gray-600 border-b border-gray-100 bg-gray-50">
+                        <div className="px-3 py-2 text-xs border-b border-white/20 bg-gradient-to-r from-orange-500/20 to-green-500/20">
                           <div className="flex items-center justify-between">
-                            <span>Tokens:</span>
-                            <span className="font-medium text-blue-600 flex items-center">
-                              <span className="text-yellow-500 mr-1">⚡</span>
+                            <span className="text-gray-300">Tokens:</span>
+                            <span className="font-medium text-orange-400 flex items-center">
+                              <span className="text-yellow-400 mr-1">⚡</span>
                               {tokenLoading ? "..." : token}
                             </span>
                           </div>
@@ -369,10 +363,10 @@ const Navbar = () => {
                       {/* Profile link removed from mobile menu */}
 
                       <button
-                        className="flex items-center w-full px-3 py-2 text-xs text-gray-700 hover:bg-gray-100"
+                        className="flex items-center w-full px-3 py-2 text-xs text-white hover:bg-white/10 transition-colors duration-300 rounded-xl mx-1"
                         onClick={handleLogout}
                       >
-                        <LogOut className="w-3 h-3 mr-2" />
+                        <LogOut className="w-3 h-3 mr-2 text-red-400" />
                         Sign Out
                       </button>
                     </div>
@@ -380,10 +374,10 @@ const Navbar = () => {
                 </div>
               ) : (
                 <button
-                  className="text-sm text-gray-600 hover:bg-gray-100 px-2 py-1 rounded"
+                  className="text-sm text-white/90 hover:text-orange-400 hover:bg-white/10 px-2 py-1 rounded-xl transition-all duration-300 border border-white/20"
                   onClick={handleModal}
                 >
-                  <LogIn />
+                  <LogIn className="w-4 h-4" />
                 </button>
               )}
 
@@ -391,9 +385,9 @@ const Navbar = () => {
                 href="https://coff.ee/heisen47"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600 flex items-center"
+                className="text-sm bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-2 py-1 rounded-xl hover:from-yellow-400 hover:to-orange-400 flex items-center transition-all duration-300 shadow-lg"
               >
-                <Coffee className="inline" />
+                <Coffee className="w-4 h-4" />
               </a>
             </div>
           </div>
