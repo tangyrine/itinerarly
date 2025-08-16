@@ -6,6 +6,7 @@ import {
   User,
   ChevronDown,
   LogOut,
+  Info,
 } from "lucide-react";
 import { SignInModal } from "./SignInModal";
 import Cookies from "js-cookie";
@@ -262,6 +263,12 @@ const Navbar = () => {
                               {tokenLoading ? "..." : token}
                             </span>
                           </div>
+                          <div className="flex items-center mt-2 p-2 bg-blue-500/20 rounded-lg border border-blue-400/30">
+                            <Info className="w-3 h-3 text-blue-400 mr-2 flex-shrink-0" />
+                            <p className="text-xs text-blue-200">
+                              6 tokens refresh every 24 hours
+                            </p>
+                          </div>
                         </div>
                       )}
 
@@ -356,6 +363,12 @@ const Navbar = () => {
                               <span className="text-yellow-400 mr-1">⚡</span>
                               {tokenLoading ? "..." : token}
                             </span>
+                          </div>
+                          <div className="flex items-center mt-2 p-1.5 bg-blue-500/20 rounded border border-blue-400/30">
+                            <Info className="w-2.5 h-2.5 text-blue-400 mr-1.5 flex-shrink-0" />
+                            <p className="text-xs text-blue-200">
+                              6 tokens refresh every 24hrs
+                            </p>
                           </div>
                         </div>
                       )}

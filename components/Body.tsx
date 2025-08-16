@@ -81,7 +81,7 @@ interface BodyProps {
 
 const communityImages = [
   {
-    url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
+    url: "https://unsplash.com/photos/a-snow-covered-mountain-range-with-a-house-in-the-foreground-qCANb0oBLlY",
     title: "Serene Mountain Views",
     location: "Himachal Pradesh",
   },
@@ -375,7 +375,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
                 Discover breathtaking destinations through the eyes of our
                 travel community
               </p>
-              
+
               {/* Imgur Upload and Submit Links */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -392,11 +392,13 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
                       href="https://imgur.com/upload"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group inline-flex items-center space-x-3 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-purple-600/80 to-orange-600/80 backdrop-blur-sm rounded-2xl border border-white/20 hover:border-white/40 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20 relative overflow-hidden"
+                      className="group inline-flex items-center space-x-3 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-purple-600/80 to-orange-600/80 backdrop-blur-sm rounded-2xl border border-white/20 hover:border-white/40 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20 relative overflow-hidden w-full sm:w-auto min-w-[220px]"
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-orange-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       <Globe className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300 relative z-10" />
-                      <span className="relative z-10">Share Your Travel Photos</span>
+                      <span className="relative z-10">
+                        Share Your Travel Photos
+                      </span>
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300 relative z-10" />
                     </a>
                   </motion.div>
@@ -407,14 +409,13 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
                   >
                     <button
                       onClick={() => {
-                        const imgurLink = prompt("Paste your Imgur link here:");
-                        if (imgurLink && imgurLink.includes("imgur.com")) {
-                          alert("Thank you for sharing! Your photo will be reviewed and added to our community gallery.");
-                        } else if (imgurLink) {
-                          alert("Please provide a valid Imgur link.");
-                        }
+                        window.open(
+                          "https://docs.google.com/forms/d/e/1FAIpQLSex2El_Ag0yKlqho5a4bgoHYvJLfFF0zbcfBnyneJQjb607YA/viewform?usp=dialog",
+                          "_blank",
+                          "noopener,noreferrer"
+                        );
                       }}
-                      className="group inline-flex items-center space-x-3 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-green-600/80 to-blue-600/80 backdrop-blur-sm rounded-2xl border border-white/20 hover:border-white/40 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20 relative overflow-hidden"
+                      className="group inline-flex items-center space-x-3 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-green-600/80 to-blue-600/80 backdrop-blur-sm rounded-2xl border border-white/20 hover:border-white/40 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20 relative overflow-hidden w-full sm:w-auto min-w-[220px]"
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       <Star className="w-5 h-5 group-hover:scale-110 transition-transform duration-300 relative z-10" />
@@ -424,7 +425,8 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
                   </motion.div>
                 </div>
                 <p className="text-xs text-gray-400 mt-2">
-                  Upload to Imgur and share your incredible India moments with our community
+                  Upload to Imgur and share your incredible India moments with
+                  our community
                 </p>
               </motion.div>
             </div>
