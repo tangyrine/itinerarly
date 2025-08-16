@@ -8,8 +8,15 @@ export interface StateData {
   export const stateData: { [key: string]: StateData } = {
     "Andhra Pradesh": {
       name: "Andhra Pradesh",
-      center: [79.7400, 15.9129],
+      center: [80.8600, 15.9129],
       zoom: 2000,
+      description: "Home to ancient temples, scenic beaches, and the Eastern Ghats mountain range"
+    },
+    "Telangana": {
+      name: "Telangana",
+      center: [78.4867, 17.3850],
+      zoom: 2000,
+      description: "Known for its rich history, traditional art forms, and the historic city of Hyderabad"
     },
     "Arunachal Pradesh": {
       name: "Arunachal Pradesh",
@@ -120,11 +127,6 @@ export interface StateData {
       name: "Tamil Nadu",
       center: [78.6569, 11.1271],
       zoom: 2000,
-    },
-    "Telangana": {
-      name: "Telangana",
-      center: [79.0193, 17.1231],
-      zoom: 2200,
     },
     "Tripura": {
       name: "Tripura",
