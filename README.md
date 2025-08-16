@@ -231,6 +231,60 @@ npm run test:watch
 - Enhanced coverage for northeastern states and island territories
 - Seasonal destination recommendations
 
+## 🚀 Future Plans & Roadmap
+
+We're constantly working to enhance Itinerarly with exciting new features and improvements. Here's what's coming next:
+
+### 🤖 AI Enhancement & Personalization
+- **Advanced AI Fine-tuning**: Continuously improving AI responses using user feedback data
+- **Personalized Recommendations**: Learning from user preferences to provide tailored travel suggestions
+- **Smart Itinerary Optimization**: AI-powered route optimization based on travel patterns and user behavior
+- **Contextual Suggestions**: More intelligent recommendations based on season, budget, and travel style
+
+### 💬 Social & Collaboration Features
+- **In-App Group Chat**: Real-time chat functionality for travel groups to discuss plans within the app
+- **Collaborative Planning**: Multiple users can contribute to the same itinerary simultaneously
+- **Travel Community**: Connect with fellow travelers and share experiences
+- **Social Sharing**: Share itineraries and travel photos with the community
+- **Travel Buddies**: Find travel companions with similar interests and destinations
+
+### 💰 Premium Features & Monetization
+- **Token Purchase System**: Buy additional tokens when your daily limit is exhausted
+- **Premium Subscriptions**: Unlock advanced features like unlimited AI requests, priority support
+- **Pro Analytics**: Detailed travel insights and expense tracking for premium users
+- **Exclusive Content**: Access to premium travel guides and insider recommendations
+
+### 🛠️ Technical Improvements
+- **Offline Support**: Download itineraries and maps for offline access
+- **Mobile App**: Native iOS and Android applications
+- **Advanced Maps**: 3D map visualization and satellite imagery integration
+- **Real-time Updates**: Live weather, traffic, and event information
+- **Multi-language Support**: Localization for international travelers
+
+### 🌟 Additional Features
+- **Expense Tracking**: Comprehensive budget management and expense splitting
+- **Booking Integration**: Direct hotel and flight booking within the app
+- **Travel Insurance**: Integrated travel insurance recommendations
+- **Emergency Assistance**: 24/7 travel support and emergency contacts
+- **AR Travel Guide**: Augmented reality features for on-location information
+- **Carbon Footprint Tracking**: Eco-friendly travel options and carbon offset suggestions
+
+### 📊 Analytics & Insights
+- **Travel Analytics Dashboard**: Personal travel statistics and insights
+- **Popular Destinations**: Trending destinations based on community data
+- **Best Time to Visit**: AI-powered optimal timing recommendations
+- **Price Prediction**: Smart pricing alerts for flights and accommodations
+
+---
+
+**Want to contribute to these features or suggest new ones?** 
+- 📧 [Contact us](mailto:your-email@example.com) with feature requests
+- 🐛 [Report issues](https://github.com/yourusername/itinerarly-FE/issues) on GitHub
+- 💡 [Join our Discord](https://discord.gg/your-invite) community for discussions
+- ⭐ Star our repository to stay updated on new releases
+
+*Timeline: Most of these features are planned for release over the next 6-12 months. Priority will be given based on user feedback and demand.*
+
 ## Troubleshooting
 - **API rate limiting**: If encountering rate limiting with the Gemini API:
     - The application automatically retries with exponential backoff
