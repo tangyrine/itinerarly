@@ -4,7 +4,7 @@ import React, { createContext, useState, useContext, useEffect, ReactNode } from
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const SiteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:8080";
+const SiteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "https://itinerarly-be.onrender.com";
 
 interface TokenContextType {
   token: number | undefined;

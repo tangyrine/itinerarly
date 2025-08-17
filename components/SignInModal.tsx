@@ -17,13 +17,25 @@ interface SignInModalProps {
   onClose: () => void; 
 }
 
-const SiteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:8080";
+// Use production backend URL as default, with environment variable override
+const SiteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "https://itinerarly-be.onrender.com";
+
+// Debug environment variable loading
+if (typeof window !== 'undefined') {
+  console.log('Environment check:', {
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+    SiteUrl,
+    isProduction: process.env.NODE_ENV === 'production'
+  });
+}
 
 const signInWithGithub = () => {
+  console.log("Redirecting to:", `${SiteUrl}/oauth2/authorization/github`);
   window.location.href = `${SiteUrl}/oauth2/authorization/github`;
 }
 
 const signInWithGoogle = () => {
+  console.log("Redirecting to:", `${SiteUrl}/oauth2/authorization/google`);
   window.location.href = `${SiteUrl}/oauth2/authorization/google`;
 };
 

@@ -63,7 +63,7 @@ export default function Planner() {
   const [showTokenModal, setShowTokenModal] = useState(false);
 
   const SiteUrl: string =
-    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:8080";
+    process.env.NEXT_PUBLIC_SITE_URL || "https://itinerarly-be.onrender.com";
 
   const {
     token,

@@ -38,7 +38,7 @@ export function StateDetailsModal({
 
   const { token, isLoading: tokenLoading, consumeToken, refreshTokenCount, isTokenAvailable, error } = useToken();
   
-  const SiteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:8080";
+  const SiteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "https://itinerarly-be.onrender.com";
   
   useEffect(() => {
     const checkLogin = () => {

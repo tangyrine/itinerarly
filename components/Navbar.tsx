@@ -23,7 +23,7 @@ const Navbar = () => {
     email?: string;
     avatar?: string;
   } | null>(null);
-  const SiteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:8080";
+  const SiteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "https://itinerarly-be.onrender.com";
   
   // Use global token context
   const { token, isLoading: tokenLoading, refreshTokenCount } = useToken();
