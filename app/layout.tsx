@@ -20,6 +20,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <title>{metadata.title}</title>
         <meta name="description" content={metadata.description} />
+        
+        {/* Performance optimizations */}
+        <link rel="preload" href="/assets/bg-poster.png" as="image" type="image/png" />
+        <link rel="preconnect" href="https://images.unsplash.com" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://ui-avatars.com" />
+        
+        {/* Viewport and responsive meta tags */}
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+        <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
       </head>
       <body>
         <TokenProvider>

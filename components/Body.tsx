@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import {
   Mountain,
@@ -109,11 +110,15 @@ const communityImages = [
 
 const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
   const carouselRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  // Auto-scroll carousel
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
+  const [showFloatingElements, setShowFloatingElements] = useState(false);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) =>
@@ -122,6 +127,28 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
     }, 4000);
 
     return () => clearInterval(interval);
+  }, []);
+
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowVideo(true);
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.load();
+        }
+      }, 100);
+    }, 1000); 
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowFloatingElements(true);
+    }, 2000); 
+
+    return () => clearTimeout(timer);
   }, []);
 
   const scrollToImage = (index: number) => {
@@ -142,31 +169,67 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
 
   return (
     <div className="relative">
-      {/* Enhanced Background with Video */}
+
       <div className="absolute inset-0 z-0">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          aria-label="Background video showing travel destinations"
-          className="object-cover w-full h-full scale-105"
-          poster="/assets/bg-poster.png"
-        >
-          <source src="/assets/background.mp4" type="video/mp4" />
-        </video>
+
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: "url('/assets/bg-poster.png')",
+          }}
+        />
+        
+        {showVideo && (
+          <video
+            ref={videoRef}
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            aria-label="Background video showing travel destinations"
+            className={`object-cover w-full h-full scale-105 transition-opacity duration-1000 ${
+              videoLoaded ? 'opacity-100' : 'opacity-0'
+            }`}
+            poster="/assets/bg-poster.png"
+            onLoadedData={() => {
+              console.log('Video loaded data');
+              setVideoLoaded(true);
+              if (videoRef.current) {
+                videoRef.current.play().catch((error) => {
+                  console.log('Video autoplay failed:', error);
+                });
+              }
+            }}
+            onCanPlay={() => {
+              console.log('Video can play');
+              setVideoLoaded(true);
+            }}
+            onLoadStart={() => {
+              console.log('Video load started');
+            }}
+            onError={(e) => {
+              console.error('Video error:', e);
+              setVideoLoaded(false);
+            }}
+          >
+            <source src="/assets/background.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        )}
+        
         {/* Multi-layered background overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/40 to-black/60" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
       </div>
 
-      {/* Floating Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-        <div className="absolute top-40 right-20 w-1 h-1 bg-purple-400 rounded-full animate-ping" />
-        <div className="absolute bottom-40 left-20 w-1.5 h-1.5 bg-orange-400 rounded-full animate-bounce" />
-      </div>
+      {/* Floating Elements - Load after delay for better performance */}
+      {showFloatingElements && (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 left-10 w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+          <div className="absolute top-40 right-20 w-1 h-1 bg-purple-400 rounded-full animate-ping" />
+          <div className="absolute bottom-40 left-20 w-1.5 h-1.5 bg-orange-400 rounded-full animate-bounce" />
+        </div>
+      )}
 
       {/* Content */}
       <div className="relative z-10 text-white pt-16">
@@ -441,11 +504,17 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
                 >
                   {communityImages.map((img, idx) => (
                     <div key={idx} className="w-full flex-shrink-0 relative">
-                      <img
+                      <Image
                         src={img.url}
                         alt={img.title}
+                        width={800}
+                        height={500}
                         className="w-full h-64 sm:h-80 md:h-96 lg:h-[500px] object-cover"
-                        loading="lazy"
+                        loading={idx === 0 ? "eager" : "lazy"}
+                        priority={idx === 0}
+                        placeholder="blur"
+                        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 800px"
                       />
                       {/* Image overlay with info */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />

@@ -1,11 +1,16 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
+import dynamic from "next/dynamic";
 import { useInView } from "react-intersection-observer";
 import Body from "@/components/Body";
-import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { sections } from "@/data/sections";
+
+const Footer = dynamic(() => import("@/components/Footer"), {
+  loading: () => <div className="h-20 bg-gray-900" />,
+  ssr: true,
+});
 
 const Page: React.FC = () => {
   const [currentBackground, setCurrentBackground] = useState(
