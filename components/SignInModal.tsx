@@ -30,9 +30,6 @@ const signInWithGoogle = () => {
   window.location.href = `${SiteUrl}/oauth2/authorization/google`;
 };
 
-// const signInWithFacebook= () => {
-//   window.location.href = `${SiteUrl}/oauth2/authorization/facebook`;
-// };
 
 export function SignInModal({ openModal, onClose }: SignInModalProps) {
 
