@@ -17,19 +17,15 @@ interface SignInModalProps {
   onClose: () => void; 
 }
 
-  const SiteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:8080";
-
-
+const SiteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:8080";
 
 const signInWithGithub = () => {
   window.location.href = `${SiteUrl}/oauth2/authorization/github`;
 }
 
-
 const signInWithGoogle = () => {
   window.location.href = `${SiteUrl}/oauth2/authorization/google`;
 };
-
 
 export function SignInModal({ openModal, onClose }: SignInModalProps) {
 
