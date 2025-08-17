@@ -1,4 +1,4 @@
-
+#!/bin/bash
 
 echo "🎥 Optimizing background video for better LCP performance..."
 

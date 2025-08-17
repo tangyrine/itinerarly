@@ -119,6 +119,55 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
   const [showVideo, setShowVideo] = useState(false);
   const [showFloatingElements, setShowFloatingElements] = useState(false);
 
+  // Detect device capabilities for optimal video loading
+  const [deviceInfo, setDeviceInfo] = useState({
+    isMobile: false,
+    isLowEndDevice: false,
+    supportsWebM: false,
+    videoSrc: '',
+  });
+
+  useEffect(() => {
+    const isMobile = window.innerWidth <= 768 || /Mobi|Android/i.test(navigator.userAgent);
+    
+
+    const deviceMemory = (navigator as any).deviceMemory;
+    const isLowEndDevice = navigator.hardwareConcurrency <= 2 || 
+                          (deviceMemory && deviceMemory <= 2) ||
+                          /Android.*Chrome\/[0-5]/.test(navigator.userAgent);
+    
+    const supportsWebM = document.createElement('video').canPlayType('video/webm') !== '';
+
+    let videoSrc = '/assets/background.mp4'; 
+    
+    if (isMobile) {
+      videoSrc = supportsWebM 
+        ? '/assets/optimized/background-mobile.webm'
+        : '/assets/optimized/background-mobile.mp4';
+    } else if (window.innerWidth >= 1441) {
+      videoSrc = '/assets/optimized/background-hd.mp4';
+    } else {
+      videoSrc = supportsWebM 
+        ? '/assets/optimized/background-desktop.webm'
+        : '/assets/optimized/background-desktop.mp4';
+    }
+    
+    setDeviceInfo({ isMobile, isLowEndDevice, supportsWebM, videoSrc });
+
+    const delay = isLowEndDevice ? 2000 : isMobile ? 1500 : 1000;
+    
+    const timer = setTimeout(() => {
+      setShowVideo(true);
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.load();
+        }
+      }, 100);
+    }, delay);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) =>
@@ -127,20 +176,6 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
     }, 4000);
 
     return () => clearInterval(interval);
-  }, []);
-
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowVideo(true);
-      setTimeout(() => {
-        if (videoRef.current) {
-          videoRef.current.load();
-        }
-      }, 100);
-    }, 1000); 
-
-    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -168,8 +203,8 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
   };
 
   return (
-    <div className="relative">
-
+    <div className="relative overflow-hidden">
+      {/* Fixed background container to prevent layout issues */}
       <div className="absolute inset-0 z-0">
 
         <div 
@@ -185,34 +220,85 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
             muted
             loop
             playsInline
-            preload="metadata"
+            preload="none"
             aria-label="Background video showing travel destinations"
-            className={`object-cover w-full h-full scale-105 transition-opacity duration-1000 ${
+            className={`absolute inset-0 object-cover w-full h-full transition-opacity duration-1000 ${
               videoLoaded ? 'opacity-100' : 'opacity-0'
             }`}
             poster="/assets/bg-poster.png"
             onLoadedData={() => {
-              console.log('Video loaded data');
+              console.log('Video loaded successfully');
               setVideoLoaded(true);
               if (videoRef.current) {
-                videoRef.current.play().catch((error) => {
-                  console.log('Video autoplay failed:', error);
-                });
+                // Small delay to ensure smooth transition
+                setTimeout(() => {
+                  videoRef.current?.play().catch((error) => {
+                    console.log('Video autoplay prevented by browser:', error);
+                  });
+                }, 200);
               }
             }}
             onCanPlay={() => {
-              console.log('Video can play');
+              console.log('Video ready to play');
               setVideoLoaded(true);
             }}
             onLoadStart={() => {
-              console.log('Video load started');
+              console.log('Video loading started');
             }}
             onError={(e) => {
-              console.error('Video error:', e);
+              const video = e.target as HTMLVideoElement;
+              const error = video.error;
+              
+              console.error('Video loading error details:', {
+                code: error?.code,
+                message: error?.message,
+                networkState: video.networkState,
+                readyState: video.readyState,
+                currentSrc: video.currentSrc,
+                src: video.src
+              });
+              
+              let errorMessage = 'Unknown video error';
+              if (error) {
+                switch (error.code) {
+                  case 1:
+                    errorMessage = 'Video loading aborted by user';
+                    break;
+                  case 2:
+                    errorMessage = 'Network error while loading video';
+                    break;
+                  case 3:
+                    errorMessage = 'Video decode error';
+                    break;
+                  case 4:
+                    errorMessage = 'Video format not supported';
+                    break;
+                }
+              }
+              
+              console.warn(`Video Error: ${errorMessage}`);
               setVideoLoaded(false);
+              
+              // Fallback to static background - video will not show
+            }}
+            onPlay={() => {
+              console.log('Video playing');
             }}
           >
-            <source src="/assets/background.mp4" type="video/mp4" />
+            {/* Single optimized source based on device detection */}
+            <source 
+              src={deviceInfo.videoSrc} 
+              type={deviceInfo.videoSrc.includes('.webm') ? 'video/webm' : 'video/mp4'}
+              onError={(e) => console.log('Primary video source failed:', deviceInfo.videoSrc)}
+            />
+            
+            {/* Fallback to original video */}
+            <source 
+              src="/assets/background.mp4" 
+              type="video/mp4"
+              onError={(e) => console.log('Fallback video source failed - no video will play')}
+            />
+            
             Your browser does not support the video tag.
           </video>
         )}
