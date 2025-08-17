@@ -49,6 +49,7 @@ export default function Planner() {
     budget: "",
   });
   const [itinerary, setItinerary] = useState("");
+  const [destinationName, setDestinationName] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -73,6 +74,11 @@ export default function Planner() {
   } = useToken();
 
   const router = useRouter();
+
+  const extractDestinationName = (itineraryText: string): string => {
+    const destinationMatch = itineraryText.match(/Destination:\s*([^\n]+)/i);
+    return destinationMatch ? destinationMatch[1].trim() : "AI Recommended Destination";
+  };
 
   const handleModal = () => {
     setOpenModal(!openModal);
@@ -204,7 +210,6 @@ export default function Planner() {
 
   const generateItinerary = async () => {
     setLoading(true);
-    setDrawerOpen(false);
     try {
       if (!isLoggedIn) {
         setOpenModal(true);
@@ -226,7 +231,7 @@ export default function Planner() {
 
       const result = await ItineraryGeneration(formData);
       setItinerary(result ?? "");
-
+      setDestinationName(formData.destination);
       setDrawerOpen(false);
       setShowModal(true);
     } catch (error) {
@@ -234,8 +239,9 @@ export default function Planner() {
       setItinerary(
         "Sorry, we couldn't generate an itinerary. Please try again."
       );
-      setShowModal(true);
+      setDestinationName(formData.destination);
       setDrawerOpen(false);
+      setShowModal(true);
     } finally {
       setLoading(false);
     }
@@ -243,7 +249,7 @@ export default function Planner() {
 
   const generateMonthBasedItinerary = async () => {
     setLoading(true);
-    setDrawerOpen(false);
+
 
     try {
       if (!isLoggedIn) {
@@ -267,6 +273,7 @@ export default function Planner() {
 
       const result = await generateMonthBasedTrip(monthData);
       setItinerary(result ?? "");
+      setDestinationName(extractDestinationName(result ?? ""));
 
       setDrawerOpen(false);
       setShowModal(true);
@@ -275,8 +282,9 @@ export default function Planner() {
       const errorMessage =
         "Sorry, we couldn't generate an itinerary for your selected month. Please try again.";
       setItinerary(errorMessage);
-      setShowModal(true);
+      setDestinationName(`Best destination for ${monthData.month}`);
       setDrawerOpen(false);
+      setShowModal(true);
     } finally {
       setLoading(false);
     }
@@ -831,11 +839,7 @@ export default function Planner() {
         open={showModal}
         onClose={() => setShowModal(false)}
         itinerary={itinerary}
-        destination={
-          plannerMode === "manual"
-            ? formData.destination
-            : "AI Recommended Destination"
-        }
+        destination={destinationName || formData.destination || "AI Recommended Destination"}
       />
 
       <SignInModal openModal={openModal} onClose={handleModal} />

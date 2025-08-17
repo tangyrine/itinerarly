@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
       try {
         const response = await ai.models.generateContent({
           model: models[currentModelIndex],
-          contents: `Based on the month of ${month}, suggest the BEST destination in India to visit during this time and create a detailed ${days}-day itinerary for ${people} people with a ${budget} budget in 60 words.
+          contents: `Based on the month of ${month}, suggest the BEST destination in India to visit during this time and create a detailed ${days}-day itinerary for ${people} people with a ${budget} budget.
 
         Consider:
             - Weather conditions in ${month}
@@ -44,20 +44,36 @@ export async function POST(req: NextRequest) {
             - Best places to visit during this specific month
             - Activities suitable for the weather
 
-            Format your response each response should come in a new line:
-            **Recommended Destination: [DESTINATION NAME]**
-            
-            **Why this destination is perfect for ${month}:** [Brief explanation]
-
-            **${days}-Day Itinerary:**
-
-            [Provide detailed day-wise itinerary with activities, places to visit, estimated costs, accommodation suggestions, and travel tips]
-            **Total Estimated Budget:** [Total cost for the trip]
-
-            Keep it practical, engaging, and show the total budget-appropriate amount at the buttom.`,
+        Return the itinerary in this exact format, using "|||" as a delimiter between sections:
+        Destination: <recommended destination name>
+        Budget: <budget> per head
+        Hotels: <hotel1>, <hotel2>, <hotel3>
+        Restaurants: <restaurant1>, <restaurant2>, <restaurant3>
+        Attractions: <attraction1>, <attraction2>, <attraction3>
+        Day-wise Plan:
+        Day 1: <activities>
+        Day 2: <activities>
+        Day 3: <activities>
+        Why perfect for ${month}: <brief seasonal explanation>
+        |||
+        Example:
+        Destination: Goa
+        Budget: ₹20,000 - ₹25,000 per head
+        Hotels: Taj Exotica, The Leela, Alila Diwa
+        Restaurants: Thalassa, Gunpowder, Fisherman's Wharf
+        Attractions: Baga Beach, Dudhsagar Falls, Old Goa Churches
+        Day-wise Plan:
+        Day 1: Baga Beach, Calangute Beach, Anjuna Market
+        Day 2: Dudhsagar Falls, Spice Plantation Tour
+        Day 3: Old Goa Churches, Fontainhas, River Cruise
+        Why perfect for December: Pleasant weather, perfect beach conditions, Christmas celebrations
+        |||
+        
+        Now generate for: Best destination for ${month}, ${people} people, ${days} days, budget: ${budget} per head. Return in 80 words or less.`,
         });
         
-        return response.text ?? "";
+        let text = typeof response.text === "string" ? response.text.trim() : "";
+        return text;
       } catch (error: any) {
         if (error.message?.includes("rate limit") && currentModelIndex < models.length - 1) {
           currentModelIndex++;
