@@ -155,6 +155,15 @@ export function TokenProvider({ children }: { children: ReactNode }) {
       setToken(response.data.remainingTokens ?? 0);
       setIsAuthenticated(true);
       
+      // Set a simple isLoggedIn cookie for middleware to use
+      // This avoids the JWT token issues in middleware
+      setCookieSafely(Cookies, "isLoggedIn", "true", { 
+        expires: 7, // 7 days
+        sameSite: 'Lax',
+        secure: process.env.NODE_ENV === 'production'
+      });
+      console.log("✅ Set isLoggedIn cookie to true");
+      
       // Store authentication state in session/localStorage for persistence
       // This helps when HttpOnly cookies are present but not visible to JS
       try {
@@ -173,6 +182,10 @@ export function TokenProvider({ children }: { children: ReactNode }) {
       console.error("Authentication check failed:", error);
       setToken(0);
       setIsAuthenticated(false);
+      
+      // Remove the isLoggedIn cookie when authentication fails
+      Cookies.remove("isLoggedIn");
+      console.log("❌ Removed isLoggedIn cookie due to auth failure");
       
       // Clear authentication state in storage
       try {
@@ -281,7 +294,8 @@ export function TokenProvider({ children }: { children: ReactNode }) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401) {
           setIsAuthenticated(false);
-          // Clear authentication state in storage
+          // Clear authentication state in storage and cookies
+          Cookies.remove("isLoggedIn");
           try {
             sessionStorage.removeItem("isAuthenticated");
             localStorage.removeItem("isAuthenticated");

@@ -126,8 +126,8 @@ const Navbar = () => {
 
   useEffect(() => {
     const checkLogin = () => {
-      // Use getCookieSafely for safer cookie handling
-      const loggedIn = !!getCookieSafely(Cookies, "auth-token");
+      // Use the isLoggedIn cookie instead of parsing JWT tokens
+      const loggedIn = getCookieSafely(Cookies, "isLoggedIn") === "true";
       setIsLoggedIn(loggedIn);
 
       if (loggedIn && !userInfo) {
