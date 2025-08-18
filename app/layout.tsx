@@ -3,16 +3,10 @@ import React from 'react';
 import { Analytics } from '@vercel/analytics/react'
 import { TokenProvider } from '@/lib/TokenProvider';
 import { GoogleAnalytics } from '@next/third-parties/google'
-import dynamic from 'next/dynamic';
+import AuthWrapper from '@/components/AuthWrapper';
 
 // Configure axios for cross-domain cookies
 import '@/lib/axios-config';
-
-// Import the AuthenticationTester with dynamic import to ensure it only runs on the client
-const AuthenticationTester = dynamic(
-  () => import('@/components/AuthenticationTester'),
-  { ssr: false }
-);
 
 export const metadata = {
   title: 'Itinerary App',
@@ -48,7 +42,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <body>
         <TokenProvider>
           {children}
-          <AuthenticationTester />
+          <AuthWrapper />
         </TokenProvider>
         <Analytics />
         {gaId && <GoogleAnalytics gaId={gaId} />}
