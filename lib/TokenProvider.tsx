@@ -9,17 +9,34 @@ const SiteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "https://itinerarly-
 
 
 function checkAuthenticationMechanisms() {
-
+  // Use safe cookie handling for all cookie operations
+  // This will help prevent the OAuth2 error with character [34] (double quotes)
+  
   const visibleCookies = document.cookie;
   const hasCookies = visibleCookies.length > 0;
   const hasVisibleJsessionId = visibleCookies.includes('JSESSIONID');
   const hasVisibleAuthToken = visibleCookies.includes('auth-token') || visibleCookies.includes('authToken');
   
+  // Use getCookieSafely directly from the cookie-utils
   const jsessionidFromJsCookie = Cookies.get("JSESSIONID");
-  let authTokenFromJsCookie = Cookies.get("auth-token") || Cookies.get("authToken");
-
-  if (authTokenFromJsCookie) {
-    authTokenFromJsCookie = extractJwtToken(authTokenFromJsCookie);
+  
+  // Get auth tokens and ensure they're properly sanitized
+  let authTokenRaw = Cookies.get("auth-token");
+  let altAuthTokenRaw = Cookies.get("authToken");
+  
+  // Clean these tokens proactively to prevent OAuth errors
+  let authTokenFromJsCookie = authTokenRaw ? extractJwtToken(authTokenRaw) : undefined;
+  let altAuthTokenFromJsCookie = altAuthTokenRaw ? extractJwtToken(altAuthTokenRaw) : undefined;
+  
+  // If we have tokens with issues, clean and reset them
+  if (authTokenRaw && authTokenRaw !== authTokenFromJsCookie) {
+    console.log("Sanitizing malformed auth-token cookie");
+    setCookieSafely(Cookies, "auth-token", authTokenFromJsCookie);
+  }
+  
+  if (altAuthTokenRaw && altAuthTokenRaw !== altAuthTokenFromJsCookie) {
+    console.log("Sanitizing malformed authToken cookie");
+    setCookieSafely(Cookies, "authToken", altAuthTokenFromJsCookie);
   }
   
   const hasLocalStorageToken = 
@@ -37,6 +54,7 @@ function checkAuthenticationMechanisms() {
     hasVisibleAuthToken,
     jsessionidFromJsCookie: jsessionidFromJsCookie !== undefined,
     authTokenFromJsCookie: authTokenFromJsCookie !== undefined,
+    altAuthTokenFromJsCookie: altAuthTokenFromJsCookie !== undefined,
     hasLocalStorageToken,
     oauthFlowStarted,
     authInProgress,
@@ -50,6 +68,7 @@ function checkAuthenticationMechanisms() {
     jsessionidFromJsCookie !== undefined ||
     hasVisibleAuthToken ||
     authTokenFromJsCookie !== undefined ||
+    altAuthTokenFromJsCookie !== undefined ||
     hasLocalStorageToken ||
     // Also check session/localStorage for auth state
     sessionStorage.getItem("isAuthenticated") === "true" ||
@@ -105,6 +124,27 @@ export function TokenProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
     setError(null);
     
+    // Before making the request, ensure cookies are sanitized to prevent OAuth errors
+    const authTokenRaw = Cookies.get("auth-token");
+    const altAuthTokenRaw = Cookies.get("authToken");
+    
+    // Clean any potentially malformed tokens before making the API call
+    if (authTokenRaw) {
+      const sanitizedToken = extractJwtToken(authTokenRaw);
+      if (sanitizedToken !== authTokenRaw) {
+        console.log("Sanitizing auth-token before API call");
+        setCookieSafely(Cookies, "auth-token", sanitizedToken);
+      }
+    }
+    
+    if (altAuthTokenRaw) {
+      const sanitizedToken = extractJwtToken(altAuthTokenRaw);
+      if (sanitizedToken !== altAuthTokenRaw) {
+        console.log("Sanitizing authToken before API call");
+        setCookieSafely(Cookies, "authToken", sanitizedToken);
+      }
+    }
+    
     try {
       const response = await axios.get(`${SiteUrl}/api/v1/tokens/remaining`, {
         withCredentials: true // This ensures cookies are sent with the request
@@ -144,7 +184,41 @@ export function TokenProvider({ children }: { children: ReactNode }) {
       }
       
       if (axios.isAxiosError(error)) {
-        if (error.response?.status === 401) {
+        // Check specifically for OAuth error with invalid character [34]
+        const errorMsg = error.response?.data?.error || '';
+        const isOAuthCharacterError = 
+          errorMsg.includes('OAuth2 authentication failed') && 
+          errorMsg.includes('invalid character [34]');
+        
+        if (isOAuthCharacterError) {
+          console.error("Detected OAuth2 invalid character error - cleaning cookies");
+          
+          // Clean up problematic cookies
+          const authTokenRaw = Cookies.get("auth-token");
+          const altAuthTokenRaw = Cookies.get("authToken");
+          
+          if (authTokenRaw) {
+            Cookies.remove("auth-token");
+            const sanitizedToken = extractJwtToken(authTokenRaw);
+            setCookieSafely(Cookies, "auth-token", sanitizedToken);
+          }
+          
+          if (altAuthTokenRaw) {
+            Cookies.remove("authToken");
+            const sanitizedToken = extractJwtToken(altAuthTokenRaw);
+            setCookieSafely(Cookies, "authToken", sanitizedToken);
+          }
+          
+          // Try again with cleaned cookies
+          setError("Fixing authentication issue. Please wait...");
+          
+          // Wait a moment and try again with cleaned cookies
+          setTimeout(() => {
+            refreshTokenCount();
+          }, 500);
+          
+          return;
+        } else if (error.response?.status === 401) {
           setError("Authentication error. Please sign in again.");
         } else {
           setError(`Failed to fetch tokens: ${error.response?.data?.message || error.message}`);
@@ -293,6 +367,42 @@ export function TokenProvider({ children }: { children: ReactNode }) {
     window.addEventListener("focus", checkAuth);
     return () => window.removeEventListener("focus", checkAuth);
   }, []);
+
+  // Add effect to handle redirection when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      // Check if we're on a page that should redirect to /start
+      const currentPath = window.location.pathname;
+      
+      // Don't redirect if we're already on the start page or in an authenticated area
+      const shouldRedirect = 
+        currentPath !== '/start' && 
+        !currentPath.startsWith('/start/') &&
+        !currentPath.includes('/app/') &&
+        !currentPath.includes('/dashboard/');
+      
+      if (shouldRedirect) {
+        // Check for OAuth parameters in URL that might indicate we just completed auth
+        const url = new URL(window.location.href);
+        const hasAuthParams = url.searchParams.has('token') || 
+                            url.searchParams.has('code') || 
+                            url.searchParams.has('auth');
+        
+        // If we have auth parameters or we just completed the OAuth flow, redirect
+        if (hasAuthParams || localStorage.getItem("oauthFlowStarted")) {
+          console.log("Authentication successful, redirecting to /start");
+          
+          // Clean up OAuth flow markers before redirecting
+          localStorage.removeItem("oauthFlowStarted");
+          localStorage.removeItem("oauthFlowTimestamp");
+          sessionStorage.removeItem("authInProgress");
+          
+          // Use window.location for full page navigation to ensure cookies are sent
+          window.location.href = "/start";
+        }
+      }
+    }
+  }, [isAuthenticated]);
 
   const value = {
     token,
