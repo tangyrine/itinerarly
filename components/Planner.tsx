@@ -106,8 +106,11 @@ export default function Planner() {
         }
       );
 
+      // Remove all authentication cookies
       Cookies.remove("auth-token", { path: "/" });
       Cookies.remove("JSESSIONID", { path: "/" });
+      Cookies.remove("isLoggedIn", { path: "/" }); // This is the key cookie for middleware
+      Cookies.remove("authToken", { path: "/" }); // Alternative auth token
 
       setIsLoggedIn(false);
       setUserInfo(null);
@@ -127,8 +130,12 @@ export default function Planner() {
         });
       }
 
+      // Clear all authentication cookies even if logout fails
       Cookies.remove("auth-token", { path: "/" });
       Cookies.remove("JSESSIONID", { path: "/" });
+      Cookies.remove("isLoggedIn", { path: "/" }); // This is the key cookie for middleware
+      Cookies.remove("authToken", { path: "/" }); // Alternative auth token
+      
       setIsLoggedIn(false);
       setUserInfo(null);
       setIsProfileDropdownOpen(false);

@@ -405,6 +405,8 @@ export function TokenProvider({ children }: { children: ReactNode }) {
         // If we have auth parameters or we just completed the OAuth flow, redirect
         if (hasAuthParams || localStorage.getItem("oauthFlowStarted")) {
           console.log("Authentication successful, redirecting to /start");
+          console.log("Current isAuthenticated state:", isAuthenticated);
+          console.log("Current path:", currentPath);
           
           // Clean up OAuth flow markers before redirecting
           localStorage.removeItem("oauthFlowStarted");
