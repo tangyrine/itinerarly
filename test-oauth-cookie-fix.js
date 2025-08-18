@@ -1,18 +1,13 @@
-#!/bin/bash
+#!/usr/bin/env node
 
-# Test script to verify the OAuth cookie fix
-echo "🔍 Testing OAuth Cookie Fix"
-echo "=========================="
+// Test script to verify the OAuth cookie fix
+console.log("🔍 Testing OAuth Cookie Fix");
+console.log("==========================");
 
-# Test the cookie sanitization
-echo "Testing cookie sanitization for JWT tokens with problematic characters..."
+// Test the cookie sanitization
+console.log("Testing cookie sanitization for JWT tokens with problematic characters...");
 
-# Create a test directory
-mkdir -p ./test-oauth-fix
-
-# Create a test file to verify the cookie sanitization
-cat > ./test-oauth-fix/test-cookie.js << 'EOL'
-const { extractJwtToken } = require('../lib/cookie-utils');
+const { extractJwtToken } = require('./lib/cookie-utils');
 
 // Test cases with problematic JWT tokens
 const testCases = [
@@ -72,13 +67,9 @@ if (failed > 0) {
   process.exit(1);
 }
 EOL
+// Exit with non-zero if any tests failed
+if (failed > 0) {
+  process.exit(1);
+}
 
-# Run the test
-echo "Running cookie sanitization tests..."
-node ./test-oauth-fix/test-cookie.js
-
-# Clean up
-echo "Cleaning up test files..."
-rm -rf ./test-oauth-fix
-
-echo "✅ OAuth cookie fix verification complete"
+console.log("✅ OAuth cookie fix verification complete");
