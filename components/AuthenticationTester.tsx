@@ -3,6 +3,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../lib/axios-config';
 import Cookies from 'js-cookie';
+import { sanitizeCookieValue, setCookieSafely } from '@/lib/cookie-utils';
+
+// Function to sanitize cookie values
+const sanitizeCookie = (value: string): string => {
+  return sanitizeCookieValue(value);
+};
 
 const AuthenticationTester = () => {
   const [results, setResults] = useState({
@@ -31,8 +37,8 @@ const AuthenticationTester = () => {
       const response = await axios.get('/api/v1/tokens/remaining');
       
       // Restore cookies
-      if (authToken) Cookies.set('auth-token', authToken);
-      if (altAuthToken) Cookies.set('authToken', altAuthToken);
+      if (authToken) setCookieSafely(Cookies, 'auth-token', authToken);
+      if (altAuthToken) setCookieSafely(Cookies, 'authToken', altAuthToken);
       
       return response.status < 400;
     } catch (error) {
@@ -56,8 +62,8 @@ const AuthenticationTester = () => {
       const response = await axios.get('/api/v1/tokens/remaining');
       
       // Restore cookies
-      if (jsessionid) Cookies.set('JSESSIONID', jsessionid);
-      if (altAuthToken) Cookies.set('authToken', altAuthToken);
+      if (jsessionid) setCookieSafely(Cookies, 'JSESSIONID', jsessionid);
+      if (altAuthToken) setCookieSafely(Cookies, 'authToken', altAuthToken);
       
       return response.status < 400;
     } catch (error) {
@@ -81,8 +87,8 @@ const AuthenticationTester = () => {
       const response = await axios.get('/api/v1/tokens/remaining');
       
       // Restore cookies
-      if (jsessionid) Cookies.set('JSESSIONID', jsessionid);
-      if (authToken) Cookies.set('auth-token', authToken);
+      if (jsessionid) setCookieSafely(Cookies, 'JSESSIONID', jsessionid);
+      if (authToken) setCookieSafely(Cookies, 'auth-token', authToken);
       
       return response.status < 400;
     } catch (error) {
@@ -111,9 +117,9 @@ const AuthenticationTester = () => {
       });
       
       // Restore cookies
-      if (jsessionid) Cookies.set('JSESSIONID', jsessionid);
-      if (authToken) Cookies.set('auth-token', authToken);
-      if (altAuthToken) Cookies.set('authToken', altAuthToken);
+      if (jsessionid) setCookieSafely(Cookies, 'JSESSIONID', sanitizeCookieValue(jsessionid));
+      if (authToken) setCookieSafely(Cookies, 'auth-token', sanitizeCookieValue(authToken));
+      if (altAuthToken) setCookieSafely(Cookies, 'authToken', sanitizeCookieValue(altAuthToken));
       
       return response.status < 400;
     } catch (error) {
@@ -142,9 +148,9 @@ const AuthenticationTester = () => {
       });
       
       // Restore cookies
-      if (jsessionid) Cookies.set('JSESSIONID', jsessionid);
-      if (authToken) Cookies.set('auth-token', authToken);
-      if (altAuthToken) Cookies.set('authToken', altAuthToken);
+      if (jsessionid) setCookieSafely(Cookies, 'JSESSIONID', sanitizeCookieValue(jsessionid));
+      if (authToken) setCookieSafely(Cookies, 'auth-token', sanitizeCookieValue(authToken));
+      if (altAuthToken) setCookieSafely(Cookies, 'authToken', sanitizeCookieValue(altAuthToken));
       
       return response.status < 400;
     } catch (error) {

@@ -33,11 +33,22 @@ if (typeof window !== 'undefined') {
 
 const signInWithGithub = () => {
   console.log("Redirecting to:", `${SiteUrl}/oauth2/authorization/github`);
+  
+  // Set a flag that we're in the OAuth flow
+  // This helps detect when authentication is in progress
+  localStorage.setItem("oauthFlowStarted", "github");
+  localStorage.setItem("oauthFlowTimestamp", new Date().toISOString());
+  
   window.location.href = `${SiteUrl}/oauth2/authorization/github`;
 }
 
 const signInWithGoogle = () => {
   console.log("Redirecting to:", `${SiteUrl}/oauth2/authorization/google`);
+  
+  // Set a flag that we're in the OAuth flow
+  localStorage.setItem("oauthFlowStarted", "google");
+  localStorage.setItem("oauthFlowTimestamp", new Date().toISOString());
+  
   window.location.href = `${SiteUrl}/oauth2/authorization/google`;
 };
 
@@ -52,12 +63,29 @@ export function SignInModal({ openModal, onClose }: SignInModalProps) {
                           url.searchParams.has('code') || 
                           url.searchParams.has('auth');
     
-    // If we have auth params, we were redirected back from OAuth
-    if (hasAuthParams) {
-      console.log("OAuth redirect detected");
+    // Check if we were in an OAuth flow
+    const oauthFlowStarted = localStorage.getItem("oauthFlowStarted");
+    const oauthFlowTimestamp = localStorage.getItem("oauthFlowTimestamp");
+    
+    // If we have auth params or we were in an OAuth flow and just returned
+    if (hasAuthParams || oauthFlowStarted) {
+      console.log("OAuth redirect or return detected:", { 
+        hasAuthParams, 
+        oauthProvider: oauthFlowStarted,
+        flowStarted: oauthFlowTimestamp 
+      });
+      
+      // Mark that authentication is expected, even before the API confirms it
+      // This helps UI elements render appropriately during the check
+      sessionStorage.setItem("authInProgress", "true");
       
       // Refresh token count to check authentication status
       refreshTokenCount().then(() => {
+        // Clean up OAuth flow markers
+        localStorage.removeItem("oauthFlowStarted");
+        localStorage.removeItem("oauthFlowTimestamp");
+        sessionStorage.removeItem("authInProgress");
+        
         // Clean up URL params to avoid keeping sensitive info in browser history
         window.history.replaceState({}, document.title, window.location.pathname);
       });

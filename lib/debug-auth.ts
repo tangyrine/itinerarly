@@ -1,5 +1,6 @@
 // Add this debug helper function to your codebase to analyze JWT token issues
 import Cookies from 'js-cookie';
+import { getCookieSafely } from './cookie-utils';
 
 /**
  * Debug function to check for JWT token and other authentication cookies
@@ -16,24 +17,31 @@ function debugAuthTokens(): string {
   try {
     console.log("2. Cookies from js-cookie library:");
     console.log({
-      JSESSIONID: Cookies.get("JSESSIONID") || "Not found/HttpOnly",
-      authToken: Cookies.get("auth-token") || "Not found",
-      altAuthToken: Cookies.get("authToken") || "Not found",
-      JWT: Cookies.get("JWT") || "Not found",
-      jwt: Cookies.get("jwt") || "Not found",
-      accessToken: Cookies.get("access_token") || "Not found"
+      JSESSIONID: getCookieSafely(Cookies, "JSESSIONID") || "Not found/HttpOnly",
+      authToken: getCookieSafely(Cookies, "auth-token") || "Not found",
+      altAuthToken: getCookieSafely(Cookies, "authToken") || "Not found",
+      JWT: getCookieSafely(Cookies, "JWT") || "Not found",
+      jwt: getCookieSafely(Cookies, "jwt") || "Not found",
+      accessToken: getCookieSafely(Cookies, "access_token") || "Not found"
     });
   } catch (e) {
     console.log("js-cookie library not available:", e);
   }
   
   // 3. Check localStorage for tokens
-  console.log("3. Local storage tokens:");
+  console.log("3. Local storage tokens and auth state:");
   console.log({
     token: localStorage.getItem("token") || "Not found",
     accessToken: localStorage.getItem("access_token") || "Not found",
     idToken: localStorage.getItem("id_token") || "Not found",
-    refreshToken: localStorage.getItem("refresh_token") || "Not found"
+    refreshToken: localStorage.getItem("refresh_token") || "Not found",
+    isAuthenticated: localStorage.getItem("isAuthenticated") || "Not found",
+    lastAuthCheck: localStorage.getItem("lastAuthCheck") || "Not found",
+    lastAuthError: localStorage.getItem("lastAuthError") || "Not found",
+    sessionIsAuthenticated: sessionStorage.getItem("isAuthenticated") || "Not found",
+    oauthFlowStarted: localStorage.getItem("oauthFlowStarted") || "Not found",
+    oauthFlowTimestamp: localStorage.getItem("oauthFlowTimestamp") || "Not found",
+    authInProgress: sessionStorage.getItem("authInProgress") || "Not found"
   });
   
   // 4. Make a test request to check auth status
@@ -93,6 +101,18 @@ function debugAuthTokens(): string {
   } else {
     console.log("⚠️ JSESSIONID cookie is not visible to JavaScript (may be HttpOnly)");
     console.log("👉 This is NORMAL if the backend sets it as HttpOnly for security");
+  }
+  
+  if (localStorage.getItem("isAuthenticated") === "true" || 
+      sessionStorage.getItem("isAuthenticated") === "true") {
+    console.log("✅ Authentication state found in storage (logged in)");
+  } else {
+    console.log("❌ No authentication state in storage (not logged in)");
+  }
+  
+  if (localStorage.getItem("oauthFlowStarted") || 
+      sessionStorage.getItem("authInProgress") === "true") {
+    console.log("🔄 Authentication flow in progress");
   }
   
   console.log("💡 HttpOnly cookies cannot be accessed by JavaScript directly");

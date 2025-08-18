@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import StateDetailsBody from "./StateDetailsBody";
 import Cookies from "js-cookie";
 import { useToken } from "../lib/TokenProvider";
+import { getCookieSafely } from "@/lib/cookie-utils";
 
 interface StateDetailsModal {
   showStateModal: boolean;
@@ -42,7 +43,8 @@ export function StateDetailsModal({
   
   useEffect(() => {
     const checkLogin = () => {
-      const loggedIn = !!Cookies.get("auth-token");
+      // Use getCookieSafely for safer cookie handling
+      const loggedIn = !!getCookieSafely(Cookies, "auth-token");
       setIsLoggedIn(loggedIn);
       
       if (loggedIn) {

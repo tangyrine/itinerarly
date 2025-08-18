@@ -13,6 +13,11 @@ export default function AuthDebugPanel() {
     jsessionid: '',
     authToken: '',
     apiStatus: 'Not checked',
+    localStorageAuth: 'Not checked',
+    sessionStorageAuth: 'Not checked', 
+    lastAuthCheck: 'Never',
+    oauthFlowStarted: 'No',
+    authInProgress: 'No'
   });
 
   const isDev = process.env.NODE_ENV === 'development';
@@ -28,6 +33,11 @@ export default function AuthDebugPanel() {
       jsessionid: document.cookie.includes('JSESSIONID') ? 'Present' : 'Not visible (likely HttpOnly)',
       authToken: document.cookie.includes('auth-token') ? 'Present' : 'Not found',
       apiStatus: isAuthenticated ? 'Authenticated' : 'Not authenticated',
+      localStorageAuth: localStorage.getItem('isAuthenticated') || 'Not set',
+      sessionStorageAuth: sessionStorage.getItem('isAuthenticated') || 'Not set',
+      lastAuthCheck: localStorage.getItem('lastAuthCheck') || 'Never',
+      oauthFlowStarted: localStorage.getItem('oauthFlowStarted') || 'No',
+      authInProgress: sessionStorage.getItem('authInProgress') === 'true' ? 'Yes' : 'No'
     });
   };
 
@@ -73,6 +83,12 @@ export default function AuthDebugPanel() {
             <p>Authenticated: {isAuthenticated ? 'Yes' : 'No'}</p>
             <p>JSESSIONID: {debugInfo.jsessionid}</p>
             <p>AuthToken: {debugInfo.authToken}</p>
+            <p>localStorage Auth: {debugInfo.localStorageAuth}</p>
+            <p>sessionStorage Auth: {debugInfo.sessionStorageAuth}</p>
+            <p>OAuth Flow: {debugInfo.oauthFlowStarted}</p>
+            <p>Auth In Progress: {debugInfo.authInProgress}</p>
+            <p>Last Auth Check: {debugInfo.lastAuthCheck !== 'Never' ? 
+                new Date(debugInfo.lastAuthCheck).toLocaleTimeString() : 'Never'}</p>
           </div>
           <div style={{ display: 'flex', gap: '5px', marginTop: '10px' }}>
             <button 
@@ -100,6 +116,26 @@ export default function AuthDebugPanel() {
               }}
             >
               Refresh Token
+            </button>
+            <button 
+              onClick={() => {
+                localStorage.removeItem("isAuthenticated");
+                sessionStorage.removeItem("isAuthenticated");
+                localStorage.removeItem("oauthFlowStarted");
+                sessionStorage.removeItem("authInProgress");
+                localStorage.setItem("lastAuthError", new Date().toISOString());
+                runDebug();
+              }}
+              style={{
+                backgroundColor: '#dc3545',
+                color: 'white',
+                padding: '5px 10px',
+                borderRadius: '4px',
+                fontSize: '12px',
+                border: 'none',
+              }}
+            >
+              Clear Auth
             </button>
           </div>
           <div style={{ marginTop: '10px', fontSize: '10px' }}>

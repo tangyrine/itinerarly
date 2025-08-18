@@ -124,6 +124,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+    <script src="cookie-utils.js"></script>
     <script>
         // Configuration
         const API_URL = "https://itinerarly-be.onrender.com";
@@ -179,7 +180,7 @@
                 // Restore other cookies
                 Object.keys(storedCookies).forEach(name => {
                     if (name !== 'JSESSIONID') {
-                        Cookies.set(name, storedCookies[name]);
+                        setCookieSafely(Cookies, name, storedCookies[name]);
                     }
                 });
                 
@@ -216,7 +217,7 @@
                 Cookies.remove('authToken');
                 
                 // Set test auth-token
-                Cookies.set('auth-token', TEST_TOKEN);
+                setCookieSafely(Cookies, 'auth-token', TEST_TOKEN);
                 
                 // Configure axios for this request
                 const instance = axios.create({
@@ -267,7 +268,7 @@
                 Cookies.remove('auth-token');
                 
                 // Set test authToken
-                Cookies.set('authToken', TEST_TOKEN);
+                setCookieSafely(Cookies, 'authToken', TEST_TOKEN);
                 
                 // Configure axios for this request
                 const instance = axios.create({

@@ -12,6 +12,7 @@ import { SignInModal } from "./SignInModal";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { useToken } from "@/lib/TokenProvider";
+import { getCookieSafely } from "@/lib/cookie-utils";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -125,7 +126,8 @@ const Navbar = () => {
 
   useEffect(() => {
     const checkLogin = () => {
-      const loggedIn = !!Cookies.get("auth-token");
+      // Use getCookieSafely for safer cookie handling
+      const loggedIn = !!getCookieSafely(Cookies, "auth-token");
       setIsLoggedIn(loggedIn);
 
       if (loggedIn && !userInfo) {

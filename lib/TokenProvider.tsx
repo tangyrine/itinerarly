@@ -3,32 +3,59 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { sanitizeCookieValue, setCookieSafely, extractJwtToken } from "./cookie-utils";
 
 const SiteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "https://itinerarly-be.onrender.com";
 
-// Define a function to check all possible authentication mechanisms
+
 function checkAuthenticationMechanisms() {
-  // JSESSIONID is the most reliable indicator since it's set by the backend
-  // Even if it's HttpOnly, we can detect authentication through API calls
-  const jsessionidExists = Cookies.get("JSESSIONID") !== undefined;
+
+  const visibleCookies = document.cookie;
+  const hasCookies = visibleCookies.length > 0;
+  const hasVisibleJsessionId = visibleCookies.includes('JSESSIONID');
+  const hasVisibleAuthToken = visibleCookies.includes('auth-token') || visibleCookies.includes('authToken');
+  
+  const jsessionidFromJsCookie = Cookies.get("JSESSIONID");
+  let authTokenFromJsCookie = Cookies.get("auth-token") || Cookies.get("authToken");
+
+  if (authTokenFromJsCookie) {
+    authTokenFromJsCookie = extractJwtToken(authTokenFromJsCookie);
+  }
+  
+  const hasLocalStorageToken = 
+    localStorage.getItem("token") !== null ||
+    localStorage.getItem("X-Auth-Token") !== null ||
+    localStorage.getItem("Authorization") !== null;
+    
+  const oauthFlowStarted = localStorage.getItem("oauthFlowStarted") !== null;
+  const authInProgress = sessionStorage.getItem("authInProgress") === "true";
   
   // Log auth state for debugging
   console.log("Authentication check:", {
-    jsessionidVisible: jsessionidExists,
-    cookiesAvailable: document.cookie.length > 0,
-    hasLocalStorageToken: localStorage.getItem("token") !== null
+    hasCookies,
+    hasVisibleJsessionId,
+    hasVisibleAuthToken,
+    jsessionidFromJsCookie: jsessionidFromJsCookie !== undefined,
+    authTokenFromJsCookie: authTokenFromJsCookie !== undefined,
+    hasLocalStorageToken,
+    oauthFlowStarted,
+    authInProgress,
+    isAuthenticatedInStorage: localStorage.getItem("isAuthenticated") === "true"
   });
   
-  // Return true if JSESSIONID exists or if we have other tokens
-  // Note: JSESSIONID might be HttpOnly, so we can't always check it directly
+  // Return true if we detect ANY sign of authentication
+  // Note: The most reliable check is still the API call made in refreshTokenCount
   return (
-    jsessionidExists || 
-    document.cookie.includes("JSESSIONID") ||
-    Cookies.get("auth-token") !== undefined || 
-    Cookies.get("authToken") !== undefined ||
-    localStorage.getItem("token") !== null ||
-    localStorage.getItem("X-Auth-Token") !== null ||
-    localStorage.getItem("Authorization") !== null
+    hasVisibleJsessionId || 
+    jsessionidFromJsCookie !== undefined ||
+    hasVisibleAuthToken ||
+    authTokenFromJsCookie !== undefined ||
+    hasLocalStorageToken ||
+    // Also check session/localStorage for auth state
+    sessionStorage.getItem("isAuthenticated") === "true" ||
+    localStorage.getItem("isAuthenticated") === "true" ||
+    // During OAuth redirect, we might be authenticated but cookies not yet visible
+    authInProgress
   );
 }
 
@@ -88,6 +115,16 @@ export function TokenProvider({ children }: { children: ReactNode }) {
       setToken(response.data.remainingTokens ?? 0);
       setIsAuthenticated(true);
       
+      // Store authentication state in session/localStorage for persistence
+      // This helps when HttpOnly cookies are present but not visible to JS
+      try {
+        sessionStorage.setItem("isAuthenticated", "true");
+        localStorage.setItem("isAuthenticated", "true");
+        localStorage.setItem("lastAuthCheck", new Date().toISOString());
+      } catch (e) {
+        console.log("Could not store auth state in storage:", e);
+      }
+      
       // Try to run debug if available
       if (typeof debugAuthTokens === 'function') {
         debugAuthTokens();
@@ -96,6 +133,15 @@ export function TokenProvider({ children }: { children: ReactNode }) {
       console.error("Authentication check failed:", error);
       setToken(0);
       setIsAuthenticated(false);
+      
+      // Clear authentication state in storage
+      try {
+        sessionStorage.removeItem("isAuthenticated");
+        localStorage.removeItem("isAuthenticated");
+        localStorage.setItem("lastAuthError", new Date().toISOString());
+      } catch (e) {
+        console.log("Could not clear auth state in storage:", e);
+      }
       
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401) {
@@ -161,6 +207,14 @@ export function TokenProvider({ children }: { children: ReactNode }) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401) {
           setIsAuthenticated(false);
+          // Clear authentication state in storage
+          try {
+            sessionStorage.removeItem("isAuthenticated");
+            localStorage.removeItem("isAuthenticated");
+            localStorage.setItem("lastAuthError", new Date().toISOString());
+          } catch (e) {
+            console.log("Could not clear auth state in storage:", e);
+          }
           errorMessage = "Authentication error. Please sign in again.";
         } else if (error.response?.status === 403) {
           errorMessage = error.response?.data?.message || "No tokens remaining for today";
@@ -183,7 +237,10 @@ export function TokenProvider({ children }: { children: ReactNode }) {
     // Check if there's any indication of authentication
     const isAuthPresent = checkAuthenticationMechanisms();
     
-    if (isAuthPresent) {
+    // Check session storage first for previous authenticated state
+    const isAuthInSession = sessionStorage.getItem("isAuthenticated") === "true";
+    
+    if (isAuthPresent || isAuthInSession) {
       refreshTokenCount();
     } else {
       setToken(0);
@@ -192,7 +249,8 @@ export function TokenProvider({ children }: { children: ReactNode }) {
     
     // Listen for storage events that might affect authentication
     const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === 'token' || event.key === 'X-Auth-Token' || event.key === 'Authorization') {
+      if (event.key === 'token' || event.key === 'X-Auth-Token' || 
+          event.key === 'Authorization' || event.key === 'isAuthenticated') {
         console.log('Authentication storage changed:', event.key);
         const isAuthPresent = checkAuthenticationMechanisms();
         if (isAuthPresent) {
@@ -201,12 +259,24 @@ export function TokenProvider({ children }: { children: ReactNode }) {
       }
     };
     
+    // Set up periodic authentication verification
+    // This helps with HttpOnly cookies that we can't directly check
+    const authCheckInterval = setInterval(() => {
+      // Only perform check if we believe we're authenticated
+      // to avoid unnecessary API calls when logged out
+      if (isAuthenticated) {
+        console.log("Performing periodic auth check");
+        refreshTokenCount();
+      }
+    }, 5 * 60 * 1000); // Check every 5 minutes
+    
     window.addEventListener('storage', handleStorageChange);
     
     return () => {
       window.removeEventListener('storage', handleStorageChange);
+      clearInterval(authCheckInterval);
     };
-  }, []);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     const checkAuth = () => {
