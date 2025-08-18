@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const isLoggedIn = request.cookies.get('isLoggedIn')?.value === 'true';
+  const token = request.cookies.get('auth-token')?.value;
 
-  if (!isLoggedIn) {
+  if (!token) {
     return NextResponse.redirect(new URL('/signin', request.url));
   }
   return NextResponse.next();
