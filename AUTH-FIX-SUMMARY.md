@@ -20,6 +20,7 @@ The frontend application was experiencing issues with JWT tokens appearing as nu
 - Added OAuth redirect handling in SignInModal
 - Created a client-side only AuthWrapper component to avoid SSR issues
 - Enhanced authentication checking to work with HttpOnly cookies
+- Created an AuthDebugWrapper to properly handle dynamic imports in Server Components
 
 ### 4. Proper Axios Configuration
 - Ensured proper withCredentials configuration to send cookies with requests
@@ -49,10 +50,12 @@ The following changes have been made to fix cross-domain cookie authentication:
 
 - Updated TokenProvider.tsx to use API calls instead of direct cookie access
 - Created AuthDebugPanel.tsx for visual debugging
+- Created AuthDebugWrapper.tsx to properly handle client-side components in Server Components
 - Enhanced debug-auth.ts utility
 - Improved SignInModal.tsx with OAuth redirect handling
 - Added proper withCredentials configuration in axios-config.ts
 - Created test-auth-complete.sh script for validation
+- Fixed Server Component SSR errors with dynamic imports
 - Documented changes in AUTH-FIX-SUMMARY.md
 
 These changes ensure that JWT tokens in HttpOnly cookies are properly handled.
