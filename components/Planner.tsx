@@ -174,7 +174,8 @@ export default function Planner() {
 
   useEffect(() => {
     const checkLogin = () => {
-      const loggedIn = !!Cookies.get("auth-token");
+      // Use the isLoggedIn cookie instead of parsing JWT tokens
+      const loggedIn = Cookies.get("isLoggedIn") === "true";
       setIsLoggedIn(loggedIn);
 
       if (loggedIn && !userInfo) {
