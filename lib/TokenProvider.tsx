@@ -8,30 +8,40 @@ const SiteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "https://itinerarly-
 
 // Define a function to check all possible authentication mechanisms
 function checkAuthenticationMechanisms() {
-  const authMechanisms = {
-    cookies: {
-      jsessionid: Cookies.get("JSESSIONID") || null,
-      authToken: Cookies.get("auth-token") || null, 
-      altAuthToken: Cookies.get("authToken") || null
-    },
-    localStorage: {
-      token: localStorage.getItem("token") || null,
-      xAuthToken: localStorage.getItem("X-Auth-Token") || null,
-      authHeader: localStorage.getItem("Authorization") || null
-    }
-  };
+  // JSESSIONID is the most reliable indicator since it's set by the backend
+  // Even if it's HttpOnly, we can detect authentication through API calls
+  const jsessionidExists = Cookies.get("JSESSIONID") !== undefined;
   
-  console.log("Authentication mechanisms check:", authMechanisms);
+  // Log auth state for debugging
+  console.log("Authentication check:", {
+    jsessionidVisible: jsessionidExists,
+    cookiesAvailable: document.cookie.length > 0,
+    hasLocalStorageToken: localStorage.getItem("token") !== null
+  });
   
-  // Return true if any authentication mechanism is present
+  // Return true if JSESSIONID exists or if we have other tokens
+  // Note: JSESSIONID might be HttpOnly, so we can't always check it directly
   return (
-    !!authMechanisms.cookies.jsessionid || 
-    !!authMechanisms.cookies.authToken || 
-    !!authMechanisms.cookies.altAuthToken ||
-    !!authMechanisms.localStorage.token ||
-    !!authMechanisms.localStorage.xAuthToken ||
-    !!authMechanisms.localStorage.authHeader
+    jsessionidExists || 
+    document.cookie.includes("JSESSIONID") ||
+    Cookies.get("auth-token") !== undefined || 
+    Cookies.get("authToken") !== undefined ||
+    localStorage.getItem("token") !== null ||
+    localStorage.getItem("X-Auth-Token") !== null ||
+    localStorage.getItem("Authorization") !== null
   );
+}
+
+// Import debug utility if it exists
+let debugAuthTokens: (() => string) | undefined;
+try {
+  if (typeof window !== 'undefined') {
+    import('@/lib/debug-auth').then(module => {
+      debugAuthTokens = module.default;
+    });
+  }
+} catch (e) {
+  console.log("Debug auth module not available");
 }
 
 interface TokenContextType {
@@ -41,6 +51,7 @@ interface TokenContextType {
   refreshTokenCount: () => Promise<void>;
   consumeToken: () => Promise<boolean>;
   isTokenAvailable: boolean;
+  isAuthenticated: boolean;
 }
 
 const TokenContext = createContext<TokenContextType>({
@@ -50,58 +61,41 @@ const TokenContext = createContext<TokenContextType>({
   refreshTokenCount: async () => {},
   consumeToken: async () => false,
   isTokenAvailable: false,
+  isAuthenticated: false,
 });
 
 export function TokenProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<number | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const isTokenAvailable = typeof token === 'number' && token > 0;
 
   const refreshTokenCount = async (): Promise<void> => {
-    const authToken = Cookies.get("auth-token");
-    const altAuthToken = Cookies.get("authToken");
+    // We'll make an API call to check authentication status
+    // The HttpOnly cookies will be sent automatically with the request
     
-    console.log("Authentication tokens:", { 
-      authToken: authToken ? "Present" : "Not found", 
-      altAuthToken: altAuthToken ? "Present" : "Not found",
-      jsessionid: Cookies.get("JSESSIONID") ? "Present" : "Not found"
-    });
-    
-    if (!authToken && !altAuthToken && !Cookies.get("JSESSIONID")) {
-      setToken(0);
-      return;
-    }
-
     setIsLoading(true);
     setError(null);
     
     try {
-      const headers: Record<string, string> = {};
-      
-      // Try with X-Auth-Token header
-      if (authToken) {
-        headers["X-Auth-Token"] = authToken;
-      }
-      
-      // Try with Authorization header
-      if (authToken) {
-        headers["Authorization"] = `Bearer ${authToken}`;
-      }
-      
       const response = await axios.get(`${SiteUrl}/api/v1/tokens/remaining`, {
-        withCredentials: true,
-        headers
+        withCredentials: true // This ensures cookies are sent with the request
       });
       
-      // Check which authentication method worked
-      console.log("Response headers:", response.headers);
-      
+      // If we get a successful response, we're authenticated
+      console.log("Authentication successful:", response.data);
       setToken(response.data.remainingTokens ?? 0);
-      console.log("Token count refreshed:", response.data.remainingTokens);
+      setIsAuthenticated(true);
+      
+      // Try to run debug if available
+      if (typeof debugAuthTokens === 'function') {
+        debugAuthTokens();
+      }
     } catch (error) {
-      console.error("Error fetching tokens:", error);
+      console.error("Authentication check failed:", error);
       setToken(0);
+      setIsAuthenticated(false);
       
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401) {
@@ -118,10 +112,9 @@ export function TokenProvider({ children }: { children: ReactNode }) {
   };
 
   const consumeToken = async (): Promise<boolean> => {
-    const authToken = Cookies.get("auth-token");
-    const altAuthToken = Cookies.get("authToken");
-    
-    if (!authToken && !altAuthToken && !Cookies.get("JSESSIONID")) {
+    // Don't need to check for specific cookies since we're relying on withCredentials
+    // to send all cookies, including HttpOnly ones
+    if (!isAuthenticated) {
       setError("Please sign in to continue");
       return false;
     }
@@ -135,31 +128,11 @@ export function TokenProvider({ children }: { children: ReactNode }) {
     setError(null);
     
     try {
-      const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-        "X-Requested-With": "XMLHttpRequest",
-      };
-      
-      // Try with X-Auth-Token header
-      if (authToken) {
-        headers["X-Auth-Token"] = authToken;
-      } else if (altAuthToken) {
-        headers["X-Auth-Token"] = altAuthToken;
-      }
-      
-      // Try with Authorization header
-      if (authToken) {
-        headers["Authorization"] = `Bearer ${authToken}`;
-      } else if (altAuthToken) {
-        headers["Authorization"] = `Bearer ${altAuthToken}`;
-      }
-      
       const response = await axios.post(
         `${SiteUrl}/api/v1/tokens/consume`,
         {},
         {
           withCredentials: true,
-          headers,
           timeout: 10000,
         }
       );
@@ -187,6 +160,7 @@ export function TokenProvider({ children }: { children: ReactNode }) {
       
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401) {
+          setIsAuthenticated(false);
           errorMessage = "Authentication error. Please sign in again.";
         } else if (error.response?.status === 403) {
           errorMessage = error.response?.data?.message || "No tokens remaining for today";
@@ -206,20 +180,24 @@ export function TokenProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    // Check all authentication mechanisms
-    const isAuthenticated = checkAuthenticationMechanisms();
+    // Check if there's any indication of authentication
+    const isAuthPresent = checkAuthenticationMechanisms();
     
-    if (isAuthenticated) {
+    if (isAuthPresent) {
       refreshTokenCount();
     } else {
       setToken(0);
+      setIsAuthenticated(false);
     }
     
     // Listen for storage events that might affect authentication
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === 'token' || event.key === 'X-Auth-Token' || event.key === 'Authorization') {
         console.log('Authentication storage changed:', event.key);
-        checkAuthenticationMechanisms();
+        const isAuthPresent = checkAuthenticationMechanisms();
+        if (isAuthPresent) {
+          refreshTokenCount();
+        }
       }
     };
     
@@ -232,12 +210,13 @@ export function TokenProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const checkAuth = () => {
-      const isAuthenticated = checkAuthenticationMechanisms();
+      const isAuthPresent = checkAuthenticationMechanisms();
       
-      if (isAuthenticated) {
+      if (isAuthPresent) {
         refreshTokenCount();
       } else {
         setToken(0);
+        setIsAuthenticated(false);
       }
     };
 
@@ -251,7 +230,8 @@ export function TokenProvider({ children }: { children: ReactNode }) {
     error,
     refreshTokenCount,
     consumeToken,
-    isTokenAvailable
+    isTokenAvailable,
+    isAuthenticated
   };
 
   return <TokenContext.Provider value={value}>{children}</TokenContext.Provider>;

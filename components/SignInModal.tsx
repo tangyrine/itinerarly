@@ -9,7 +9,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import {  FaGithub, FaGoogle } from "react-icons/fa";
+import { FaGithub, FaGoogle } from "react-icons/fa";
+import { useEffect } from "react";
+import { useToken } from "@/lib/TokenProvider";
 
 
 interface SignInModalProps {
@@ -17,7 +19,7 @@ interface SignInModalProps {
   onClose: () => void; 
 }
 
-// Use production backend URL as default, with environment variable override
+
 const SiteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "https://itinerarly-be.onrender.com";
 
 // Debug environment variable loading
@@ -40,6 +42,27 @@ const signInWithGoogle = () => {
 };
 
 export function SignInModal({ openModal, onClose }: SignInModalProps) {
+  const { refreshTokenCount } = useToken();
+
+  // Check for authentication redirect
+  useEffect(() => {
+    // Check if we've been redirected back from OAuth
+    const url = new URL(window.location.href);
+    const hasAuthParams = url.searchParams.has('token') || 
+                          url.searchParams.has('code') || 
+                          url.searchParams.has('auth');
+    
+    // If we have auth params, we were redirected back from OAuth
+    if (hasAuthParams) {
+      console.log("OAuth redirect detected");
+      
+      // Refresh token count to check authentication status
+      refreshTokenCount().then(() => {
+        // Clean up URL params to avoid keeping sensitive info in browser history
+        window.history.replaceState({}, document.title, window.location.pathname);
+      });
+    }
+  }, [refreshTokenCount]);
 
   return (
     <Dialog open={openModal} onOpenChange={onClose}>
@@ -58,9 +81,7 @@ export function SignInModal({ openModal, onClose }: SignInModalProps) {
           <button className="cursor-pointer border border-black h-20 w-20 flex justify-center items-center" onClick={signInWithGithub}>
             <FaGithub className="h-10 w-10 text-center"/>
           </button>
-          {/* <button className="cursor-pointer border border-black h-20 w-20 flex justify-center items-center" onClick={signInWithFacebook}>
-            <FaFacebook className="h-10 w-10 text-center"/>
-          </button> */}
+
         </div>
         <DialogFooter>
           <DialogClose asChild>

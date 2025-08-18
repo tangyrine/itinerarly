@@ -4,6 +4,13 @@ import { Analytics } from '@vercel/analytics/react'
 import { TokenProvider } from '@/lib/TokenProvider';
 import { GoogleAnalytics } from '@next/third-parties/google'
 import AuthWrapper from '@/components/AuthWrapper';
+import dynamic from 'next/dynamic';
+
+// Dynamically import the AuthDebugPanel to ensure it only runs on client
+const AuthDebugPanel = dynamic(
+  () => import('@/components/AuthDebugPanel'),
+  { ssr: false }
+);
 
 // Configure axios for cross-domain cookies
 import '@/lib/axios-config';
@@ -43,6 +50,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <TokenProvider>
           {children}
           <AuthWrapper />
+          <AuthDebugPanel />
         </TokenProvider>
         <Analytics />
         {gaId && <GoogleAnalytics gaId={gaId} />}

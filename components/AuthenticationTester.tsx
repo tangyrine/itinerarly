@@ -211,8 +211,6 @@ const AuthenticationTester = () => {
 
   return (
     <div style={{ display: 'none' }}>
-      {/* Hidden component - all logic happens behind the scenes */}
-      {/* Can be enabled for debugging by changing display style */}
     </div>
   );
 };
