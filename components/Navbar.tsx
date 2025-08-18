@@ -55,7 +55,6 @@ const Navbar = () => {
     try {
       const response = await axios.post(
         `${SiteUrl}/api/v1/logout`,
-        {},
         {
           withCredentials: true,
           timeout: 10000,
@@ -74,7 +73,6 @@ const Navbar = () => {
       setUserInfo(null);
       setIsProfileDropdownOpen(false);
       
-      // Refresh token count after logout
       refreshTokenCount();
       
       window.location.href = "/";
