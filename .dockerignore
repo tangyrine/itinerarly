@@ -1,12 +1,66 @@
+# Dependencies
 node_modules
-npm-debug.log
-Dockerfile
-.dockerignore
-.git
-.gitignore
-README.md
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files (CRITICAL SECURITY)
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build outputs
+.next
+out
+dist
+build
+.cache
 .nyc_output
 coverage
-.cache
+
+# Docker files
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Git and version control
+.git
+.gitignore
+
+# Documentation and config files
+README.md
+*.md
+tsconfig.json
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+
+# Test and performance files
+__tests__/
+*.test.*
+performance-test*.js
+test-*.js
+verify-*.sh
+optimize-*.sh
+
+# Reports and optimization files
+reports/
+OPTIMIZATION-*.md
+BACKEND-*.md
+OAUTH-*.md
+VERCEL-*.md
+LCP-*.md
+
+# Security sensitive files
+*.key
+*.pem
+*.p12
+*.log
 dist

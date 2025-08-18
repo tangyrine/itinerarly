@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  itinerarly-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: itinerarly-fe
+    
+    # Security configurations
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp:noexec,nosuid,size=100m
+      - /app/.next/cache:noexec,nosuid,size=50m
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    
+    # Environment variables (set these in production)
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+      # Add your production environment variables here:
+      # - NEXT_PUBLIC_SITE_URL=https://itinerarly-be.onrender.com
+      # - GA_ID=G-84VJZDKNLV
+    
+    # Network configuration
+    ports:
+      - "3000:3000"
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Restart policy
+    restart: unless-stopped
+    
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  default:
+    driver: bridge

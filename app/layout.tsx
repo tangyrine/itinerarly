@@ -4,6 +4,9 @@ import { Analytics } from '@vercel/analytics/react'
 import { TokenProvider } from '@/lib/TokenProvider';
 import { GoogleAnalytics } from '@next/third-parties/google'
 
+// Configure axios for cross-domain cookies
+import '@/lib/axios-config';
+
 
 export const metadata = {
   title: 'Itinerary App',
@@ -26,6 +29,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <link rel="preconnect" href="https://images.unsplash.com" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        
+        {/* Backend server preconnect for faster cookie handling */}
+        <link rel="preconnect" href="https://itinerarly-be.onrender.com" />
+        <link rel="dns-prefetch" href="https://itinerarly-be.onrender.com" />
         <link rel="dns-prefetch" href="https://ui-avatars.com" />
         
         {/* Viewport and responsive meta tags */}

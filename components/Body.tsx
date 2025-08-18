@@ -285,21 +285,12 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
               console.log('Video playing');
             }}
           >
-            {/* Single optimized source based on device detection */}
+            {/* Primary optimized source based on device detection */}
             <source 
               src={deviceInfo.videoSrc} 
               type={deviceInfo.videoSrc.includes('.webm') ? 'video/webm' : 'video/mp4'}
               onError={(e) => console.log('Primary video source failed:', deviceInfo.videoSrc)}
             />
-            
-            {/* Fallback to original video */}
-            <source 
-              src="/assets/background.mp4" 
-              type="video/mp4"
-              onError={(e) => console.log('Fallback video source failed - no video will play')}
-            />
-            
-            Your browser does not support the video tag.
           </video>
         )}
         
