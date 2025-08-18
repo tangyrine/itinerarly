@@ -6,6 +6,34 @@ import Cookies from "js-cookie";
 
 const SiteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "https://itinerarly-be.onrender.com";
 
+// Define a function to check all possible authentication mechanisms
+function checkAuthenticationMechanisms() {
+  const authMechanisms = {
+    cookies: {
+      jsessionid: Cookies.get("JSESSIONID") || null,
+      authToken: Cookies.get("auth-token") || null, 
+      altAuthToken: Cookies.get("authToken") || null
+    },
+    localStorage: {
+      token: localStorage.getItem("token") || null,
+      xAuthToken: localStorage.getItem("X-Auth-Token") || null,
+      authHeader: localStorage.getItem("Authorization") || null
+    }
+  };
+  
+  console.log("Authentication mechanisms check:", authMechanisms);
+  
+  // Return true if any authentication mechanism is present
+  return (
+    !!authMechanisms.cookies.jsessionid || 
+    !!authMechanisms.cookies.authToken || 
+    !!authMechanisms.cookies.altAuthToken ||
+    !!authMechanisms.localStorage.token ||
+    !!authMechanisms.localStorage.xAuthToken ||
+    !!authMechanisms.localStorage.authHeader
+  );
+}
+
 interface TokenContextType {
   token: number | undefined;
   isLoading: boolean;
@@ -31,7 +59,16 @@ export function TokenProvider({ children }: { children: ReactNode }) {
   const isTokenAvailable = typeof token === 'number' && token > 0;
 
   const refreshTokenCount = async (): Promise<void> => {
-    if (!Cookies.get("auth-token")) {
+    const authToken = Cookies.get("auth-token");
+    const altAuthToken = Cookies.get("authToken");
+    
+    console.log("Authentication tokens:", { 
+      authToken: authToken ? "Present" : "Not found", 
+      altAuthToken: altAuthToken ? "Present" : "Not found",
+      jsessionid: Cookies.get("JSESSIONID") ? "Present" : "Not found"
+    });
+    
+    if (!authToken && !altAuthToken && !Cookies.get("JSESSIONID")) {
       setToken(0);
       return;
     }
@@ -40,9 +77,25 @@ export function TokenProvider({ children }: { children: ReactNode }) {
     setError(null);
     
     try {
+      const headers: Record<string, string> = {};
+      
+      // Try with X-Auth-Token header
+      if (authToken) {
+        headers["X-Auth-Token"] = authToken;
+      }
+      
+      // Try with Authorization header
+      if (authToken) {
+        headers["Authorization"] = `Bearer ${authToken}`;
+      }
+      
       const response = await axios.get(`${SiteUrl}/api/v1/tokens/remaining`, {
         withCredentials: true,
+        headers
       });
+      
+      // Check which authentication method worked
+      console.log("Response headers:", response.headers);
       
       setToken(response.data.remainingTokens ?? 0);
       console.log("Token count refreshed:", response.data.remainingTokens);
@@ -65,7 +118,10 @@ export function TokenProvider({ children }: { children: ReactNode }) {
   };
 
   const consumeToken = async (): Promise<boolean> => {
-    if (!Cookies.get("auth-token")) {
+    const authToken = Cookies.get("auth-token");
+    const altAuthToken = Cookies.get("authToken");
+    
+    if (!authToken && !altAuthToken && !Cookies.get("JSESSIONID")) {
       setError("Please sign in to continue");
       return false;
     }
@@ -79,15 +135,31 @@ export function TokenProvider({ children }: { children: ReactNode }) {
     setError(null);
     
     try {
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+        "X-Requested-With": "XMLHttpRequest",
+      };
+      
+      // Try with X-Auth-Token header
+      if (authToken) {
+        headers["X-Auth-Token"] = authToken;
+      } else if (altAuthToken) {
+        headers["X-Auth-Token"] = altAuthToken;
+      }
+      
+      // Try with Authorization header
+      if (authToken) {
+        headers["Authorization"] = `Bearer ${authToken}`;
+      } else if (altAuthToken) {
+        headers["Authorization"] = `Bearer ${altAuthToken}`;
+      }
+      
       const response = await axios.post(
         `${SiteUrl}/api/v1/tokens/consume`,
         {},
         {
           withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-          },
+          headers,
           timeout: 10000,
         }
       );
@@ -134,18 +206,35 @@ export function TokenProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    const authToken = Cookies.get("auth-token");
-    if (authToken) {
+    // Check all authentication mechanisms
+    const isAuthenticated = checkAuthenticationMechanisms();
+    
+    if (isAuthenticated) {
       refreshTokenCount();
     } else {
-      setToken(0); 
+      setToken(0);
     }
+    
+    // Listen for storage events that might affect authentication
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'token' || event.key === 'X-Auth-Token' || event.key === 'Authorization') {
+        console.log('Authentication storage changed:', event.key);
+        checkAuthenticationMechanisms();
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   useEffect(() => {
     const checkAuth = () => {
-      const isLoggedIn = !!Cookies.get("auth-token");
-      if (isLoggedIn) {
+      const isAuthenticated = checkAuthenticationMechanisms();
+      
+      if (isAuthenticated) {
         refreshTokenCount();
       } else {
         setToken(0);

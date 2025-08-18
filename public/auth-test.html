@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication Mechanism Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .test-name {
+            font-weight: bold;
+        }
+        .test-status {
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        .status-pending {
+            background-color: #f0f0f0;
+        }
+        .status-running {
+            background-color: #fff3cd;
+        }
+        .status-success {
+            background-color: #d4edda;
+        }
+        .status-failed {
+            background-color: #f8d7da;
+        }
+        .test-result {
+            font-family: monospace;
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 3px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+        .button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Authentication Mechanism Test</h1>
+        <p>This page tests various authentication mechanisms for the Itinerarly application.</p>
+        
+        <div>
+            <button id="run-all-tests" class="button">Run All Tests</button>
+            <button id="clear-cookies" class="button">Clear All Cookies</button>
+        </div>
+        
+        <div id="test-jsessionid" class="test-section">
+            <div class="test-header">
+                <span class="test-name">Test JSESSIONID Cookie</span>
+                <span class="test-status status-pending">Pending</span>
+            </div>
+            <div class="test-result"></div>
+        </div>
+        
+        <div id="test-auth-token" class="test-section">
+            <div class="test-header">
+                <span class="test-name">Test auth-token Cookie</span>
+                <span class="test-status status-pending">Pending</span>
+            </div>
+            <div class="test-result"></div>
+        </div>
+        
+        <div id="test-alt-auth-token" class="test-section">
+            <div class="test-header">
+                <span class="test-name">Test authToken Cookie</span>
+                <span class="test-status status-pending">Pending</span>
+            </div>
+            <div class="test-result"></div>
+        </div>
+        
+        <div id="test-x-auth-token" class="test-section">
+            <div class="test-header">
+                <span class="test-name">Test X-Auth-Token Header</span>
+                <span class="test-status status-pending">Pending</span>
+            </div>
+            <div class="test-result"></div>
+        </div>
+        
+        <div id="test-authorization" class="test-section">
+            <div class="test-header">
+                <span class="test-name">Test Authorization Header</span>
+                <span class="test-status status-pending">Pending</span>
+            </div>
+            <div class="test-result"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+    <script>
+        // Configuration
+        const API_URL = "https://itinerarly-be.onrender.com";
+        const TEST_TOKEN = "test-token";
+        
+        // Helper function to update test status
+        function updateTestStatus(testId, status, result) {
+            const testSection = document.getElementById(testId);
+            const statusEl = testSection.querySelector('.test-status');
+            const resultEl = testSection.querySelector('.test-result');
+            
+            // Update status
+            statusEl.className = `test-status status-${status}`;
+            statusEl.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+            
+            // Update result
+            if (result) {
+                resultEl.textContent = typeof result === 'object' ? 
+                    JSON.stringify(result, null, 2) : result;
+            }
+        }
+        
+        // Test JSESSIONID cookie
+        async function testJsessionId() {
+            updateTestStatus('test-jsessionid', 'running');
+            
+            try {
+                // Store current cookies
+                const storedCookies = {};
+                document.cookie.split(';').forEach(cookie => {
+                    const [name, value] = cookie.trim().split('=');
+                    storedCookies[name] = value;
+                });
+                
+                // Check if JSESSIONID exists
+                if (!Cookies.get('JSESSIONID')) {
+                    updateTestStatus('test-jsessionid', 'failed', 'No JSESSIONID cookie found');
+                    return false;
+                }
+                
+                // Remove other auth cookies
+                Cookies.remove('auth-token');
+                Cookies.remove('authToken');
+                
+                // Configure axios for this request
+                const instance = axios.create({
+                    withCredentials: true
+                });
+                
+                // Make request with only JSESSIONID
+                const response = await instance.get(`${API_URL}/api/v1/tokens/remaining`);
+                
+                // Restore other cookies
+                Object.keys(storedCookies).forEach(name => {
+                    if (name !== 'JSESSIONID') {
+                        Cookies.set(name, storedCookies[name]);
+                    }
+                });
+                
+                updateTestStatus('test-jsessionid', 'success', {
+                    status: response.status,
+                    data: response.data,
+                    message: 'JSESSIONID authentication works!'
+                });
+                return true;
+            } catch (error) {
+                updateTestStatus('test-jsessionid', 'failed', {
+                    status: error.response?.status,
+                    message: error.message,
+                    details: 'JSESSIONID authentication failed'
+                });
+                return false;
+            }
+        }
+        
+        // Test auth-token cookie
+        async function testAuthToken() {
+            updateTestStatus('test-auth-token', 'running');
+            
+            try {
+                // Store current cookies
+                const storedCookies = {};
+                document.cookie.split(';').forEach(cookie => {
+                    const [name, value] = cookie.trim().split('=');
+                    storedCookies[name] = value;
+                });
+                
+                // Remove other auth cookies
+                Cookies.remove('JSESSIONID');
+                Cookies.remove('authToken');
+                
+                // Set test auth-token
+                Cookies.set('auth-token', TEST_TOKEN);
+                
+                // Configure axios for this request
+                const instance = axios.create({
+                    withCredentials: true
+                });
+                
+                // Make request with only auth-token
+                const response = await instance.get(`${API_URL}/api/v1/tokens/remaining`);
+                
+                // Restore original cookies
+                Object.keys(storedCookies).forEach(name => {
+                    Cookies.set(name, storedCookies[name]);
+                });
+                
+                updateTestStatus('test-auth-token', 'success', {
+                    status: response.status,
+                    data: response.data,
+                    message: 'auth-token authentication works!'
+                });
+                return true;
+            } catch (error) {
+                // Restore original cookies
+                Cookies.remove('auth-token');
+                
+                updateTestStatus('test-auth-token', 'failed', {
+                    status: error.response?.status,
+                    message: error.message,
+                    details: 'auth-token authentication failed'
+                });
+                return false;
+            }
+        }
+        
+        // Test authToken cookie
+        async function testAltAuthToken() {
+            updateTestStatus('test-alt-auth-token', 'running');
+            
+            try {
+                // Store current cookies
+                const storedCookies = {};
+                document.cookie.split(';').forEach(cookie => {
+                    const [name, value] = cookie.trim().split('=');
+                    storedCookies[name] = value;
+                });
+                
+                // Remove other auth cookies
+                Cookies.remove('JSESSIONID');
+                Cookies.remove('auth-token');
+                
+                // Set test authToken
+                Cookies.set('authToken', TEST_TOKEN);
+                
+                // Configure axios for this request
+                const instance = axios.create({
+                    withCredentials: true
+                });
+                
+                // Make request with only authToken
+                const response = await instance.get(`${API_URL}/api/v1/tokens/remaining`);
+                
+                // Restore original cookies
+                Object.keys(storedCookies).forEach(name => {
+                    Cookies.set(name, storedCookies[name]);
+                });
+                
+                updateTestStatus('test-alt-auth-token', 'success', {
+                    status: response.status,
+                    data: response.data,
+                    message: 'authToken authentication works!'
+                });
+                return true;
+            } catch (error) {
+                // Restore original cookies
+                Cookies.remove('authToken');
+                
+                updateTestStatus('test-alt-auth-token', 'failed', {
+                    status: error.response?.status,
+                    message: error.message,
+                    details: 'authToken authentication failed'
+                });
+                return false;
+            }
+        }
+        
+        // Test X-Auth-Token header
+        async function testXAuthToken() {
+            updateTestStatus('test-x-auth-token', 'running');
+            
+            try {
+                // Store current cookies
+                const storedCookies = {};
+                document.cookie.split(';').forEach(cookie => {
+                    const [name, value] = cookie.trim().split('=');
+                    storedCookies[name] = value;
+                });
+                
+                // Remove all auth cookies
+                Cookies.remove('JSESSIONID');
+                Cookies.remove('auth-token');
+                Cookies.remove('authToken');
+                
+                // Make request with X-Auth-Token header
+                const response = await axios.get(`${API_URL}/api/v1/tokens/remaining`, {
+                    headers: {
+                        'X-Auth-Token': TEST_TOKEN
+                    }
+                });
+                
+                // Restore original cookies
+                Object.keys(storedCookies).forEach(name => {
+                    Cookies.set(name, storedCookies[name]);
+                });
+                
+                updateTestStatus('test-x-auth-token', 'success', {
+                    status: response.status,
+                    data: response.data,
+                    message: 'X-Auth-Token authentication works!'
+                });
+                return true;
+            } catch (error) {
+                // Restore original cookies
+                Object.keys(storedCookies).forEach(name => {
+                    Cookies.set(name, storedCookies[name]);
+                });
+                
+                updateTestStatus('test-x-auth-token', 'failed', {
+                    status: error.response?.status,
+                    message: error.message,
+                    details: 'X-Auth-Token authentication failed'
+                });
+                return false;
+            }
+        }
+        
+        // Test Authorization header
+        async function testAuthorization() {
+            updateTestStatus('test-authorization', 'running');
+            
+            try {
+                // Store current cookies
+                const storedCookies = {};
+                document.cookie.split(';').forEach(cookie => {
+                    const [name, value] = cookie.trim().split('=');
+                    storedCookies[name] = value;
+                });
+                
+                // Remove all auth cookies
+                Cookies.remove('JSESSIONID');
+                Cookies.remove('auth-token');
+                Cookies.remove('authToken');
+                
+                // Make request with Authorization header
+                const response = await axios.get(`${API_URL}/api/v1/tokens/remaining`, {
+                    headers: {
+                        'Authorization': `Bearer ${TEST_TOKEN}`
+                    }
+                });
+                
+                // Restore original cookies
+                Object.keys(storedCookies).forEach(name => {
+                    Cookies.set(name, storedCookies[name]);
+                });
+                
+                updateTestStatus('test-authorization', 'success', {
+                    status: response.status,
+                    data: response.data,
+                    message: 'Authorization header authentication works!'
+                });
+                return true;
+            } catch (error) {
+                // Restore original cookies
+                Object.keys(storedCookies).forEach(name => {
+                    Cookies.set(name, storedCookies[name]);
+                });
+                
+                updateTestStatus('test-authorization', 'failed', {
+                    status: error.response?.status,
+                    message: error.message,
+                    details: 'Authorization header authentication failed'
+                });
+                return false;
+            }
+        }
+        
+        // Run all tests
+        async function runAllTests() {
+            const runButton = document.getElementById('run-all-tests');
+            runButton.disabled = true;
+            
+            await testJsessionId();
+            await testAuthToken();
+            await testAltAuthToken();
+            await testXAuthToken();
+            await testAuthorization();
+            
+            runButton.disabled = false;
+        }
+        
+        // Clear all cookies
+        function clearAllCookies() {
+            const cookies = document.cookie.split(';');
+            
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i];
+                const eqPos = cookie.indexOf('=');
+                const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+                document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+            }
+            
+            alert('All cookies cleared!');
+        }
+        
+        // Add event listeners
+        document.getElementById('run-all-tests').addEventListener('click', runAllTests);
+        document.getElementById('clear-cookies').addEventListener('click', clearAllCookies);
+    </script>
+</body>
+</html>
