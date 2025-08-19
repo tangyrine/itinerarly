@@ -71,6 +71,7 @@ export default function Planner() {
     consumeToken,
     refreshTokenCount,
     isTokenAvailable,
+    logout,
   } = useToken();
 
   const router = useRouter();
@@ -94,6 +95,7 @@ export default function Planner() {
 
   const handleLogout = async (): Promise<void> => {
     try {
+      // First try to call the backend logout endpoint
       const response = await axios.post(
         `${SiteUrl}/api/v1/logout`,
         {},
@@ -106,40 +108,24 @@ export default function Planner() {
         }
       );
 
-      // Remove all authentication cookies
-      Cookies.remove("auth-token", { path: "/" });
-      Cookies.remove("JSESSIONID", { path: "/" });
-      Cookies.remove("isLoggedIn", { path: "/" }); // This is the key cookie for middleware
-      Cookies.remove("authToken", { path: "/" }); // Alternative auth token
-
-      setIsLoggedIn(false);
-      setUserInfo(null);
-      setIsProfileDropdownOpen(false);
-
-      refreshTokenCount();
-
-      window.location.href = "/";
+      console.log("Backend logout successful:", response.status);
     } catch (err) {
-      console.error("Logout error:", err);
-
-      if (axios.isAxiosError(err)) {
-        console.error("Error details:", {
-          status: err.response?.status,
-          statusText: err.response?.statusText,
-          data: err.response?.data,
-        });
-      }
-
-      // Clear all authentication cookies even if logout fails
-      Cookies.remove("auth-token", { path: "/" });
-      Cookies.remove("JSESSIONID", { path: "/" });
-      Cookies.remove("isLoggedIn", { path: "/" }); // This is the key cookie for middleware
-      Cookies.remove("authToken", { path: "/" }); // Alternative auth token
-      
-      setIsLoggedIn(false);
-      setUserInfo(null);
-      setIsProfileDropdownOpen(false);
+      console.error("Backend logout error (proceeding with local cleanup):", err);
     }
+
+    // Always perform local cleanup using the centralized logout function
+    logout();
+    
+    // Update local component state
+    setIsLoggedIn(false);
+    setUserInfo(null);
+    setIsProfileDropdownOpen(false);
+
+    // Refresh token count to ensure UI is updated
+    refreshTokenCount();
+
+    // Redirect to homepage
+    window.location.href = "/";
   };
 
   const fetchUserInfo = async () => {

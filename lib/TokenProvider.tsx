@@ -9,26 +9,20 @@ const SiteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "https://itinerarly-
 
 
 function checkAuthenticationMechanisms() {
-  // Use safe cookie handling for all cookie operations
-  // This will help prevent the OAuth2 error with character [34] (double quotes)
   
   const visibleCookies = document.cookie;
   const hasCookies = visibleCookies.length > 0;
   const hasVisibleJsessionId = visibleCookies.includes('JSESSIONID');
   const hasVisibleAuthToken = visibleCookies.includes('auth-token') || visibleCookies.includes('authToken');
   
-  // Use getCookieSafely directly from the cookie-utils
   const jsessionidFromJsCookie = Cookies.get("JSESSIONID");
-  
-  // Get auth tokens and ensure they're properly sanitized
+
   let authTokenRaw = Cookies.get("auth-token");
   let altAuthTokenRaw = Cookies.get("authToken");
-  
-  // Clean these tokens proactively to prevent OAuth errors
+
   let authTokenFromJsCookie = authTokenRaw ? extractJwtToken(authTokenRaw) : undefined;
   let altAuthTokenFromJsCookie = altAuthTokenRaw ? extractJwtToken(altAuthTokenRaw) : undefined;
-  
-  // If we have tokens with issues, clean and reset them
+
   if (authTokenRaw && authTokenRaw !== authTokenFromJsCookie) {
     console.log("Sanitizing malformed auth-token cookie");
     setCookieSafely(Cookies, "auth-token", authTokenFromJsCookie);
@@ -46,8 +40,7 @@ function checkAuthenticationMechanisms() {
     
   const oauthFlowStarted = localStorage.getItem("oauthFlowStarted") !== null;
   const authInProgress = sessionStorage.getItem("authInProgress") === "true";
-  
-  // Log auth state for debugging
+
   console.log("Authentication check:", {
     hasCookies,
     hasVisibleJsessionId,
@@ -61,8 +54,6 @@ function checkAuthenticationMechanisms() {
     isAuthenticatedInStorage: localStorage.getItem("isAuthenticated") === "true"
   });
   
-  // Return true if we detect ANY sign of authentication
-  // Note: The most reliable check is still the API call made in refreshTokenCount
   return (
     hasVisibleJsessionId || 
     jsessionidFromJsCookie !== undefined ||
@@ -70,10 +61,10 @@ function checkAuthenticationMechanisms() {
     authTokenFromJsCookie !== undefined ||
     altAuthTokenFromJsCookie !== undefined ||
     hasLocalStorageToken ||
-    // Also check session/localStorage for auth state
+    
     sessionStorage.getItem("isAuthenticated") === "true" ||
     localStorage.getItem("isAuthenticated") === "true" ||
-    // During OAuth redirect, we might be authenticated but cookies not yet visible
+    
     authInProgress
   );
 }
@@ -98,6 +89,7 @@ interface TokenContextType {
   consumeToken: () => Promise<boolean>;
   isTokenAvailable: boolean;
   isAuthenticated: boolean;
+  logout: () => void;
 }
 
 const TokenContext = createContext<TokenContextType>({
@@ -108,6 +100,7 @@ const TokenContext = createContext<TokenContextType>({
   consumeToken: async () => false,
   isTokenAvailable: false,
   isAuthenticated: false,
+  logout: () => {},
 });
 
 export function TokenProvider({ children }: { children: ReactNode }) {
@@ -118,17 +111,12 @@ export function TokenProvider({ children }: { children: ReactNode }) {
   const isTokenAvailable = typeof token === 'number' && token > 0;
 
   const refreshTokenCount = async (): Promise<void> => {
-    // We'll make an API call to check authentication status
-    // The HttpOnly cookies will be sent automatically with the request
-    
     setIsLoading(true);
     setError(null);
     
-    // Before making the request, ensure cookies are sanitized to prevent OAuth errors
     const authTokenRaw = Cookies.get("auth-token");
     const altAuthTokenRaw = Cookies.get("authToken");
     
-    // Clean any potentially malformed tokens before making the API call
     if (authTokenRaw) {
       const sanitizedToken = extractJwtToken(authTokenRaw);
       if (sanitizedToken !== authTokenRaw) {
@@ -245,9 +233,6 @@ export function TokenProvider({ children }: { children: ReactNode }) {
   };
 
   const consumeToken = async (): Promise<boolean> => {
-    // Check both isAuthenticated state and isLoggedIn cookie for consistency
-    // This ensures we're truly authenticated according to both the TokenProvider
-    // internal state and the global cookie that's used by middleware and other components
     const isLoggedIn = Cookies.get("isLoggedIn") === "true";
     
     if (!isAuthenticated || !isLoggedIn) {
@@ -354,16 +339,12 @@ export function TokenProvider({ children }: { children: ReactNode }) {
       }
     };
     
-    // Set up periodic authentication verification
-    // This helps with HttpOnly cookies that we can't directly check
     const authCheckInterval = setInterval(() => {
-      // Only perform check if we believe we're authenticated
-      // to avoid unnecessary API calls when logged out
       if (isAuthenticated) {
         console.log("Performing periodic auth check");
         refreshTokenCount();
       }
-    }, 5 * 60 * 1000); // Check every 5 minutes
+    }, 5 * 60 * 1000); 
     
     window.addEventListener('storage', handleStorageChange);
     
@@ -389,13 +370,10 @@ export function TokenProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("focus", checkAuth);
   }, []);
 
-  // Add effect to handle redirection when authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      // Check if we're on a page that should redirect to /start
       const currentPath = window.location.pathname;
       
-      // Don't redirect if we're already on the start page or in an authenticated area
       const shouldRedirect = 
         currentPath !== '/start' && 
         !currentPath.startsWith('/start/') &&
@@ -427,6 +405,60 @@ export function TokenProvider({ children }: { children: ReactNode }) {
     }
   }, [isAuthenticated]);
 
+  const logout = () => {
+    console.log("🚪 TokenProvider logout called - clearing all authentication state");
+    
+    // Clear internal state
+    setToken(0);
+    setIsAuthenticated(false);
+    setError(null);
+    
+    // Clear all authentication cookies with comprehensive approach
+    const cookieNames = ["auth-token", "JSESSIONID", "isLoggedIn", "authToken"];
+    const domains = [undefined, ".itinerarly-be.onrender.com", "itinerarly-be.onrender.com", window.location.hostname, `.${window.location.hostname}`];
+    const paths = ["/", undefined];
+    
+    cookieNames.forEach(cookieName => {
+      domains.forEach(domain => {
+        paths.forEach(path => {
+          const options: any = {};
+          if (domain) options.domain = domain;
+          if (path) options.path = path;
+          
+          Cookies.remove(cookieName, options);
+          
+          // Also try with secure flag combinations
+          Cookies.remove(cookieName, { ...options, secure: true });
+          Cookies.remove(cookieName, { ...options, secure: false });
+          Cookies.remove(cookieName, { ...options, sameSite: 'Lax' });
+          Cookies.remove(cookieName, { ...options, sameSite: 'None', secure: true });
+        });
+      });
+    });
+    
+    // Force clear by setting expired cookies
+    cookieNames.forEach(cookieName => {
+      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${window.location.hostname}`;
+      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.${window.location.hostname}`;
+    });
+    
+    // Clear authentication state in storage
+    try {
+      sessionStorage.removeItem("isAuthenticated");
+      localStorage.removeItem("isAuthenticated");
+      localStorage.removeItem("oauthFlowStarted");
+      localStorage.removeItem("oauthFlowTimestamp");
+      sessionStorage.removeItem("authInProgress");
+      localStorage.setItem("lastAuthError", new Date().toISOString());
+      console.log("✅ Cleared all storage-based authentication state");
+    } catch (e) {
+      console.log("Could not clear auth state in storage:", e);
+    }
+    
+    console.log("🧹 TokenProvider logout complete - all auth state cleared");
+  };
+
   const value = {
     token,
     isLoading,
@@ -434,7 +466,8 @@ export function TokenProvider({ children }: { children: ReactNode }) {
     refreshTokenCount,
     consumeToken,
     isTokenAvailable,
-    isAuthenticated
+    isAuthenticated,
+    logout
   };
 
   return <TokenContext.Provider value={value}>{children}</TokenContext.Provider>;
