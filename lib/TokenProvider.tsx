@@ -282,7 +282,7 @@ export function TokenProvider({ children }: { children: ReactNode }) {
       if (response.data?.success === true) {
         if (response.data?.remainingTokens !== undefined) {
           setToken(response.data.remainingTokens);
-          console.log(`Token consumed. Remaining: ${response.data.remainingTokens}`);
+          console.log(`✅ Token consumed successfully. Remaining: ${response.data.remainingTokens}`);
         } else {
           await refreshTokenCount();
         }
@@ -290,7 +290,7 @@ export function TokenProvider({ children }: { children: ReactNode }) {
       } else {
         const message = response.data?.message || "No tokens remaining";
         setError(message);
-        alert(message);
+        console.log("🚫 Token consumption failed:", message);
         return false;
       }
     } catch (error) {
@@ -313,12 +313,29 @@ export function TokenProvider({ children }: { children: ReactNode }) {
       }
       
       let errorMessage = "Failed to consume token";
+      let shouldAlert = true;
       
       if (axios.isAxiosError(error)) {
-        if (error.response?.status === 401) {
+        // Check if response is HTML (login page) instead of JSON
+        const responseText = typeof error.response?.data === 'string' ? error.response.data : '';
+        const isHtmlResponse = responseText.includes('<!DOCTYPE html>') || responseText.includes('<html');
+        
+        if (isHtmlResponse) {
+          console.log("🔐 Backend returned login page - user session expired or invalid");
+          setIsAuthenticated(false);
+          Cookies.remove("isLoggedIn");
+          try {
+            sessionStorage.removeItem("isAuthenticated");
+            localStorage.removeItem("isAuthenticated");
+            localStorage.setItem("lastAuthError", new Date().toISOString());
+          } catch (e) {
+            console.log("Could not clear auth state in storage:", e);
+          }
+          errorMessage = "Your session has expired. Please sign in again.";
+          shouldAlert = false; // Don't show alert, let the UI handle this gracefully
+        } else if (error.response?.status === 401) {
           console.log("🔐 401 Unauthorized - clearing auth state");
           setIsAuthenticated(false);
-          // Clear authentication state in storage and cookies
           Cookies.remove("isLoggedIn");
           try {
             sessionStorage.removeItem("isAuthenticated");
@@ -328,10 +345,19 @@ export function TokenProvider({ children }: { children: ReactNode }) {
             console.log("Could not clear auth state in storage:", e);
           }
           errorMessage = "Authentication error. Please sign in again.";
+          shouldAlert = false;
         } else if (error.response?.status === 403) {
-          console.log("🚫 403 Forbidden - likely no tokens remaining or session issue");
+          console.log("🚫 403 Forbidden - checking response details");
           console.log("🔍 Response data:", error.response?.data);
-          errorMessage = error.response?.data?.message || "No tokens remaining for today";
+          
+          // Try to extract meaningful error message
+          if (error.response?.data?.message) {
+            errorMessage = error.response.data.message;
+          } else if (error.response?.data?.error) {
+            errorMessage = error.response.data.error;
+          } else {
+            errorMessage = "Access denied. You may have run out of daily tokens or your session is invalid.";
+          }
         } else if (error.response?.status === 500) {
           console.log("💥 500 Server Error");
           errorMessage = "Server error occurred. Please try again later.";
@@ -339,10 +365,18 @@ export function TokenProvider({ children }: { children: ReactNode }) {
           console.log(`🔴 HTTP ${error.response?.status} Error:`, error.response?.data);
           errorMessage = error.response?.data?.message || error.message;
         }
+      } else {
+        console.log("🔴 Non-Axios error:", error);
+        errorMessage = (error as Error)?.message || "Network error occurred";
       }
       
       setError(errorMessage);
-      alert(errorMessage);
+      
+      // Only show alert for certain types of errors
+      if (shouldAlert) {
+        alert(errorMessage);
+      }
+      
       return false;
     } finally {
       setIsLoading(false);
