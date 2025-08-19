@@ -66,7 +66,6 @@ const Navbar = () => {
         }
       );
 
-      console.log("Backend logout successful:", response.status);
     } catch (err) {
       console.error("Backend logout error (proceeding with local cleanup):", err);
     }

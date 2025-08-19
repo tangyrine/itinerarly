@@ -183,15 +183,6 @@ const AuthenticationTester = () => {
       inProgress: false,
       complete: true
     }));
-    
-    // Log final results
-    console.log('Authentication mechanism test results:', {
-      jsessionid: jsessionidResult,
-      authToken: authTokenResult,
-      altAuthToken: altAuthTokenResult,
-      xAuthToken: xAuthTokenResult,
-      authorization: authorizationResult
-    });
   };
 
   // Run tests automatically on login

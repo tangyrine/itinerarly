@@ -227,23 +227,18 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
             }`}
             poster="/assets/bg-poster.png"
             onLoadedData={() => {
-              console.log('Video loaded successfully');
               setVideoLoaded(true);
               if (videoRef.current) {
                 // Small delay to ensure smooth transition
                 setTimeout(() => {
                   videoRef.current?.play().catch((error) => {
-                    console.log('Video autoplay prevented by browser:', error);
+                    console.error('Video autoplay prevented by browser:', error);
                   });
                 }, 200);
               }
             }}
             onCanPlay={() => {
-              console.log('Video ready to play');
               setVideoLoaded(true);
-            }}
-            onLoadStart={() => {
-              console.log('Video loading started');
             }}
             onError={(e) => {
               const video = e.target as HTMLVideoElement;
@@ -278,18 +273,12 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
               
               console.warn(`Video Error: ${errorMessage}`);
               setVideoLoaded(false);
-              
-              // Fallback to static background - video will not show
-            }}
-            onPlay={() => {
-              console.log('Video playing');
             }}
           >
-            {/* Primary optimized source based on device detection */}
             <source 
               src={deviceInfo.videoSrc} 
               type={deviceInfo.videoSrc.includes('.webm') ? 'video/webm' : 'video/mp4'}
-              onError={(e) => console.log('Primary video source failed:', deviceInfo.videoSrc)}
+              onError={(e) => console.error('Primary video source failed:', deviceInfo.videoSrc)}
             />
           </video>
         )}

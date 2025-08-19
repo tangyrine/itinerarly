@@ -77,7 +77,6 @@ const Itinerary: React.FC<ItineraryProps> = ({
   try {
     if (itinerary) {
       parsed = parseDelimitedItinerary(itinerary);
-      console.log("Parsed itinerary:", parsed);
     }
   } catch (e) {
     parseError = "Could not parse itinerary.";
