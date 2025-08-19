@@ -69,17 +69,17 @@ function checkAuthenticationMechanisms() {
   );
 }
 
-// Import debug utility if it exists
-let debugAuthTokens: (() => string) | undefined;
-try {
-  if (typeof window !== 'undefined') {
-    import('@/lib/debug-auth').then(module => {
-      debugAuthTokens = module.default;
-    });
-  }
-} catch (e) {
-  console.log("Debug auth module not available");
-}
+// // Import debug utility if it exists
+// let debugAuthTokens: (() => string) | undefined;
+// try {
+//   if (typeof window !== 'undefined') {
+//     import('@/lib/debug-auth').then(module => {
+//       debugAuthTokens = module.default;
+//     });
+//   }
+// } catch (e) {
+//   console.log("Debug auth module not available");
+// }
 
 interface TokenContextType {
   token: number | undefined;
@@ -171,9 +171,9 @@ export function TokenProvider({ children }: { children: ReactNode }) {
         console.log("Could not store auth state in storage:", e);
       }
 
-      if (typeof debugAuthTokens === 'function') {
-        debugAuthTokens();
-      }
+      // if (typeof debugAuthTokens === 'function') {
+      //   debugAuthTokens();
+      // }
     } catch (error) {
       console.error("Authentication check failed:", error);
       setToken(0);
