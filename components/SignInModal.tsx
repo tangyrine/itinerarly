@@ -41,9 +41,7 @@ const signInWithGoogle = () => {
 export function SignInModal({ openModal, onClose }: SignInModalProps) {
   const { refreshTokenCount } = useToken();
 
-  // Check for authentication redirect
   useEffect(() => {
-    // Check if we've been redirected back from OAuth
     const url = new URL(window.location.href);
     const hasAuthParams = url.searchParams.has('token') || 
                           url.searchParams.has('code') || 

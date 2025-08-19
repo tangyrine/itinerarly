@@ -119,7 +119,6 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
   const [showVideo, setShowVideo] = useState(false);
   const [showFloatingElements, setShowFloatingElements] = useState(false);
 
-  // Detect device capabilities for optimal video loading
   const [deviceInfo, setDeviceInfo] = useState({
     isMobile: false,
     isLowEndDevice: false,
@@ -229,7 +228,6 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
             onLoadedData={() => {
               setVideoLoaded(true);
               if (videoRef.current) {
-                // Small delay to ensure smooth transition
                 setTimeout(() => {
                   videoRef.current?.play().catch((error) => {
                     console.error('Video autoplay prevented by browser:', error);

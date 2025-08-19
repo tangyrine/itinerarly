@@ -54,9 +54,6 @@ function checkAuthenticationMechanisms() {
   );
 }
 
-// Import debug utility if it exists
-
-
 interface TokenContextType {
   token: number | undefined;
   isLoading: boolean;
@@ -152,7 +149,6 @@ export function TokenProvider({ children }: { children: ReactNode }) {
         if (isOAuthCharacterError) {
           console.error("Detected OAuth2 invalid character error - cleaning cookies");
           
-          // Clean up problematic cookies
           const authTokenRaw = Cookies.get("auth-token");
           const altAuthTokenRaw = Cookies.get("authToken");
           
@@ -167,11 +163,9 @@ export function TokenProvider({ children }: { children: ReactNode }) {
             const sanitizedToken = extractJwtToken(altAuthTokenRaw);
             setCookieSafely(Cookies, "authToken", sanitizedToken);
           }
-          
-          // Try again with cleaned cookies
+
           setError("Fixing authentication issue. Please wait...");
-          
-          // Wait a moment and try again with cleaned cookies
+
           setTimeout(() => {
             refreshTokenCount();
           }, 500);
@@ -254,7 +248,6 @@ export function TokenProvider({ children }: { children: ReactNode }) {
       let shouldAlert = true;
       
       if (axios.isAxiosError(error)) {
-        // Check if response is HTML (login page) instead of JSON
         const responseText = typeof error.response?.data === 'string' ? error.response.data : '';
         const isHtmlResponse = responseText.includes('<!DOCTYPE html>') || responseText.includes('<html');
         
@@ -302,7 +295,6 @@ export function TokenProvider({ children }: { children: ReactNode }) {
       
       setError(errorMessage);
       
-      // Only show alert for certain types of errors
       if (shouldAlert) {
         alert(errorMessage);
       }
@@ -314,10 +306,7 @@ export function TokenProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    // Check if there's any indication of authentication
     const isAuthPresent = checkAuthenticationMechanisms();
-    
-    // Check session storage first for previous authenticated state
     const isAuthInSession = sessionStorage.getItem("isAuthenticated") === "true";
     
     if (isAuthPresent || isAuthInSession) {
@@ -326,8 +315,7 @@ export function TokenProvider({ children }: { children: ReactNode }) {
       setToken(0);
       setIsAuthenticated(false);
     }
-    
-    // Listen for storage events that might affect authentication
+
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === 'token' || event.key === 'X-Auth-Token' || 
           event.key === 'Authorization' || event.key === 'isAuthenticated') {
@@ -379,7 +367,6 @@ export function TokenProvider({ children }: { children: ReactNode }) {
         !currentPath.includes('/dashboard/');
       
       if (shouldRedirect) {
-        // Check for OAuth parameters in URL that might indicate we just completed auth
         const url = new URL(window.location.href);
         const hasAuthParams = url.searchParams.has('token') || 
                             url.searchParams.has('code') || 
@@ -414,7 +401,6 @@ export function TokenProvider({ children }: { children: ReactNode }) {
           
           Cookies.remove(cookieName, options);
           
-          // Also try with secure flag combinations
           Cookies.remove(cookieName, { ...options, secure: true });
           Cookies.remove(cookieName, { ...options, secure: false });
           Cookies.remove(cookieName, { ...options, sameSite: 'Lax' });
@@ -422,15 +408,13 @@ export function TokenProvider({ children }: { children: ReactNode }) {
         });
       });
     });
-    
-    // Force clear by setting expired cookies
+
     cookieNames.forEach(cookieName => {
       document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
       document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${window.location.hostname}`;
       document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.${window.location.hostname}`;
     });
-    
-    // Clear authentication state in storage
+
     try {
       sessionStorage.removeItem("isAuthenticated");
       localStorage.removeItem("isAuthenticated");

@@ -25,7 +25,6 @@ axios.interceptors.response.use(
     const authorizationHeader = response.headers['authorization'];
     const xAuthTokenHeader = response.headers['x-auth-token'];
     
-    // Check for redirect response
     const isRedirect = response.status >= 300 && response.status < 400;
     const redirectUrl = response.headers['location'];
     

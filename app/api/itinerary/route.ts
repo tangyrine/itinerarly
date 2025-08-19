@@ -5,7 +5,6 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const formData = body?.formData;
-    // Input validation
     if (
       !formData ||
       typeof formData !== "object" ||

@@ -109,7 +109,6 @@ const StateDetailsBody: React.FC<PlaceDetailsProps> = ({
     return stars;
   };
 
-  // Helper function to get attraction name regardless of format
   const getAttractionDisplay = (attraction: any): string => {
     if (typeof attraction === 'string') {
       return attraction;

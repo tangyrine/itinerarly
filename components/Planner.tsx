@@ -95,7 +95,6 @@ export default function Planner() {
 
   const handleLogout = async (): Promise<void> => {
     try {
-      // First try to call the backend logout endpoint
       const response = await axios.post(
         `${SiteUrl}/api/v1/logout`,
         {},
@@ -112,18 +111,12 @@ export default function Planner() {
       console.error("Backend logout error (proceeding with local cleanup):", err);
     }
 
-    // Always perform local cleanup using the centralized logout function
     logout();
-    
-    // Update local component state
     setIsLoggedIn(false);
     setUserInfo(null);
     setIsProfileDropdownOpen(false);
 
-    // Refresh token count to ensure UI is updated
     refreshTokenCount();
-
-    // Redirect to homepage
     window.location.href = "/";
   };
 
@@ -159,7 +152,6 @@ export default function Planner() {
 
   useEffect(() => {
     const checkLogin = () => {
-      // Use the isLoggedIn cookie instead of parsing JWT tokens
       const loggedIn = Cookies.get("isLoggedIn") === "true";
       setIsLoggedIn(loggedIn);
 

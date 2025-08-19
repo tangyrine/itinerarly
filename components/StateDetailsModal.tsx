@@ -43,7 +43,6 @@ export function StateDetailsModal({
   
   useEffect(() => {
     const checkLogin = () => {
-      // Use the isLoggedIn cookie instead of parsing JWT tokens
       const loggedIn = getCookieSafely(Cookies, "isLoggedIn") === "true";
       setIsLoggedIn(loggedIn);
       

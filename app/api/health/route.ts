@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
-    // Basic health check - verify the app is responding
     return NextResponse.json({
       status: 'healthy',
       timestamp: new Date().toISOString(),

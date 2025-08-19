@@ -162,7 +162,6 @@ export default function IndiaMap({ type }: IndiaMapProps) {
             <Geographies geography={indiaGeoJson}>
               {({ geographies }: { geographies: any[] }) =>
                 geographies.map((geo, index) => {
-                  // Try multiple possible property names for state name
                   const name = geo.properties?.NAME_1 || geo.properties?.st_nm || geo.properties?.name || geo.properties?.NAME || `geography-${index}`;
                   const isSelected = selectedState === name;
                   const isHovered = hoveredState === name;
@@ -210,13 +209,12 @@ export default function IndiaMap({ type }: IndiaMapProps) {
 
             <g className="disputed-territories">
               <path
-                d="M..." // SVG path for correct Kashmir border
+                d="M..." 
                 fill="none"
                 stroke="#FF0000"
                 strokeWidth={1}
                 strokeDasharray="5,5"
               />
-              {/* Add other disputed borders as needed */}
             </g>
 
             {highlightedPlaces.map((place: any) => (

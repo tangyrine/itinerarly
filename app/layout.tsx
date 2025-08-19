@@ -5,8 +5,6 @@ import { TokenProvider } from '@/lib/TokenProvider';
 import { GoogleAnalytics } from '@next/third-parties/google'
 import AuthWrapper from '@/components/AuthWrapper';
 import AuthDebugWrapper from '@/components/AuthDebugWrapper';
-
-// Configure axios for cross-domain cookies
 import '@/lib/axios-config';
 
 export const metadata = {

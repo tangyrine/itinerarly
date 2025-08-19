@@ -26,7 +26,6 @@ const Navbar = () => {
   } | null>(null);
   const SiteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "https://itinerarly-be.onrender.com";
   
-  // Use global token context
   const { token, isLoading: tokenLoading, refreshTokenCount, logout } = useToken();
 
   const handleModal = () => {
@@ -54,7 +53,6 @@ const Navbar = () => {
 
   const handleLogout = async (): Promise<void> => {
     try {
-      // First try to call the backend logout endpoint
       const response = await axios.post(
         `${SiteUrl}/api/v1/logout`,
         {
@@ -70,18 +68,13 @@ const Navbar = () => {
       console.error("Backend logout error (proceeding with local cleanup):", err);
     }
 
-    // Always perform local cleanup using the centralized logout function
     logout();
-    
-    // Update local component state
+
     setIsLoggedIn(false);
     setUserInfo(null);
     setIsProfileDropdownOpen(false);
     
-    // Refresh token count to ensure UI is updated
     refreshTokenCount();
-    
-    // Redirect to homepage
     window.location.href = "/";
   };
 
@@ -102,13 +95,11 @@ const Navbar = () => {
 
   useEffect(() => {
     const checkLogin = () => {
-      // Use the isLoggedIn cookie instead of parsing JWT tokens
       const loggedIn = getCookieSafely(Cookies, "isLoggedIn") === "true";
       setIsLoggedIn(loggedIn);
 
       if (loggedIn && !userInfo) {
         fetchUserInfo();
-        // Refresh token count when user logs in
         refreshTokenCount();
       }
     };
@@ -117,7 +108,7 @@ const Navbar = () => {
 
     window.addEventListener("focus", checkLogin);
     return () => window.removeEventListener("focus", checkLogin);
-  }, [userInfo]); // Removed refreshTokenCount from dependencies to prevent infinite loops
+  }, [userInfo]); 
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

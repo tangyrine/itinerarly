@@ -33,13 +33,11 @@ describe('TokenProvider', () => {
   });
 
   it('provides token context to child components', async () => {
-    // Mock successful token fetch
+    require('js-cookie').get.mockReturnValue('mock-auth-token');
+
     mockedAxios.get.mockResolvedValue({
       data: { remainingTokens: 5 }
     });
-
-    // Mock authenticated user
-    require('js-cookie').get.mockReturnValue('mock-auth-token');
 
     render(
       <TokenProvider>
@@ -47,10 +45,8 @@ describe('TokenProvider', () => {
       </TokenProvider>
     );
 
-    // Should start with loading state
     expect(screen.getByTestId('is-loading')).toHaveTextContent('true');
 
-    // Wait for token fetch to complete
     await waitFor(() => {
       expect(screen.getByTestId('token-count')).toHaveTextContent('5');
       expect(screen.getByTestId('is-loading')).toHaveTextContent('false');
@@ -58,7 +54,6 @@ describe('TokenProvider', () => {
       expect(screen.getByTestId('is-available')).toHaveTextContent('true');
     });
 
-    // Verify axios was called with correct URL
     expect(mockedAxios.get).toHaveBeenCalledWith(
       'http://localhost:8080/api/v1/tokens/remaining',
       { withCredentials: true }
