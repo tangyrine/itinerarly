@@ -111,8 +111,18 @@ export function TokenProvider({ children }: { children: ReactNode }) {
   const isTokenAvailable = typeof token === 'number' && token > 0;
 
   const refreshTokenCount = async (): Promise<void> => {
+    console.log("🔄 Refreshing token count...");
     setIsLoading(true);
     setError(null);
+    
+    // Log current authentication state
+    console.log("🔍 Current auth state:", {
+      cookies: document.cookie,
+      isLoggedInCookie: Cookies.get("isLoggedIn"),
+      jsessionId: Cookies.get("JSESSIONID"),
+      authToken: Cookies.get("auth-token"),
+      altAuthToken: Cookies.get("authToken")
+    });
     
     const authTokenRaw = Cookies.get("auth-token");
     const altAuthTokenRaw = Cookies.get("authToken");
@@ -134,12 +144,13 @@ export function TokenProvider({ children }: { children: ReactNode }) {
     }
     
     try {
+      console.log("🚀 Making request to /tokens/remaining...");
       const response = await axios.get(`${SiteUrl}/api/v1/tokens/remaining`, {
         withCredentials: true // This ensures cookies are sent with the request
       });
       
       // If we get a successful response, we're authenticated
-      console.log("Authentication successful:", response.data);
+      console.log("✅ Authentication successful:", response.data);
       setToken(response.data.remainingTokens ?? 0);
       setIsAuthenticated(true);
       
@@ -151,9 +162,7 @@ export function TokenProvider({ children }: { children: ReactNode }) {
         secure: process.env.NODE_ENV === 'production'
       });
       console.log("✅ Set isLoggedIn cookie to true");
-      
-      // Store authentication state in session/localStorage for persistence
-      // This helps when HttpOnly cookies are present but not visible to JS
+
       try {
         sessionStorage.setItem("isAuthenticated", "true");
         localStorage.setItem("isAuthenticated", "true");
@@ -161,8 +170,7 @@ export function TokenProvider({ children }: { children: ReactNode }) {
       } catch (e) {
         console.log("Could not store auth state in storage:", e);
       }
-      
-      // Try to run debug if available
+
       if (typeof debugAuthTokens === 'function') {
         debugAuthTokens();
       }
@@ -170,8 +178,7 @@ export function TokenProvider({ children }: { children: ReactNode }) {
       console.error("Authentication check failed:", error);
       setToken(0);
       setIsAuthenticated(false);
-      
-      // Remove the isLoggedIn cookie when authentication fails
+
       Cookies.remove("isLoggedIn");
       console.log("❌ Removed isLoggedIn cookie due to auth failure");
       
@@ -254,15 +261,23 @@ export function TokenProvider({ children }: { children: ReactNode }) {
     setError(null);
     
     try {
+      console.log("🔥 Attempting to consume token...");
+      console.log("🍪 Current cookies:", document.cookie);
+      console.log("🔑 Auth state:", { isAuthenticated, isLoggedIn });
+      
       const response = await axios.post(
         `${SiteUrl}/api/v1/tokens/consume`,
+        {}, 
         {
           withCredentials: true,
           timeout: 10000,
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
       );
 
-      console.log("Token consume response:", response.data);
+      console.log("✅ Token consume response:", response.data);
 
       if (response.data?.success === true) {
         if (response.data?.remainingTokens !== undefined) {
@@ -279,12 +294,29 @@ export function TokenProvider({ children }: { children: ReactNode }) {
         return false;
       }
     } catch (error) {
-      console.error("Error consuming token:", error);
+      console.error("❌ Error consuming token:", error);
+      
+      // Log detailed error information for debugging
+      if (axios.isAxiosError(error)) {
+        console.error("📊 Axios error details:", {
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+          headers: error.response?.headers,
+          config: {
+            url: error.config?.url,
+            method: error.config?.method,
+            withCredentials: error.config?.withCredentials,
+            headers: error.config?.headers
+          }
+        });
+      }
       
       let errorMessage = "Failed to consume token";
       
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401) {
+          console.log("🔐 401 Unauthorized - clearing auth state");
           setIsAuthenticated(false);
           // Clear authentication state in storage and cookies
           Cookies.remove("isLoggedIn");
@@ -297,10 +329,14 @@ export function TokenProvider({ children }: { children: ReactNode }) {
           }
           errorMessage = "Authentication error. Please sign in again.";
         } else if (error.response?.status === 403) {
+          console.log("🚫 403 Forbidden - likely no tokens remaining or session issue");
+          console.log("🔍 Response data:", error.response?.data);
           errorMessage = error.response?.data?.message || "No tokens remaining for today";
         } else if (error.response?.status === 500) {
+          console.log("💥 500 Server Error");
           errorMessage = "Server error occurred. Please try again later.";
         } else {
+          console.log(`🔴 HTTP ${error.response?.status} Error:`, error.response?.data);
           errorMessage = error.response?.data?.message || error.message;
         }
       }
