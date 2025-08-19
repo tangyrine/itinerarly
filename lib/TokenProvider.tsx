@@ -245,9 +245,17 @@ export function TokenProvider({ children }: { children: ReactNode }) {
   };
 
   const consumeToken = async (): Promise<boolean> => {
-    // Don't need to check for specific cookies since we're relying on withCredentials
-    // to send all cookies, including HttpOnly ones
-    if (!isAuthenticated) {
+    // Check both isAuthenticated state and isLoggedIn cookie for consistency
+    // This ensures we're truly authenticated according to both the TokenProvider
+    // internal state and the global cookie that's used by middleware and other components
+    const isLoggedIn = Cookies.get("isLoggedIn") === "true";
+    
+    if (!isAuthenticated || !isLoggedIn) {
+      console.log("Token consumption blocked - Authentication check failed:", {
+        isAuthenticated,
+        isLoggedIn,
+        hasIsLoggedInCookie: Cookies.get("isLoggedIn") !== undefined
+      });
       setError("Please sign in to continue");
       return false;
     }
@@ -263,7 +271,6 @@ export function TokenProvider({ children }: { children: ReactNode }) {
     try {
       const response = await axios.post(
         `${SiteUrl}/api/v1/tokens/consume`,
-        {},
         {
           withCredentials: true,
           timeout: 10000,
