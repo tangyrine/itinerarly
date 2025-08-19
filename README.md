@@ -1,303 +1,148 @@
 # Itinerarly - Travel Planning Made Simple
 
 ## Overview
-This is a fun project because all my friends couldn't decide where to go for our next trip and the itinerary of the trip isn't decided which wastes all of our time . Thus this is my attempt to solve my little problem , along with learning ,using and showcasing the skills i have gathered over the years. 
+Itinerarly is an AI-powered travel planning application that helps you create perfect itineraries for exploring India. Born from the frustration of indecisive group travel planning, this tool leverages AI to make travel planning effortless and enjoyable.
 
-If you guys have any similar issues , feel free to use the tool which i have developed using a significant amount of my time. 
+**🎯 Quick Start**: Visit our live application and start planning your next adventure! 
 
-## Features
-- Interactive India map visualization using react-simple-maps
-- Modern, responsive UI with Tailwind CSS and shadcn/ui components
-- Server-side rendering and app router with Next.js 14
-- Type-safe development with TypeScript
-- AI-powered travel recommendations using Google's Gemini API
-- Interactive state and city selection with detailed information
-- Dynamic itinerary creation and management
-- Weather forecasts for destinations
-- Accommodation and attraction suggestions
-- Comprehensive database of 1000+ tourist destinations across India
-- Curated collections of hill stations, historical sites, beaches, and wildlife sanctuaries
+## ✨ Key Features
+- 🗺️ **Interactive India Map** with react-simple-maps visualization
+- 🤖 **AI-Powered Recommendations** using Google's Gemini API
+- 🏛️ **1000+ Curated Destinations** across India (Hill Stations, Historical Sites, Beaches, Wildlife Sanctuaries)
+- 📱 **Modern Responsive UI** with Tailwind CSS and shadcn/ui
+- ⚡ **Fast & Type-Safe** with Next.js 14 and TypeScript
+- 🌤️ **Weather Integration** for destination planning
+- 🏨 **Smart Suggestions** for accommodations and attractions
 
-## Tech Stack
-- **Framework**: Next.js 14
+## 🛠️ Tech Stack
+- **Framework**: Next.js 14 with App Router
 - **Language**: TypeScript 5.0+
-- **Styling**: Tailwind CSS 3.3+
-- **UI Components**: shadcn/ui
+- **Styling**: Tailwind CSS + shadcn/ui
 - **Maps**: react-simple-maps
-- **Icons**: Lucide React
 - **AI**: Google Gemini API
 - **State Management**: Zustand
 - **Testing**: Vitest & React Testing Library
-- **Data Fetching**: SWR
 
-## Data Coverage
+## 📊 Data Coverage
+Itinerarly features **1000+ carefully curated destinations** across India:
 
-### Comprehensive Tourist Destination Database
-Itinerarly features an extensive database of 1000+ carefully curated tourist destinations across India, organized into four main categories:
+- **🏔️ Hill Stations**: Mountain retreats from Himalayas to Western Ghats
+- **🏛️ Historical Sites**: UNESCO sites, monuments, forts, and cultural landmarks  
+- **🏖️ Beaches (150+)**: Complete coastal coverage including islands (Lakshadweep, Andaman & Nicobar)
+- **🦌 Wildlife Sanctuaries (100+)**: National parks across all biogeographic regions
 
-#### 🏔️ Hill Stations
-- Popular mountain retreats and scenic hill destinations
-- Covering major hill station circuits across all states
-- From the Himalayas to the Western and Eastern Ghats
+**Complete Coverage**: All 28 states and 8 union territories with verified, up-to-date information.
 
-#### 🏛️ Historical Sites
-- UNESCO World Heritage Sites
-- Ancient monuments, palaces, and forts
-- Archaeological sites and heritage locations
-- Cultural and religious landmarks
+> 📍 **View Database**: [Tourist Destinations (sections.js)](./data/sections.js) | [Map Data (india-geoJson.json)](./app/start/india-geoJson.json)
 
-#### 🏖️ Beaches (150+ locations)
-- **West Coast**: Gujarat, Maharashtra, Goa, Karnataka, Kerala
-- **East Coast**: Tamil Nadu, Andhra Pradesh, Telangana, Odisha, West Bengal
-- **Islands**: 
-  - **Lakshadweep**: All major islands including Agatti, Bangaram, Kadmat, Kavaratti, Kalpeni, Minicoy
-  - **Andaman & Nicobar**: Havelock, Neil Island, Ross Island, Baratang, Diglipur, and more
-- **Union Territories**: Puducherry, Daman & Diu
-
-#### 🦌 Wildlife Sanctuaries & National Parks (100+ locations)
-Comprehensive coverage across all biogeographic regions of India:
-
-- **Himalayan Region**: Snow leopard habitats, alpine ecosystems
-- **Trans-Himalayan**: High-altitude wildlife reserves
-- **Desert Region**: Rajasthan's unique desert wildlife
-- **Semi-Arid**: Gujarat and western India sanctuaries
-- **Western Ghats**: UNESCO World Heritage biodiversity hotspot
-- **Deccan Peninsula**: Central and southern India parks
-- **Gangetic Plain**: Terai and alluvial plain reserves
-- **Coasts**: Coastal and marine sanctuaries
-- **Islands**: Endemic species of Andaman & Nicobar, Lakshadweep
-- **Northeast India**: Biodiversity-rich sanctuaries across all seven sister states
-
-### State-wise Coverage
-Every Indian state and union territory is comprehensively covered:
-- **28 States**: From Andhra Pradesh to West Bengal
-- **8 Union Territories**: Including specialized coverage for island territories
-- **Special Focus**: Enhanced coverage for tourism-heavy states like Rajasthan, Kerala, Himachal Pradesh, Uttarakhand, and Goa
-
-## Getting Started
-
-## Special mention
-
-Huge shoutout to [Udit-001](https://github.com/udit-001/india-maps-data) for compiling the data of Indian states and geography
-
-## Data Files
-
-### 📍 [Tourist Destinations Database (sections.js)](./data/sections.js)
-Complete database of 1000+ tourist destinations across India, organized by categories:
-- Hill Stations, Historical Sites, Beaches, Wildlife Sanctuaries
-- Comprehensive coverage of all Indian states and union territories
-
-### 🗺️ [India GeoJSON Data (india-geoJson.json)](./app/start/india-geoJson.json)
-Geographic boundary data for interactive map visualization:
-- State and union territory boundaries
-- Coordinates for map rendering with react-simple-maps
-- Optimized for web performance 
+## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18.17.0 or later
+- Node.js 18.17+ 
 - npm 9+ or yarn 1.22+
-- Google Gemini API key
+- Google Gemini API key ([Get it here](https://makersuite.google.com/app/apikey))
 
 ### Installation
-1. Clone the repository
 ```bash
+# Clone and install
 git clone https://github.com/yourusername/itinerarly-FE.git
 cd itinerarly-FE
-```
-
-2. Install dependencies
-```bash
 npm install
-# or
-yarn install
-```
 
-3. Set up environment variables
-Create a `.env.local` file in the root directory with the following variables:
-```env
-NEXT_PUBLIC_GEMINI_API_KEY=your_gemini_api_key_here
-NEXT_PUBLIC_API_URL=your_backend_api_url
-```
+# Set up environment
+echo "NEXT_PUBLIC_GEMINI_API_KEY=your_api_key_here" > .env.local
 
-4. Start the development server
-```bash
+# Start development
 npm run dev
-# or
-yarn dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser
+Visit [http://localhost:3000](http://localhost:3000) to start planning!
 
-## Project Structure
+> 📖 **Need help?** Check our [Contributing Guide](./CONTRIBUTING.md) for detailed setup instructions.
+
+## 📁 Project Structure
 ```
 itinerarly-FE/
-├── app/                # Next.js app directory
-│   ├── (routes)/      # Application routes
-│   ├── api/           # API routes
-│   ├── layout.tsx     # Root layout
-│   ├── page.tsx       # Home page
-│   └── start/
-│       └── india-geoJson.json # India map data → [View File](./app/start/india-geoJson.json)
-├── components/         # Reusable components
-│   ├── ui/            # UI components
-│   ├── map/           # Map-related components
-│   ├── IndiaMap.tsx   # Interactive India map component
-│   └── StateDetailsModal.tsx # State details and AI recommendations
-├── data/              # Static data files
-│   └── sections.js    # 1000+ tourist destinations database → [View File](./data/sections.js)
-├── lib/               # Utility functions and API handlers
-├── hooks/             # Custom React hooks
-├── store/             # State management
-├── styles/            # Global styles
-├── public/            # Static assets
-├── __tests__/         # Test files
-└── types/             # TypeScript type definitions
+├── app/                   # Next.js app directory
+│   ├── (routes)/         # Application routes  
+│   └── start/india-geoJson.json # Map data
+├── components/           # React components
+│   ├── ui/              # shadcn/ui components
+│   ├── IndiaMap.tsx     # Interactive map
+│   └── StateDetailsModal.tsx # AI recommendations
+├── data/sections.js     # 1000+ destinations database
+├── lib/                 # Utilities & API handlers
+└── types/              # TypeScript definitions
 ```
 
-## Key Components
+## 🎯 Key Components
+- **Interactive Map**: Click any state for detailed destination info
+- **AI Recommendations**: Smart travel suggestions via Google Gemini
+- **Destination Database**: 1000+ curated locations with regular updates
 
-### Interactive Map (`IndiaMap.tsx`)
-- Click on any Indian state to view detailed information
-- Seamless state selection with visual feedback
-- Integration with comprehensive destination database
+## 🔧 Development
 
-### AI-Powered Recommendations (`StateDetailsModal.tsx`)
-- Google Gemini API integration for intelligent travel suggestions
-- Contextual recommendations based on selected state
-- Dynamic itinerary generation with local insights
-
-### Destination Database (`data/sections.js`)
-- 1000+ curated tourist destinations → [**View Database**](./data/sections.js)
-- Organized by category: Hill Stations, Historical Sites, Beaches, Wildlife Sanctuaries
-- Complete coverage of all Indian states and union territories
-- Regular updates with new destinations and seasonal recommendations
-
-## Available Scripts
+### Available Scripts
 ```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run start        # Start production server
-npm run lint         # Run ESLint
-npm run test         # Run tests
-npm run test:watch   # Run tests in watch mode
-npm run format       # Format code with Prettier
+npm run dev      # Start development server
+npm run build    # Build for production  
+npm run test     # Run tests
+npm run lint     # Code linting
 ```
 
-## Environment Variables
-The following environment variables are required:
-
+### Environment Variables
 | Variable | Description | Required |
 |----------|-------------|----------|
-| NEXT_PUBLIC_GEMINI_API_KEY | Google Gemini API Key | Yes |
-| NEXT_PUBLIC_API_URL | Backend API URL | No |
+| `NEXT_PUBLIC_GEMINI_API_KEY` | Google Gemini API Key | ✅ |
+| `NEXT_PUBLIC_API_URL` | Backend API URL | ❌ |
 
-To obtain a Gemini API key:
-1. Visit the [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Create or sign in to your Google account
-3. Generate an API key
-4. Copy the key to your `.env.local` file
+## 📚 Documentation
 
-## Testing
-The project uses Vitest and React Testing Library for testing. To run tests:
-```bash
-npm test
-```
+- **[Contributing Guide](./CONTRIBUTING.md)** - Setup, development workflow, and contribution guidelines
+- **[Future Roadmap](./FUTURE-PLANS.md)** - Upcoming features and long-term vision
+- **[Troubleshooting](./TROUBLESHOOT-403-CONSUME-ENDPOINT.md)** - Common issues and solutions
 
-For watch mode:
-```bash
-npm run test:watch
-```
+## 🤝 Contributing
 
-## Contributing
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+We welcome contributions! Please check our [Contributing Guide](./CONTRIBUTING.md) for:
+- Development setup instructions
+- Coding standards and best practices  
+- How to submit pull requests
+- Testing requirements
 
-## Recent Updates
+## 📈 Recent Updates
 
-### Version 2.0 - Comprehensive Data Expansion
-- **Expanded Database**: Added 500+ new destinations across all categories
-- **Enhanced Beach Coverage**: 150+ coastal destinations including complete island coverage
-- **Wildlife Sanctuary Addition**: 100+ national parks and wildlife sanctuaries
-- **Bug Fixes**: Resolved state selection issues in interactive map
-- **Code Optimization**: Removed console logs and improved error handling
-- **Complete Coverage**: All 28 states and 8 union territories now have comprehensive data
+### Version 2.0 - Major Data Expansion
+- ✅ **500+ New Destinations** across all categories
+- ✅ **Complete Island Coverage** (Lakshadweep, Andaman & Nicobar)
+- ✅ **100+ Wildlife Sanctuaries** added
+- ✅ **Enhanced UI/UX** with improved error handling
+- ✅ **All States Covered** - comprehensive data for 28 states + 8 UTs
 
-### Data Quality Improvements
-- Verified and validated all location data
-- Added geographical diversity across all biogeographic regions
-- Enhanced coverage for northeastern states and island territories
-- Seasonal destination recommendations
+## 🚀 What's Next?
 
-## 🚀 Future Plans & Roadmap
+Exciting features coming soon! Check our [Future Plans](./FUTURE-PLANS.md) for:
+- 🤖 Advanced AI personalization
+- 💬 Social travel planning & group chat
+- 📱 Mobile apps (iOS/Android)
+- 💰 Premium features & token system
+- 🌍 International destinations
 
-We're constantly working to enhance Itinerarly with exciting new features and improvements. Here's what's coming next:
+## 📞 Support & Community
 
-### 🤖 AI Enhancement & Personalization
-- **Advanced AI Fine-tuning**: Continuously improving AI responses using user feedback data
-- **Personalized Recommendations**: Learning from user preferences to provide tailored travel suggestions
-- **Smart Itinerary Optimization**: AI-powered route optimization based on travel patterns and user behavior
-- **Contextual Suggestions**: More intelligent recommendations based on season, budget, and travel style
+- 🐛 [Report Issues](https://github.com/Heisen47/itinerarly-FE/issues)
+- 💡 [Feature Requests](https://github.com/Heisen47/itinerarly-FE/discussions)
+- 📧 [Contact Us](mailto:iamrishi.dev47@gmail.com)
+- ⭐ [Star on GitHub](https://github.com/Heisen47/itinerarly-FE) to stay updated
 
-### 💬 Social & Collaboration Features
-- **In-App Group Chat**: Real-time chat functionality for travel groups to discuss plans within the app
-- **Collaborative Planning**: Multiple users can contribute to the same itinerary simultaneously
-- **Travel Community**: Connect with fellow travelers and share experiences
-- **Social Sharing**: Share itineraries and travel photos with the community
-- **Travel Buddies**: Find travel companions with similar interests and destinations
+## 🙏 Acknowledgments
 
-### 💰 Premium Features & Monetization
-- **Token Purchase System**: Buy additional tokens when your daily limit is exhausted
-- **Premium Subscriptions**: Unlock advanced features like unlimited AI requests, priority support
-- **Pro Analytics**: Detailed travel insights and expense tracking for premium users
-- **Exclusive Content**: Access to premium travel guides and insider recommendations
+Special thanks to [Udit-001](https://github.com/udit-001/india-maps-data) for the comprehensive Indian geographic data compilation.
 
-### 🛠️ Technical Improvements
-- **Offline Support**: Download itineraries and maps for offline access
-- **Mobile App**: Native iOS and Android applications
-- **Advanced Maps**: 3D map visualization and satellite imagery integration
-- **Real-time Updates**: Live weather, traffic, and event information
-- **Multi-language Support**: Localization for international travelers
+## 📄 License
 
-### 🌟 Additional Features
-- **Expense Tracking**: Comprehensive budget management and expense splitting
-- **Booking Integration**: Direct hotel and flight booking within the app
-- **Travel Insurance**: Integrated travel insurance recommendations
-- **Emergency Assistance**: 24/7 travel support and emergency contacts
-- **AR Travel Guide**: Augmented reality features for on-location information
-- **Carbon Footprint Tracking**: Eco-friendly travel options and carbon offset suggestions
-
-### 📊 Analytics & Insights
-- **Travel Analytics Dashboard**: Personal travel statistics and insights
-- **Popular Destinations**: Trending destinations based on community data
-- **Best Time to Visit**: AI-powered optimal timing recommendations
-- **Price Prediction**: Smart pricing alerts for flights and accommodations
+MIT License - see [LICENSE](./LICENSE) file for details.
 
 ---
 
-**Want to contribute to these features or suggest new ones?** 
-- 📧 [Contact us](mailto:your-email@example.com) with feature requests
-- 🐛 [Report issues](https://github.com/yourusername/itinerarly-FE/issues) on GitHub
-- 💡 [Join our Discord](https://discord.gg/your-invite) community for discussions
-- ⭐ Star our repository to stay updated on new releases
-
-*Timeline: Most of these features are planned for release over the next 6-12 months. Priority will be given based on user feedback and demand.*
-
-## Troubleshooting
-- **API rate limiting**: If encountering rate limiting with the Gemini API:
-    - The application automatically retries with exponential backoff
-    - Check your API quota in the Google AI Studio
-    - Consider implementing a caching strategy for common requests
-
-- **Build errors**:
-    - Ensure Node.js version is 18.17.0 or higher
-    - Clear the `.next` cache directory and rebuild
-
-- **Map rendering issues**:
-    - Check console for any CORS errors
-    - Ensure GeoJSON data is properly formatted
-
-## License
-This project is licensed under the MIT License - see the LICENSE file for details.
+**Made with ❤️ for Indian travelers** | **[Start Planning Your Next Adventure →](http://localhost:3000)**
