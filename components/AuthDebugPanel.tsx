@@ -2,8 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useToken } from '@/lib/TokenProvider';
-import debugAuthTokens from '@/lib/debug-auth';
-
 
 export default function AuthDebugPanel() {
   const { token, isAuthenticated, refreshTokenCount } = useToken();
@@ -22,12 +20,8 @@ export default function AuthDebugPanel() {
 
   const isDev = process.env.NODE_ENV === 'development';
 
-  // Run debug function
   const runDebug = () => {
-    // Run the debug function
-    debugAuthTokens();
-    
-    // Collect basic info for display
+
     setDebugInfo({
       cookies: document.cookie || 'No visible cookies',
       jsessionid: document.cookie.includes('JSESSIONID') ? 'Present' : 'Not visible (likely HttpOnly)',
@@ -41,7 +35,6 @@ export default function AuthDebugPanel() {
     });
   };
 
-  // Don't render anything in production
   if (!isDev) return null;
 
   return (
