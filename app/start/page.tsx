@@ -12,6 +12,7 @@ type SectionType = "hillstations" | "beaches" | "wildlife" | "historical";
 function MapWithParams() {
   const searchParams = useSearchParams();
   const type = searchParams.get("type");
+  console.log("MapWithParams rendering with type:", type); 
   return <IndiaMap type={type} />;
 }
 
@@ -19,13 +20,19 @@ export default function Page() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
+  console.log("Start page rendering..."); 
+
   const handleDestinationChange = async (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
+    console.log("Destination change triggered:", e.target.value); 
     setIsLoading(true);
     const selectedType = e.target.value as SectionType;
     try {
-      await router.push(`/start?type=${selectedType}`);
+      console.log("Pushing to router:", `/start?type=${selectedType}`); 
+      await router.replace(`/start?type=${selectedType}`);
+    } catch (error) {
+      console.error("Router error:", error); 
     } finally {
       setIsLoading(false);
     }

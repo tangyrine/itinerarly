@@ -81,9 +81,8 @@ export function TokenProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const isTokenAvailable = typeof token === 'number' && token > 0;
-
-  const refreshTokenCount = async (): Promise<void> => {
+  const isTokenAvailable = typeof token === 'number' && token > 0;  const refreshTokenCount = async (): Promise<void> => {
+    console.log("🔄 refreshTokenCount called"); // Debug log
     setIsLoading(true);
     setError(null);
     
@@ -103,12 +102,14 @@ export function TokenProvider({ children }: { children: ReactNode }) {
         setCookieSafely(Cookies, "authToken", sanitizedToken);
       }
     }
-    
+
     try {
+      console.log("🌐 Making API call to /api/v1/tokens/remaining"); // Debug log
       const response = await axios.get(`${SiteUrl}/api/v1/tokens/remaining`, {
         withCredentials: true 
       });
       
+      console.log("✅ Token response:", response.data); // Debug log
       setToken(response.data.remainingTokens ?? 0);
       setIsAuthenticated(true);
       
@@ -126,7 +127,7 @@ export function TokenProvider({ children }: { children: ReactNode }) {
         console.error("Could not store auth state in storage:", e);
       }
     } catch (error) {
-      console.error("Authentication check failed:", error);
+      console.error("❌ Authentication check failed:", error); // Debug log
       setToken(0);
       setIsAuthenticated(false);
 
@@ -306,12 +307,17 @@ export function TokenProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    console.log("🚀 TokenProvider initial useEffect triggered"); // Debug log
     const isAuthPresent = checkAuthenticationMechanisms();
-    const isAuthInSession = sessionStorage.getItem("isAuthenticated") === "true";
+    const isAuthInSession = typeof window !== 'undefined' ? sessionStorage.getItem("isAuthenticated") === "true" : false;
+    
+    console.log("🔍 Auth check results:", { isAuthPresent, isAuthInSession }); // Debug log
     
     if (isAuthPresent || isAuthInSession) {
+      console.log("✅ Auth detected, calling refreshTokenCount"); // Debug log
       refreshTokenCount();
     } else {
+      console.log("❌ No auth detected, setting unauthenticated state"); // Debug log
       setToken(0);
       setIsAuthenticated(false);
     }
@@ -328,7 +334,8 @@ export function TokenProvider({ children }: { children: ReactNode }) {
     
     const authCheckInterval = setInterval(() => {
       if (isAuthenticated) {
-        refreshTokenCount();
+        console.log("⏰ Interval auth check - TEMPORARILY DISABLED"); // Debug log
+        // refreshTokenCount(); // TEMPORARILY DISABLED TO PREVENT INFINITE LOOP
       }
     }, 5 * 60 * 1000); 
     
@@ -338,15 +345,19 @@ export function TokenProvider({ children }: { children: ReactNode }) {
       window.removeEventListener('storage', handleStorageChange);
       clearInterval(authCheckInterval);
     };
-  }, [isAuthenticated]);
+  }, []); // Changed dependency to empty array to prevent infinite loop
 
   useEffect(() => {
+    console.log("👀 Window focus useEffect setup"); // Debug log
     const checkAuth = () => {
+      console.log("🔍 Window focus auth check triggered"); // Debug log
       const isAuthPresent = checkAuthenticationMechanisms();
       
       if (isAuthPresent) {
+        console.log("✅ Auth present on focus, refreshing token"); // Debug log
         refreshTokenCount();
       } else {
+        console.log("❌ No auth on focus, setting unauthenticated"); // Debug log
         setToken(0);
         setIsAuthenticated(false);
       }
@@ -357,31 +368,40 @@ export function TokenProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      const currentPath = window.location.pathname;
-      
-      const shouldRedirect = 
-        currentPath !== '/start' && 
-        !currentPath.startsWith('/start/') &&
-        !currentPath.includes('/app/') &&
-        !currentPath.includes('/dashboard/');
-      
-      if (shouldRedirect) {
-        const url = new URL(window.location.href);
-        const hasAuthParams = url.searchParams.has('token') || 
-                            url.searchParams.has('code') || 
-                            url.searchParams.has('auth');
+    console.log("🎯 Authentication redirect useEffect triggered, isAuthenticated:", isAuthenticated); // Debug log
+    
+    // TEMPORARILY DISABLED TO PREVENT INFINITE LOOP
+    // if (isAuthenticated) {
+    //   const currentPath = window.location.pathname;
+    //   console.log("📍 Current path:", currentPath); // Debug log
+    //   
+    //   const shouldRedirect = 
+    //     currentPath !== '/start' && 
+    //     !currentPath.startsWith('/start/') &&
+    //     !currentPath.includes('/app/') &&
+    //     !currentPath.includes('/dashboard/');
+    //   
+    //   console.log("🤔 Should redirect:", shouldRedirect); // Debug log
+    //   
+    //   if (shouldRedirect) {
+    //     const url = new URL(window.location.href);
+    //     const hasAuthParams = url.searchParams.has('token') || 
+    //                         url.searchParams.has('code') || 
+    //                         url.searchParams.has('auth');
 
-        if (hasAuthParams || (typeof window !== 'undefined' && sessionStorage.getItem("oauthFlowStarted"))) {
-          if (typeof window !== 'undefined') {
-            sessionStorage.removeItem("oauthFlowStarted");
-            sessionStorage.removeItem("oauthFlowTimestamp");
-            sessionStorage.removeItem("authInProgress");
-          }
-          window.location.href = "/start";
-        }
-      }
-    }
+    //     console.log("🔍 Has auth params:", hasAuthParams); // Debug log
+
+    //     if (hasAuthParams || (typeof window !== 'undefined' && sessionStorage.getItem("oauthFlowStarted"))) {
+    //       console.log("🚀 Redirecting to /start due to OAuth flow completion"); // Debug log
+    //       if (typeof window !== 'undefined') {
+    //         sessionStorage.removeItem("oauthFlowStarted");
+    //         sessionStorage.removeItem("oauthFlowTimestamp");
+    //         sessionStorage.removeItem("authInProgress");
+    //       }
+    //       window.location.href = "/start";
+    //     }
+    //   }
+    // }
   }, [isAuthenticated]);
 
   const logout = () => {
