@@ -36,8 +36,8 @@ function checkAuthenticationMechanisms() {
     localStorage.getItem("X-Auth-Token") !== null ||
     localStorage.getItem("Authorization") !== null;
     
-  const oauthFlowStarted = localStorage.getItem("oauthFlowStarted") !== null;
-  const authInProgress = sessionStorage.getItem("authInProgress") === "true";
+  const oauthFlowStarted = typeof window !== 'undefined' ? sessionStorage.getItem("oauthFlowStarted") !== null : false;
+  const authInProgress = typeof window !== 'undefined' ? sessionStorage.getItem("authInProgress") === "true" : false;
   
   return (
     hasVisibleJsessionId || 
@@ -372,11 +372,12 @@ export function TokenProvider({ children }: { children: ReactNode }) {
                             url.searchParams.has('code') || 
                             url.searchParams.has('auth');
 
-        if (hasAuthParams || localStorage.getItem("oauthFlowStarted")) {
-
-          localStorage.removeItem("oauthFlowStarted");
-          localStorage.removeItem("oauthFlowTimestamp");
-          sessionStorage.removeItem("authInProgress");
+        if (hasAuthParams || (typeof window !== 'undefined' && sessionStorage.getItem("oauthFlowStarted"))) {
+          if (typeof window !== 'undefined') {
+            sessionStorage.removeItem("oauthFlowStarted");
+            sessionStorage.removeItem("oauthFlowTimestamp");
+            sessionStorage.removeItem("authInProgress");
+          }
           window.location.href = "/start";
         }
       }
@@ -416,12 +417,14 @@ export function TokenProvider({ children }: { children: ReactNode }) {
     });
 
     try {
-      sessionStorage.removeItem("isAuthenticated");
-      localStorage.removeItem("isAuthenticated");
-      localStorage.removeItem("oauthFlowStarted");
-      localStorage.removeItem("oauthFlowTimestamp");
-      sessionStorage.removeItem("authInProgress");
-      localStorage.setItem("lastAuthError", new Date().toISOString());
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem("isAuthenticated");
+        localStorage.removeItem("isAuthenticated");
+        sessionStorage.removeItem("oauthFlowStarted");
+        sessionStorage.removeItem("oauthFlowTimestamp");
+        sessionStorage.removeItem("authInProgress");
+        localStorage.setItem("lastAuthError", new Date().toISOString());
+      }
     } catch (e) {
       console.error("Could not clear auth state in storage:", e);
     }

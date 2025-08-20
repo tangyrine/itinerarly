@@ -1,10 +1,13 @@
 "use client";
 import { SignInModal } from "@/components/SignInModal";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState, Suspense } from "react";
+import { useToken } from "@/lib/TokenProvider";
 
 function SignInContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const { isAuthenticated } = useToken();
   const [showError, setShowError] = useState(false);
 
   useEffect(() => {
@@ -13,6 +16,16 @@ function SignInContent() {
     }
   }, [searchParams]);
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/start");
+    }
+  }, [isAuthenticated, router]);
+
+  const handleClose = () => {
+    router.push('/');
+  };
+
   return (
     <>
       {showError && (
@@ -20,7 +33,7 @@ function SignInContent() {
           Failed to authenticate. Please try again.
         </div>
       )}
-      <SignInModal openModal={true} onClose={() => {window.location.href = '/'}} />
+      <SignInModal openModal={true} onClose={handleClose} />
     </>
   );
 }
