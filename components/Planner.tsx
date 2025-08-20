@@ -72,6 +72,7 @@ export default function Planner() {
     refreshTokenCount,
     isTokenAvailable,
     logout,
+    isAuthenticated
   } = useToken();
 
   const router = useRouter();
@@ -127,6 +128,9 @@ export default function Planner() {
         headers: {
           "Content-Type": "application/json",
         },
+        params: {
+          _t: new Date().getTime()
+        }
       });
 
       const userData = response.data;
@@ -153,11 +157,10 @@ export default function Planner() {
   useEffect(() => {
     const checkLogin = () => {
       const loggedIn = Cookies.get("isLoggedIn") === "true";
-      setIsLoggedIn(loggedIn);
+      setIsLoggedIn(loggedIn || isAuthenticated);
 
-      if (loggedIn && !userInfo) {
+      if ((loggedIn || isAuthenticated) && !userInfo) {
         fetchUserInfo();
-        refreshTokenCount();
       }
     };
 
@@ -165,7 +168,7 @@ export default function Planner() {
 
     window.addEventListener("focus", checkLogin);
     return () => window.removeEventListener("focus", checkLogin);
-  }, [userInfo]);
+  }, [userInfo, isAuthenticated]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -178,6 +181,14 @@ export default function Planner() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+
+  useEffect(() => {
+    if (isAuthenticated && !userInfo) {
+      fetchUserInfo();
+    }
+    setIsLoggedIn(isAuthenticated);
+  }, [isAuthenticated]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>

@@ -1,11 +1,12 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import IndiaMap from "@/components/IndiaMap";
 import Planner from "@/components/Planner";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { useToken } from "@/lib/TokenProvider";
 
 type SectionType = "hillstations" | "beaches" | "wildlife" | "historical";
 
@@ -19,8 +20,14 @@ function MapWithParams() {
 export default function Page() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const { refreshTokenCount } = useToken();
 
-  console.log("Start page rendering..."); 
+
+  useEffect(() => {
+    refreshTokenCount().catch(err => {
+      console.error("Error refreshing authentication state:", err);
+    });
+  }, []);
 
   const handleDestinationChange = async (
     e: React.ChangeEvent<HTMLSelectElement>
