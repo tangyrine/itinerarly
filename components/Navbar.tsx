@@ -26,7 +26,7 @@ const Navbar = () => {
   } | null>(null);
   const SiteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "https://itinerarly-be.onrender.com";
   
-  const { token, isLoading: tokenLoading, refreshTokenCount, logout } = useToken();
+  const { token, isLoading: tokenLoading, refreshTokenCount, logout, isAuthenticated } = useToken();
 
   const handleModal = () => {
     setOpenModal(!openModal);
@@ -102,13 +102,29 @@ const Navbar = () => {
       if (loggedIn && !userInfo) {
         fetchUserInfo();
       }
+
+      if (loggedIn && openModal) {
+        setOpenModal(false);
+      }
     };
 
     checkLogin();
 
     window.addEventListener("focus", checkLogin);
     return () => window.removeEventListener("focus", checkLogin);
-  }, [userInfo]); 
+  }, [userInfo, openModal]); 
+
+  useEffect(() => {
+    if (isAuthenticated && openModal) {
+      setOpenModal(false);
+    }
+  }, [isAuthenticated, openModal]);
+
+  useEffect(() => {
+    if (isAuthenticated && openModal) {
+      setOpenModal(false);
+    }
+  }, [isAuthenticated, openModal]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

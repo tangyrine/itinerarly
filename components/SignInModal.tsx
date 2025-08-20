@@ -112,6 +112,12 @@ export function SignInModal({ openModal, onClose }: SignInModalProps) {
     }
   }, [isAuthenticated, onClose]);
 
+  useEffect(() => {
+    if (openModal && isAuthenticated) {
+      onClose();
+    }
+  }, [openModal, isAuthenticated, onClose]);
+
   return (
     <Dialog open={openModal} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px] bg-white shadow-xl rounded-lg border border-gray-300">
