@@ -14,7 +14,7 @@ const Footer = dynamic(() => import("@/components/Footer"), {
 
 const Page: React.FC = () => {
   const [currentBackground, setCurrentBackground] = useState(
-    sections[0].backgroundImage
+    sections[0]?.backgroundImage || '/assets/bg-poster.png'
   );
  
   const sectionRefs = sections.map(() =>
@@ -29,9 +29,10 @@ const Page: React.FC = () => {
   useEffect(() => {
     const visibleSectionIndex = inViewStates.findIndex(inView => inView);
     if (visibleSectionIndex !== -1) {
-      setCurrentBackground(sections[visibleSectionIndex].backgroundImage);
+      const backgroundImage = sections[visibleSectionIndex]?.backgroundImage || '/assets/bg-poster.png';
+      setCurrentBackground(backgroundImage);
     }
-  }, inViewStates);
+  }, [inViewStates]);
 
   return (
     <div className="min-h-screen flex flex-col">
