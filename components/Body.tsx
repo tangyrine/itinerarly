@@ -598,18 +598,18 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
                 {/*  Navigation Arrows */}
                 <button
                   onClick={prevImage}
-                  className="hidden sm:flex absolute left-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full p-3 transition-all duration-300 items-center justify-center backdrop-blur-md border border-white/20 hover:scale-110"
+                  className="flex absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full p-2 sm:p-3 transition-all duration-300 items-center justify-center backdrop-blur-md border border-white/20 hover:scale-110"
                   aria-label="Previous image"
                 >
-                  <ChevronLeft className="w-6 h-6" />
+                  <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
                 </button>
 
                 <button
                   onClick={nextImage}
-                  className="hidden sm:flex absolute right-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full p-3 transition-all duration-300 items-center justify-center backdrop-blur-md border border-white/20 hover:scale-110"
+                  className="flex absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full p-2 sm:p-3 transition-all duration-300 items-center justify-center backdrop-blur-md border border-white/20 hover:scale-110"
                   aria-label="Next image"
                 >
-                  <ChevronRight className="w-6 h-6" />
+                  <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
                 </button>
               </div>
 
@@ -629,11 +629,11 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
                 ))}
               </div>
 
-              {/* Mobile Touch Hint */}
+              {/* Mobile Navigation Hint */}
               <div className="sm:hidden flex justify-center mt-6">
                 <div className="flex items-center space-x-3 text-sm text-gray-300 bg-black/30 px-4 py-2 rounded-full backdrop-blur-sm border border-white/20">
                   <Calendar className="w-4 h-4" />
-                  <span>Swipe to explore destinations</span>
+                  <span>Use arrows to explore destinations</span>
                 </div>
               </div>
             </div>
