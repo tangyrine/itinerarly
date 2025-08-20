@@ -55,6 +55,7 @@ const Navbar = () => {
     try {
       const response = await axios.post(
         `${SiteUrl}/api/v1/logout`,
+        {},  // Empty request body
         {
           withCredentials: true,
           timeout: 10000,
