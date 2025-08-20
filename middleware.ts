@@ -2,27 +2,25 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  console.log("🛡️ Middleware called for:", request.nextUrl.pathname); // Debug log
+  console.log("🛡️ Middleware called for:", request.nextUrl.pathname); 
   
   const isLoggedIn = request.cookies.get('isLoggedIn')?.value === 'true';
   const url = request.nextUrl.clone();
   
-  console.log("🔐 isLoggedIn cookie:", isLoggedIn); // Debug log
+  console.log("🔐 isLoggedIn cookie:", isLoggedIn);
   
-  // Allow OAuth callback URLs and auth parameters to pass through
   if (url.pathname.includes('/oauth2/') || 
       url.pathname.includes('/login/oauth2/') ||
       url.searchParams.has('code') || 
       url.searchParams.has('token') ||
       url.searchParams.has('auth') ||
       url.searchParams.has('state')) {
-    console.log("✅ OAuth callback detected, allowing through"); // Debug log
+    console.log("✅ OAuth callback detected, allowing through"); 
     return NextResponse.next();
   }
   
-  // Allow signin page itself
   if (url.pathname === '/signin') {
-    console.log("✅ Signin page, allowing through"); // Debug log
+    console.log("✅ Signin page, allowing through"); 
     return NextResponse.next();
   }
 
@@ -30,17 +28,22 @@ export function middleware(request: NextRequest) {
   const hasOAuthReferer = isValidOAuthReferer(referer);
   
   if (hasOAuthReferer) {
-    console.log("✅ Valid OAuth referer, allowing through"); // Debug log
+    console.log("✅ Valid OAuth referer, allowing through"); 
     return NextResponse.next();
   }
+
+  if (!isLoggedIn) {
+    const fromSignin = referer && referer.includes('/signin');
+    if (fromSignin) {
+      console.log("⚠️ Preventing redirect loop from signin page"); 
+      return NextResponse.next();
+    }
+    
+    console.log("❌ Not logged in, redirecting to signin"); 
+    return NextResponse.redirect(new URL('/signin', request.url));
+  }
   
-  // TEMPORARILY DISABLED TO DEBUG INFINITE LOOP
-  // if (!isLoggedIn) {
-  //   console.log("❌ Not logged in, redirecting to signin"); // Debug log
-  //   return NextResponse.redirect(new URL('/signin', request.url));
-  // }
-  
-  console.log("✅ Allowing request through"); // Debug log
+  console.log("✅ Allowing request through"); 
   return NextResponse.next();
 }
 

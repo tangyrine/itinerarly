@@ -334,8 +334,19 @@ export function TokenProvider({ children }: { children: ReactNode }) {
     
     const authCheckInterval = setInterval(() => {
       if (isAuthenticated) {
-        console.log("⏰ Interval auth check - TEMPORARILY DISABLED"); // Debug log
-        // refreshTokenCount(); // TEMPORARILY DISABLED TO PREVENT INFINITE LOOP
+        console.log("⏰ Periodic auth check running"); // Debug log
+        
+        // Use a flag to prevent multiple simultaneous auth checks
+        const lastAuthCheck = localStorage.getItem("lastAuthCheck");
+        const now = new Date().getTime();
+        const fiveMinutesAgo = now - (5 * 60 * 1000);
+        
+        if (!lastAuthCheck || new Date(lastAuthCheck).getTime() < fiveMinutesAgo) {
+          localStorage.setItem("lastAuthCheck", new Date().toISOString());
+          refreshTokenCount();
+        } else {
+          console.log("⏭️ Skipping auth check - too recent"); // Debug log
+        }
       }
     }, 5 * 60 * 1000); 
     

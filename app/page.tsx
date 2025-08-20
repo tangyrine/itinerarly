@@ -31,7 +31,7 @@ const Page: React.FC = () => {
     if (visibleSectionIndex !== -1) {
       setCurrentBackground(sections[visibleSectionIndex].backgroundImage);
     }
-  }, [...inViewStates]);
+  }, inViewStates);
 
   return (
     <div className="min-h-screen flex flex-col">

@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 
 import { FaGithub, FaGoogle } from "react-icons/fa";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useToken } from "@/lib/TokenProvider";
 
 
@@ -75,11 +75,10 @@ export function SignInModal({ openModal, onClose }: SignInModalProps) {
           }
           
           setIsAuthenticating(false);
-          
           setTimeout(() => {
             if (isAuthenticated) {
               onClose();
-              window.location.href = "/start";
+              window.location.replace("/start");
             }
           }, 500);
         } catch (error) {
@@ -94,11 +93,18 @@ export function SignInModal({ openModal, onClose }: SignInModalProps) {
       }
     };
 
-    handleOAuthCallback();
-  }, [refreshTokenCount, isAuthenticated, onClose]);
+    if (openModal) {
+      handleOAuthCallback();
+    }
+  }, []);
 
   useEffect(() => {
-    if (isAuthenticated && typeof window !== 'undefined' && !sessionStorage.getItem("authInProgress")) {
+    const hasHandled = useRef(false);
+    
+    if (isAuthenticated && typeof window !== 'undefined' && 
+        !sessionStorage.getItem("authInProgress") && 
+        !hasHandled.current) {
+      hasHandled.current = true;
       onClose();
     }
   }, [isAuthenticated, onClose]);

@@ -100,7 +100,6 @@ const Navbar = () => {
 
       if (loggedIn && !userInfo) {
         fetchUserInfo();
-        refreshTokenCount();
       }
     };
 
