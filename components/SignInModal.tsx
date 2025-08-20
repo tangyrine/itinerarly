@@ -46,6 +46,7 @@ const signInWithGoogle = () => {
 export function SignInModal({ openModal, onClose }: SignInModalProps) {
   const { refreshTokenCount, isAuthenticated } = useToken();
   const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const hasHandled = useRef(false);
 
   useEffect(() => {
     const handleOAuthCallback = async () => {
@@ -96,11 +97,13 @@ export function SignInModal({ openModal, onClose }: SignInModalProps) {
     if (openModal) {
       handleOAuthCallback();
     }
+    
+    return () => {
+      hasHandled.current = false;
+    };
   }, []);
 
   useEffect(() => {
-    const hasHandled = useRef(false);
-    
     if (isAuthenticated && typeof window !== 'undefined' && 
         !sessionStorage.getItem("authInProgress") && 
         !hasHandled.current) {
