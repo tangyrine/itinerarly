@@ -1,0 +1,12 @@
+name: Keep Server Awake
+
+on:
+  schedule:
+    - cron: "*/10 * * * *" 
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Curl ping
+        run: curl -s https://itinerarly-be.onrender.com > /dev/null
