@@ -95,34 +95,43 @@ export default function Planner() {
   };
 
   const handleLogout = async (): Promise<void> => {
-    setIsLoggedIn(false);
-    setUserInfo(null);
-    setIsProfileDropdownOpen(false);
+  setIsLoggedIn(false);
+  setUserInfo(null);
+  setIsProfileDropdownOpen(false);
+  
+  const cookies = document.cookie.split(";");
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i];
+    const eqPos = cookie.indexOf("=");
+    const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;";
+    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=" + window.location.hostname;
+  }
+  
+  if (typeof window !== 'undefined') {
+    sessionStorage.clear();
+  }
 
-    logout();
+  logout();
 
-    try {
-      await axios.post(
-        `${SiteUrl}/api/v1/logout`,
-        {},
-        {
-          withCredentials: true,
-          timeout: 10000,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    } catch (err) {
-      console.error(
-        "Backend logout error (proceeding with local cleanup):",
-        err
-      );
-    }
+  try {
+    await axios.post(
+      `${SiteUrl}/api/v1/logout`,
+      {},
+      {
+        withCredentials: true,
+        timeout: 5000,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  } catch (err) {
+    console.error("Backend logout error (frontend already cleaned up):", err);
+  }
 
-    refreshTokenCount();
-    window.location.href = "/";
-  };
+  window.location.href = "/";
+};
 
   const fetchUserInfo = async () => {
     try {
