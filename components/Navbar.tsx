@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  Coffee,
-  LogIn,
-  User,
-  ChevronDown,
-  LogOut,
-  Info,
-} from "lucide-react";
+import { Coffee, LogIn, User, ChevronDown, LogOut, Info } from "lucide-react";
 import { SignInModal } from "./SignInModal";
 import Cookies from "js-cookie";
 import axios from "axios";
@@ -24,9 +17,16 @@ const Navbar = () => {
     email?: string;
     avatar?: string;
   } | null>(null);
-  const SiteUrl: string = process.env.NEXT_PUBLIC_SITE_URL || "https://itinerarly-be.onrender.com";
-  
-  const { token, isLoading: tokenLoading, refreshTokenCount, logout, isAuthenticated } = useToken();
+  const SiteUrl: string =
+    process.env.NEXT_PUBLIC_SITE_URL || "https://itinerarly-be.onrender.com";
+
+  const {
+    token,
+    isLoading: tokenLoading,
+    refreshTokenCount,
+    logout,
+    isAuthenticated,
+  } = useToken();
 
   const handleModal = () => {
     setOpenModal(!openModal);
@@ -52,10 +52,16 @@ const Navbar = () => {
   };
 
   const handleLogout = async (): Promise<void> => {
+    setIsLoggedIn(false);
+    setUserInfo(null);
+    setIsProfileDropdownOpen(false);
+
+    logout();
+
     try {
-      const response = await axios.post(
+      await axios.post(
         `${SiteUrl}/api/v1/logout`,
-        {},  // Empty request body
+        {},
         {
           withCredentials: true,
           timeout: 10000,
@@ -64,17 +70,13 @@ const Navbar = () => {
           },
         }
       );
-
     } catch (err) {
-      console.error("Backend logout error (proceeding with local cleanup):", err);
+      console.error(
+        "Backend logout error (proceeding with local cleanup):",
+        err
+      );
     }
 
-    logout();
-
-    setIsLoggedIn(false);
-    setUserInfo(null);
-    setIsProfileDropdownOpen(false);
-    
     refreshTokenCount();
     window.location.href = "/";
   };
@@ -112,7 +114,7 @@ const Navbar = () => {
 
     window.addEventListener("focus", checkLogin);
     return () => window.removeEventListener("focus", checkLogin);
-  }, [userInfo, openModal]); 
+  }, [userInfo, openModal]);
 
   useEffect(() => {
     if (isAuthenticated && openModal) {
@@ -151,7 +153,10 @@ const Navbar = () => {
           <div className="flex justify-between h-16">
             {/* Logo */}
             <div className="flex-shrink-0 flex items-center">
-              <Link href="/" className="font-bold text-xl text-white hover:text-orange-400 transition-colors duration-300">
+              <Link
+                href="/"
+                className="font-bold text-xl text-white hover:text-orange-400 transition-colors duration-300"
+              >
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-green-400">
                   Itinerarly
                 </span>
@@ -240,7 +245,9 @@ const Navbar = () => {
                       {isLoggedIn && typeof token !== "undefined" && (
                         <div className="px-4 py-3 text-sm border-b border-white/20 bg-gradient-to-r from-orange-500/20 to-green-500/20">
                           <div className="flex items-center justify-between">
-                            <span className="text-gray-300">Available Tokens:</span>
+                            <span className="text-gray-300">
+                              Available Tokens:
+                            </span>
                             <span className="font-medium text-orange-400 flex items-center">
                               <span className="text-yellow-400 mr-1">⚡</span>
                               {tokenLoading ? "..." : token}
@@ -254,7 +261,6 @@ const Navbar = () => {
                           </div>
                         </div>
                       )}
-
 
                       <hr className="my-1 border-white/20" />
 

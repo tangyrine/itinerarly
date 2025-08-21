@@ -95,8 +95,14 @@ export default function Planner() {
   };
 
   const handleLogout = async (): Promise<void> => {
+    setIsLoggedIn(false);
+    setUserInfo(null);
+    setIsProfileDropdownOpen(false);
+
+    logout();
+
     try {
-      const response = await axios.post(
+      await axios.post(
         `${SiteUrl}/api/v1/logout`,
         {},
         {
@@ -107,15 +113,12 @@ export default function Planner() {
           },
         }
       );
-
     } catch (err) {
-      console.error("Backend logout error (proceeding with local cleanup):", err);
+      console.error(
+        "Backend logout error (proceeding with local cleanup):",
+        err
+      );
     }
-
-    logout();
-    setIsLoggedIn(false);
-    setUserInfo(null);
-    setIsProfileDropdownOpen(false);
 
     refreshTokenCount();
     window.location.href = "/";
