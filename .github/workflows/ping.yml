@@ -9,4 +9,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Curl ping
-        run: curl -s https://itinerarly-be.onrender.com > /dev/null
+        run: |
+          curl -s -f https://itinerarly-be.onrender.com || echo "Server ping failed"
