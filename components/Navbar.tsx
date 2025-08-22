@@ -52,6 +52,7 @@ const Navbar = () => {
   };
 
   const handleLogout = async (): Promise<void> => {
+    
   setIsLoggedIn(false);
   setUserInfo(null);
   setIsProfileDropdownOpen(false);
