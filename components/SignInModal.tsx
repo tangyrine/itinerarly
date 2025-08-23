@@ -119,40 +119,51 @@ export function SignInModal({ openModal, onClose }: SignInModalProps) {
 
   return (
     <Dialog open={openModal} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px] bg-white shadow-xl rounded-lg border border-gray-300">
-        <DialogHeader>
-          <DialogTitle>Sign In</DialogTitle>
-          <DialogDescription>
+      <DialogContent className="w-[90%] max-w-[425px] p-4 sm:p-6 bg-white shadow-xl rounded-lg border border-gray-300">
+        <DialogHeader className="space-y-2 mb-4">
+          <DialogTitle className="text-xl sm:text-2xl text-center sm:text-left">Sign In</DialogTitle>
+          <DialogDescription className="text-sm sm:text-base text-center sm:text-left">
             Choose your preferred authentication method to access your account.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col md:flex-row md:justify-around space-y-4 md:space-y-0 md:space-x-4 p-2">
+        
+        <div className="flex justify-center gap-6 py-4">
           <button 
-            className="cursor-pointer border border-black h-20 w-20 flex justify-center items-center hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" 
+            className="flex flex-col items-center gap-2 border border-gray-300 rounded-xl p-4 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500" 
             onClick={signInWithGoogle}
             disabled={isAuthenticating || (typeof window !== 'undefined' && sessionStorage.getItem("authInProgress") === "true")}
           >
-            <FaGoogle className="h-10 w-10 text-center"/>
+            <FaGoogle className="h-8 w-8 text-blue-500"/>
+            <span className="text-sm font-medium">Google</span>
           </button>
           <button 
-            className="cursor-pointer border border-black h-20 w-20 flex justify-center items-center hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" 
+            className="flex flex-col items-center gap-2 border border-gray-300 rounded-xl p-4 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500" 
             onClick={signInWithGithub}
             disabled={isAuthenticating || (typeof window !== 'undefined' && sessionStorage.getItem("authInProgress") === "true")}
           >
-            <FaGithub className="h-10 w-10 text-center"/>
+            <FaGithub className="h-8 w-8 text-gray-800"/>
+            <span className="text-sm font-medium">GitHub</span>
           </button>
         </div>
+        
         {(isAuthenticating || (typeof window !== 'undefined' && sessionStorage.getItem("authInProgress") === "true")) && (
-          <div className="text-center text-sm text-gray-600 p-2">
-            <div className="flex items-center justify-center space-x-2">
+          <div className="text-center text-sm text-gray-600 p-2 mt-2 bg-blue-50 rounded-lg">
+            <div className="flex items-center justify-center space-x-2 py-2">
               <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
               <span>Authenticating... Please wait.</span>
             </div>
           </div>
         )}
-        <DialogFooter>
+        
+        <DialogFooter className="mt-4 sm:mt-6">
           <DialogClose asChild>
-            <Button variant="outline" disabled={isAuthenticating}>Cancel</Button>
+            <Button 
+              variant="outline" 
+              disabled={isAuthenticating}
+              className="w-full sm:w-auto"
+            >
+              Cancel
+            </Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>
