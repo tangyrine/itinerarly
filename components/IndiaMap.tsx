@@ -26,7 +26,10 @@ export default function IndiaMap({ type }: IndiaMapProps) {
   const [isMapLoading, setIsMapLoading] = useState(true);
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<string | null>(null);
-  const [position, setPosition] = useState({ coordinates: [82, 22], zoom: 1 });
+  const [position, setPosition] = useState({ 
+    coordinates: [82, 22], 
+    zoom: 1 // Will be updated by useEffect
+  });
   const [markerDetailsMap, setMarkerDetailsMap] = useState<
     Record<string, string>
   >({});
@@ -36,6 +39,39 @@ export default function IndiaMap({ type }: IndiaMapProps) {
   const [stateMousePosition, setStateMousePosition] = useState({ x: 0, y: 0 });
   const [showStateDetails, setShowStateDetails] = useState(false);
   const [showStateModal, setShowStateModal] = useState(false);
+  const [mapScale, setMapScale] = useState(800);
+  const [minZoom, setMinZoom] = useState(1);
+  const [initialZoom, setInitialZoom] = useState(1);
+
+  // Adjust map scale based on screen size
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 480) {
+        setMapScale(1400); // Extra large for very small devices
+        setMinZoom(0.8);
+        setInitialZoom(1.2);
+      } else if (window.innerWidth < 768) {
+        setMapScale(1200); // Large for small devices
+        setMinZoom(0.9);
+        setInitialZoom(1.2);
+      } else {
+        setMapScale(800); // Default for medium and larger devices
+        setMinZoom(1);
+        setInitialZoom(1);
+      }
+    };
+    
+    handleResize(); // Initialize on first render
+    
+    // Update position with new initial zoom
+    setPosition(pos => ({
+      ...pos,
+      zoom: initialZoom
+    }));
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const selectedSection = sections.find((section) => section.id === type);
   const highlightedPlaces = selectedSection?.places || [];
@@ -114,7 +150,7 @@ export default function IndiaMap({ type }: IndiaMapProps) {
       <div className="absolute top-5 right-5 z-10 flex flex-col gap-2">
         <button
           onClick={() =>
-            setPosition((pos) => ({ ...pos, zoom: pos.zoom * 1.5 }))
+            setPosition((pos) => ({ ...pos, zoom: pos.zoom * 1.3 }))
           }
           className="p-2 bg-white cursor-pointer rounded-full shadow-lg hover:bg-gray-100 transition-colors"
         >
@@ -122,14 +158,19 @@ export default function IndiaMap({ type }: IndiaMapProps) {
         </button>
         <button
           onClick={() =>
-            setPosition((pos) => ({ ...pos, zoom: pos.zoom / 1.5 }))
+            setPosition((pos) => ({ ...pos, zoom: pos.zoom / 1.3 }))
           }
           className="p-2 bg-white cursor-pointer rounded-full shadow-lg hover:bg-gray-100 transition-colors"
         >
           <Minus className="w-6 h-6" />
         </button>
         <button
-          onClick={() => setPosition({ coordinates: [82, 22], zoom: 1 })}
+          onClick={() => 
+            setPosition({ 
+              coordinates: [82, 22], 
+              zoom: initialZoom
+            })
+          }
           className="p-2 bg-white rounded-full cursor-pointer shadow-lg hover:bg-gray-100 transition-colors"
         >
           <RotateCcw className="w-6 h-6" />
@@ -143,7 +184,10 @@ export default function IndiaMap({ type }: IndiaMapProps) {
       ) : (
         <ComposableMap
           projection="geoMercator"
-          projectionConfig={{ scale: 800, center: [82, 22] }}
+          projectionConfig={{ 
+            scale: mapScale, 
+            center: [82, 22] 
+          }}
           style={{ width: "100%", height: "100%" }}
         >
           <ZoomableGroup
@@ -156,8 +200,8 @@ export default function IndiaMap({ type }: IndiaMapProps) {
               coordinates: [number, number];
               zoom: number;
             }) => setPosition({ coordinates, zoom })}
-            maxZoom={4}
-            minZoom={1}
+            maxZoom={5}
+            minZoom={minZoom}
           >
             <Geographies geography={indiaGeoJson}>
               {({ geographies }: { geographies: any[] }) =>
