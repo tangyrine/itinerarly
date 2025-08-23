@@ -13,7 +13,6 @@ type SectionType = "hillstations" | "beaches" | "wildlife" | "historical";
 function MapWithParams() {
   const searchParams = useSearchParams();
   const type = searchParams.get("type");
-  console.log("MapWithParams rendering with type:", type); 
   return <IndiaMap type={type} />;
 }
 
