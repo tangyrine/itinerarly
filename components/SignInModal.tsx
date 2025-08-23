@@ -119,48 +119,48 @@ export function SignInModal({ openModal, onClose }: SignInModalProps) {
 
   return (
     <Dialog open={openModal} onOpenChange={onClose}>
-      <DialogContent className="w-[90%] max-w-[425px] p-4 sm:p-6 bg-white shadow-xl rounded-lg border border-gray-300">
-        <DialogHeader className="space-y-2 mb-4">
+      <DialogContent className="w-[90%] max-w-[500px] p-4 sm:p-6 bg-white shadow-xl rounded-lg border border-gray-300">
+        <DialogHeader className="space-y-2 mb-4 sm:mb-6">
           <DialogTitle className="text-xl sm:text-2xl text-center sm:text-left">Sign In</DialogTitle>
           <DialogDescription className="text-sm sm:text-base text-center sm:text-left">
             Choose your preferred authentication method to access your account.
           </DialogDescription>
         </DialogHeader>
         
-        <div className="flex justify-center gap-6 py-4">
+        <div className="flex justify-center sm:justify-around gap-6 sm:gap-10 py-4 sm:py-8">
           <button 
-            className="flex flex-col items-center gap-2 border border-gray-300 rounded-xl p-4 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500" 
+            className="flex flex-col items-center gap-2 border border-gray-300 rounded-xl p-4 sm:p-6 hover:bg-gray-50 hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 sm:w-36" 
             onClick={signInWithGoogle}
             disabled={isAuthenticating || (typeof window !== 'undefined' && sessionStorage.getItem("authInProgress") === "true")}
           >
-            <FaGoogle className="h-8 w-8 text-blue-500"/>
-            <span className="text-sm font-medium">Google</span>
+            <FaGoogle className="h-8 w-8 sm:h-10 sm:w-10 text-blue-500"/>
+            <span className="text-sm sm:text-base font-medium">Google</span>
           </button>
           <button 
-            className="flex flex-col items-center gap-2 border border-gray-300 rounded-xl p-4 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500" 
+            className="flex flex-col items-center gap-2 border border-gray-300 rounded-xl p-4 sm:p-6 hover:bg-gray-50 hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 sm:w-36" 
             onClick={signInWithGithub}
             disabled={isAuthenticating || (typeof window !== 'undefined' && sessionStorage.getItem("authInProgress") === "true")}
           >
-            <FaGithub className="h-8 w-8 text-gray-800"/>
-            <span className="text-sm font-medium">GitHub</span>
+            <FaGithub className="h-8 w-8 sm:h-10 sm:w-10 text-gray-800"/>
+            <span className="text-sm sm:text-base font-medium">GitHub</span>
           </button>
         </div>
         
         {(isAuthenticating || (typeof window !== 'undefined' && sessionStorage.getItem("authInProgress") === "true")) && (
-          <div className="text-center text-sm text-gray-600 p-2 mt-2 bg-blue-50 rounded-lg">
+          <div className="text-center text-sm sm:text-base text-gray-600 p-2 sm:p-4 mt-2 sm:mt-4 bg-blue-50 rounded-lg border border-blue-100">
             <div className="flex items-center justify-center space-x-2 py-2">
-              <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 sm:border-3 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
               <span>Authenticating... Please wait.</span>
             </div>
           </div>
         )}
         
-        <DialogFooter className="mt-4 sm:mt-6">
+        <DialogFooter className="mt-4 sm:mt-8">
           <DialogClose asChild>
             <Button 
               variant="outline" 
               disabled={isAuthenticating}
-              className="w-full sm:w-auto"
+              className="w-full sm:w-auto sm:px-8 sm:py-2 sm:text-base"
             >
               Cancel
             </Button>
