@@ -7,6 +7,14 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 export const metadata = {
   title: "Itinerary App",
   description: "Plan and organize your trips effortlessly",
+  icons: {
+    icon: [
+      { url: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🌴</text></svg>' },
+    ],
+    apple: [
+      { url: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🌴</text></svg>' },
+    ],
+  },
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -17,8 +25,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <title>{metadata.title}</title>
         <meta name="description" content={metadata.description} />
-        <link rel="icon" href="/logo.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/logo.svg" />
       </head>
       <body>
         <TokenProvider>{children}</TokenProvider>

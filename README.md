@@ -50,7 +50,7 @@ cd itinerarly-FE
 npm install
 
 # Set up environment
-echo "NEXT_PUBLIC_GEMINI_API_KEY=your_api_key_here" > .env.local
+echo "GEMINI_API_KEY=your_api_key_here" > .env.local
 
 # Start development
 npm run dev
@@ -93,7 +93,7 @@ npm run lint     # Code linting
 ### Environment Variables
 | Variable | Description | Required |
 |----------|-------------|----------|
-| `NEXT_PUBLIC_GEMINI_API_KEY` | Google Gemini API Key | ✅ |
+| `GEMINI_API_KEY` | Google Gemini API Key | ✅ |
 | `NEXT_PUBLIC_API_URL` | Backend API URL | ❌ |
 
 ## 📚 Documentation

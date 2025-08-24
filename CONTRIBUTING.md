@@ -26,7 +26,7 @@ yarn install
 3. Set up environment variables
 Create a `.env.local` file in the root directory with the following variables:
 ```env
-NEXT_PUBLIC_GEMINI_API_KEY=your_gemini_api_key_here
+GEMINI_API_KEY=your_gemini_api_key_here
 NEXT_PUBLIC_API_URL=your_backend_api_url
 ```
 
@@ -44,7 +44,7 @@ The following environment variables are required:
 
 | Variable | Description | Required |
 |----------|-------------|----------|
-| NEXT_PUBLIC_GEMINI_API_KEY | Google Gemini API Key | Yes |
+| GEMINI_API_KEY | Google Gemini API Key | Yes |
 | NEXT_PUBLIC_API_URL | Backend API URL | No |
 
 To obtain a Gemini API key:
