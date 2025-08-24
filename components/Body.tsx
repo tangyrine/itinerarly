@@ -203,7 +203,6 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
 
   return (
     <div className="relative overflow-hidden">
-      {/* Fixed background container to prevent layout issues */}
       <div className="absolute inset-0 z-0">
 
         <div 
@@ -386,91 +385,6 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
             </motion.div>
           </motion.div>
 
-          {/* Scroll Indicator */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.4 }}
-            className="flex justify-center items-center my-8"
-          >
-            <motion.div
-              animate={{ 
-                y: [0, 10, 0],
-                opacity: [0.6, 1, 0.6]
-              }}
-              transition={{ 
-                repeat: Infinity, 
-                duration: 2,
-                ease: "easeInOut" 
-              }}
-              className="flex flex-col items-center cursor-pointer"
-              onClick={() => {
-                const aboutSection = document.getElementById('about');
-                if (aboutSection) {
-                  const navbarHeight = 64; // h-16 in Tailwind equals 64px
-                  const elementPosition = aboutSection.getBoundingClientRect().top;
-                  const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
-                  
-                  window.scrollTo({
-                    top: offsetPosition,
-                    behavior: "smooth"
-                  });
-                }
-              }}
-            >
-              <p className="text-sm text-gray-300 mb-2">Scroll to explore</p>
-              <div className="w-8 h-14 border-2 border-white/30 rounded-full flex justify-center p-2">
-                <motion.div 
-                  animate={{ 
-                    y: [0, 6, 0],
-                  }}
-                  transition={{ 
-                    repeat: Infinity, 
-                    duration: 1.5,
-                    ease: "easeInOut" 
-                  }}
-                  className="w-2 h-2 bg-white rounded-full"
-                />
-              </div>
-            </motion.div>
-          </motion.div>
-
-          {/* Scroll Indicator */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.4 }}
-            className="flex justify-center items-center"
-          >
-            <motion.div
-              animate={{ 
-                y: [0, 10, 0],
-                opacity: [0.6, 1, 0.6]
-              }}
-              transition={{ 
-                repeat: Infinity, 
-                duration: 2,
-                ease: "easeInOut" 
-              }}
-              className="flex flex-col items-center cursor-pointer"
-              onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-            >
-              <p className="text-sm text-gray-300 mb-2">Scroll to explore</p>
-              <div className="w-8 h-14 border-2 border-white/30 rounded-full flex justify-center p-2">
-                <motion.div 
-                  animate={{ 
-                    y: [0, 6, 0],
-                  }}
-                  transition={{ 
-                    repeat: Infinity, 
-                    duration: 1.5,
-                    ease: "easeInOut" 
-                  }}
-                  className="w-2 h-2 bg-white rounded-full"
-                />
-              </div>
-            </motion.div>
-          </motion.div>
 
           {/* About Section */}
           <motion.div
