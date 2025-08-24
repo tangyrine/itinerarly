@@ -833,32 +833,6 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
           >
             {/* Background decoration */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent rounded-3xl" />
-
-            <div className="relative z-10 space-y-6">
-              <h3 className="text-2xl sm:text-3xl font-bold text-white">
-                Join{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-purple-400">
-                  50,000+
-                </span>{" "}
-                travelers discovering India
-              </h3>
-
-              <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Link
-                    href="/start"
-                    className="group w-full sm:w-auto inline-flex items-center justify-center space-x-3 px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-green-600 to-purple-600 rounded-2xl transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/25 relative overflow-hidden"
-                  >
-                    <Compass className="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" />
-                    <span>Explore Destinations</span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </Link>
-                </motion.div>
-              </div>
-            </div>
           </motion.div>
           
           {/* Back to top button */}
