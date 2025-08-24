@@ -60,7 +60,6 @@ export function SignInModal({ openModal, onClose }: SignInModalProps) {
       const authInProgress = typeof window !== 'undefined' ? sessionStorage.getItem("authInProgress") : null;
 
       if (hasAuthParams || (oauthFlowStarted && authInProgress)) {
-        console.log("OAuth flow detected, processing authentication...");
         setIsAuthenticating(true);
         
         try {

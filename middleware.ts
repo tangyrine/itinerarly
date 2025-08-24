@@ -29,11 +29,11 @@ export function middleware(request: NextRequest) {
 
   if (!isLoggedIn) {
     const fromSignin = referer && referer.includes('/signin');
-    if (fromSignin) {
-      return NextResponse.next();
-    }
-    
-    return NextResponse.redirect(new URL('/signin', request.url));
+if (fromSignin) {
+  return NextResponse.next();
+}
+
+return NextResponse.redirect(new URL('/signin', request.url));
   }
 
   return NextResponse.next();
