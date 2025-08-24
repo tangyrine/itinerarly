@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Coffee, LogIn, User, ChevronDown, LogOut, Info } from "lucide-react";
+import { Coffee, LogIn, User, ChevronDown, LogOut, Info, Compass } from "lucide-react";
 import { SignInModal } from "./SignInModal";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { useToken } from "@/lib/TokenProvider";
 import { getCookieSafely } from "@/lib/cookie-utils";
+import { motion } from "framer-motion";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -35,11 +36,19 @@ const Navbar = () => {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
+      // Add offset for fixed navbar height
+      const navbarHeight = 64; // h-16 in Tailwind equals 64px
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
       });
+      
+      // Close all menus
       setIsMenuOpen(false);
+      setIsProfileDropdownOpen(false);
     }
   };
 
@@ -148,6 +157,32 @@ const Navbar = () => {
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Handle URL hash fragment for smooth scrolling on page load
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Wait for the page to fully load
+      const handleHashScroll = () => {
+        const hash = window.location.hash;
+        if (hash) {
+          // Remove the # symbol
+          const sectionId = hash.substring(1);
+          
+          // Small delay to ensure the page is fully rendered
+          setTimeout(() => {
+            scrollToSection(sectionId);
+          }, 500);
+        }
+      };
+      
+      // Run once on mount
+      handleHashScroll();
+      
+      // Also listen for hashchange events
+      window.addEventListener('hashchange', handleHashScroll);
+      return () => window.removeEventListener('hashchange', handleHashScroll);
+    }
   }, []);
 
   const navItems = [
@@ -306,6 +341,18 @@ const Navbar = () => {
 
             {/* Mobile menu button */}
             <div className="md:hidden flex items-center space-x-2">
+              <button 
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="p-2 rounded-xl text-white/90 hover:bg-white/10 transition-colors duration-300 border border-white/20"
+                aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+              >
+                <div className="w-5 h-5 flex flex-col justify-between">
+                  <span className={`w-full h-0.5 bg-white transition-transform duration-300 ${isMenuOpen ? 'translate-y-2 rotate-45' : ''}`}></span>
+                  <span className={`w-full h-0.5 bg-white transition-opacity duration-300 ${isMenuOpen ? 'opacity-0' : 'opacity-100'}`}></span>
+                  <span className={`w-full h-0.5 bg-white transition-transform duration-300 ${isMenuOpen ? '-translate-y-2 -rotate-45' : ''}`}></span>
+                </div>
+              </button>
+
               {isLoggedIn ? (
                 <div className="relative profile-dropdown">
                   <button
@@ -405,6 +452,149 @@ const Navbar = () => {
           </div>
         </div>
       </nav>
+      
+      {/* Mobile Menu Dropdown */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 z-40 md:hidden">
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setIsMenuOpen(false)}></div>
+          <div 
+            className="fixed right-0 top-0 h-full w-64 bg-black/90 backdrop-blur-lg border-l border-white/10 p-6 overflow-y-auto"
+          >
+            <div className="flex justify-end mb-8">
+              <button 
+                onClick={() => setIsMenuOpen(false)}
+                className="p-2 rounded-full text-white/90 hover:bg-white/10 transition-colors duration-300"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+            
+            <div className="text-center mb-6">
+              <Link href="/" className="inline-block">
+                <span className="text-transparent text-2xl font-bold bg-clip-text bg-gradient-to-r from-orange-400 to-green-400">
+                  Itinerarly
+                </span>
+              </Link>
+            </div>
+            
+            <div className="space-y-2">
+              {navItems.map((item) =>
+                item.isSection ? (
+                  <button
+                    key={item.label}
+                    onClick={() => scrollToSection(item.href.slice(1))}
+                    className="w-full text-left px-4 py-3 text-white/90 hover:text-orange-400 hover:bg-white/5 transition-colors duration-300 rounded-xl cursor-pointer font-medium flex items-center"
+                  >
+                    {item.label === "About" && <Info className="w-4 h-4 mr-3 text-orange-400" />}
+                    {item.label === "Features" && <Info className="w-4 h-4 mr-3 text-purple-400" />}
+                    {item.label === "Home" && <svg className="w-4 h-4 mr-3 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>}
+                    {item.label}
+                  </button>
+                ) : (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    className="w-full px-4 py-3 text-white/90 hover:text-orange-400 hover:bg-white/5 transition-colors duration-300 rounded-xl font-medium flex items-center"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.label === "Home" && <svg className="w-4 h-4 mr-3 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>}
+                    {item.label}
+                  </Link>
+                )
+              )}
+            </div>
+            
+            <div className="my-6 border-t border-white/10 pt-6">
+              <Link
+                href="/start"
+                className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-white bg-gradient-to-r from-green-600/80 to-blue-600/80 hover:from-green-500/80 hover:to-blue-500/80 transition-colors duration-300 rounded-xl font-medium mb-4"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Compass className="w-5 h-5 mr-2" />
+                Start Your Journey
+              </Link>
+            </div>
+            
+            <div className="space-y-4">
+              {isLoggedIn ? (
+                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                  <div className="flex items-center space-x-3 mb-3">
+                    <div className="w-8 h-8 bg-gradient-to-r from-orange-400 to-green-400 rounded-full flex items-center justify-center overflow-hidden border-2 border-white/20">
+                      {userInfo?.avatar ? (
+                        <img
+                          src={userInfo.avatar}
+                          alt={userInfo.name || "User"}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <User className="w-5 h-5 text-white" />
+                      )}
+                    </div>
+                    <div>
+                      <div className="font-medium text-white">
+                        {userInfo?.name ? userInfo.name.split(" ")[0] : "User"}
+                      </div>
+                      {userInfo?.email && (
+                        <div className="text-gray-400 text-xs">
+                          {userInfo.email}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {typeof token !== "undefined" && (
+                    <div className="px-3 py-2 text-xs bg-gradient-to-r from-orange-500/20 to-green-500/20 rounded-lg mb-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-300">Tokens:</span>
+                        <span className="font-medium text-orange-400 flex items-center">
+                          <span className="text-yellow-400 mr-1">⚡</span>
+                          {tokenLoading ? "..." : token}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <button
+                    className="flex items-center w-full px-3 py-2 text-sm text-white bg-white/10 hover:bg-white/20 transition-colors duration-300 rounded-lg"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="w-4 h-4 mr-2 text-red-400" />
+                    Sign Out
+                  </button>
+                </div>
+              ) : (
+                <button
+                  className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-white/90 bg-gradient-to-r from-orange-600/80 to-green-600/80 hover:from-orange-500/80 hover:to-green-500/80 transition-colors duration-300 rounded-xl font-medium"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    handleModal();
+                  }}
+                >
+                  <LogIn className="w-5 h-5 mr-2" />
+                  Sign In
+                </button>
+              )}
+              
+              <a
+                href="https://coff.ee/heisen47"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center space-x-2 mt-4 px-4 py-3 text-white bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 transition-colors duration-300 rounded-xl font-medium shadow-lg"
+              >
+                <Coffee className="w-5 h-5 mr-2" />
+                Buy me a coffee
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+      
       <SignInModal openModal={openModal} onClose={handleModal} />
     </>
   );
