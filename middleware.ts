@@ -27,17 +27,16 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (!isLoggedIn) {
+if (!isLoggedIn) {
     const fromSignin = referer && referer.includes('/signin');
-if (fromSignin) {
-  return NextResponse.next();
+    if (fromSignin) {
+      return NextResponse.next();
+    }
+  
+    return NextResponse.redirect(new URL('/signin', request.url));
+}
 }
 
-return NextResponse.redirect(new URL('/signin', request.url));
-  }
-
-  return NextResponse.next();
-}
 
 function isValidOAuthReferer(refererUrl: string): boolean {
   if (!refererUrl) {
