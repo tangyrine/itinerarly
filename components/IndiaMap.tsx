@@ -28,7 +28,7 @@ export default function IndiaMap({ type }: IndiaMapProps) {
   const [selectedPlace, setSelectedPlace] = useState<string | null>(null);
   const [position, setPosition] = useState({ 
     coordinates: [82, 22], 
-    zoom: 1 // Will be updated by useEffect
+    zoom: 1 
   });
   const [markerDetailsMap, setMarkerDetailsMap] = useState<
     Record<string, string>
