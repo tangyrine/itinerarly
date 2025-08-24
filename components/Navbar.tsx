@@ -592,7 +592,7 @@ const Navbar = () => {
             </div>
           </div>
         </div>
-      )}}
+      )}
       
       <SignInModal openModal={openModal} onClose={handleModal} />
     </>
