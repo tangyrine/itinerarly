@@ -123,38 +123,40 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
     isMobile: false,
     isLowEndDevice: false,
     supportsWebM: false,
-    videoSrc: '',
+    videoSrc: "",
   });
 
   useEffect(() => {
-    const isMobile = window.innerWidth <= 768 || /Mobi|Android/i.test(navigator.userAgent);
-    
+    const isMobile =
+      window.innerWidth <= 768 || /Mobi|Android/i.test(navigator.userAgent);
 
     const deviceMemory = (navigator as any).deviceMemory;
-    const isLowEndDevice = navigator.hardwareConcurrency <= 2 || 
-                          (deviceMemory && deviceMemory <= 2) ||
-                          /Android.*Chrome\/[0-5]/.test(navigator.userAgent);
-    
-    const supportsWebM = document.createElement('video').canPlayType('video/webm') !== '';
+    const isLowEndDevice =
+      navigator.hardwareConcurrency <= 2 ||
+      (deviceMemory && deviceMemory <= 2) ||
+      /Android.*Chrome\/[0-5]/.test(navigator.userAgent);
 
-    let videoSrc = '/assets/background.mp4'; 
-    
+    const supportsWebM =
+      document.createElement("video").canPlayType("video/webm") !== "";
+
+    let videoSrc = "/assets/background.mp4";
+
     if (isMobile) {
-      videoSrc = supportsWebM 
-        ? '/assets/optimized/background-mobile.webm'
-        : '/assets/optimized/background-mobile.mp4';
+      videoSrc = supportsWebM
+        ? "/assets/optimized/background-mobile.webm"
+        : "/assets/optimized/background-mobile.mp4";
     } else if (window.innerWidth >= 1441) {
-      videoSrc = '/assets/optimized/background-hd.mp4';
+      videoSrc = "/assets/optimized/background-hd.mp4";
     } else {
-      videoSrc = supportsWebM 
-        ? '/assets/optimized/background-desktop.webm'
-        : '/assets/optimized/background-desktop.mp4';
+      videoSrc = supportsWebM
+        ? "/assets/optimized/background-desktop.webm"
+        : "/assets/optimized/background-desktop.mp4";
     }
-    
+
     setDeviceInfo({ isMobile, isLowEndDevice, supportsWebM, videoSrc });
 
     const delay = isLowEndDevice ? 2000 : isMobile ? 1500 : 1000;
-    
+
     const timer = setTimeout(() => {
       setShowVideo(true);
       setTimeout(() => {
@@ -180,7 +182,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowFloatingElements(true);
-    }, 2000); 
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -204,14 +206,13 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
   return (
     <div className="relative overflow-hidden">
       <div className="absolute inset-0 z-0">
-
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: "url('/assets/bg-poster.png')",
           }}
         />
-        
+
         {showVideo && (
           <video
             ref={videoRef}
@@ -221,7 +222,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
             preload="none"
             aria-label="Background video showing travel destinations"
             className={`absolute inset-0 object-cover w-full h-full transition-opacity duration-1000 ${
-              videoLoaded ? 'opacity-100' : 'opacity-0'
+              videoLoaded ? "opacity-100" : "opacity-0"
             }`}
             poster="/assets/bg-poster.png"
             onLoadedData={() => {
@@ -229,7 +230,10 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
               if (videoRef.current) {
                 setTimeout(() => {
                   videoRef.current?.play().catch((error) => {
-                    console.error('Video autoplay prevented by browser:', error);
+                    console.error(
+                      "Video autoplay prevented by browser:",
+                      error
+                    );
                   });
                 }, 200);
               }
@@ -240,46 +244,55 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
             onError={(e) => {
               const video = e.target as HTMLVideoElement;
               const error = video.error;
-              
-              console.error('Video loading error details:', {
+
+              console.error("Video loading error details:", {
                 code: error?.code,
                 message: error?.message,
                 networkState: video.networkState,
                 readyState: video.readyState,
                 currentSrc: video.currentSrc,
-                src: video.src
+                src: video.src,
               });
-              
-              let errorMessage = 'Unknown video error';
+
+              let errorMessage = "Unknown video error";
               if (error) {
                 switch (error.code) {
                   case 1:
-                    errorMessage = 'Video loading aborted by user';
+                    errorMessage = "Video loading aborted by user";
                     break;
                   case 2:
-                    errorMessage = 'Network error while loading video';
+                    errorMessage = "Network error while loading video";
                     break;
                   case 3:
-                    errorMessage = 'Video decode error';
+                    errorMessage = "Video decode error";
                     break;
                   case 4:
-                    errorMessage = 'Video format not supported';
+                    errorMessage = "Video format not supported";
                     break;
                 }
               }
-              
+
               console.warn(`Video Error: ${errorMessage}`);
               setVideoLoaded(false);
             }}
           >
-            <source 
-              src={deviceInfo.videoSrc} 
-              type={deviceInfo.videoSrc.includes('.webm') ? 'video/webm' : 'video/mp4'}
-              onError={(e) => console.error('Primary video source failed:', deviceInfo.videoSrc)}
+            <source
+              src={deviceInfo.videoSrc}
+              type={
+                deviceInfo.videoSrc.includes(".webm")
+                  ? "video/webm"
+                  : "video/mp4"
+              }
+              onError={(e) =>
+                console.error(
+                  "Primary video source failed:",
+                  deviceInfo.videoSrc
+                )
+              }
             />
           </video>
         )}
-        
+
         {/* Multi-layered background overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/40 to-black/60" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
@@ -297,7 +310,6 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
       {/* Content */}
       <div className="relative z-10 text-white pt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 space-y-12 sm:space-y-16 lg:space-y-20 min-h-screen">
-          {/* Enhanced Hero Section */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -362,7 +374,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
             </motion.div>
 
             {/* Stats Section */}
-            <motion.div
+            {/* <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.8 }}
@@ -382,9 +394,46 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
                   <div className="text-sm text-gray-300">{stat.label}</div>
                 </motion.div>
               ))}
+            </motion.div> */}
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 1.2 }}
+              className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4 mt-8"
+            >
+              <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="relative group"
+              >
+
+              <div className="absolute -inset-1 bg-gradient-to-r from-orange-500/30 via-emerald-500/30 to-indigo-500/30 rounded-2xl opacity-0 group-hover:opacity-60 transition-all duration-300"></div>
+              
+   
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-400/40 via-emerald-400/40 to-indigo-400/40 rounded-2xl animate-pulse opacity-20"></div>
+              
+              <Link
+              href="/start"
+              className="relative inline-flex items-center space-x-3 px-10 py-5 text-xl font-bold text-white bg-gradient-to-r from-orange-600 via-emerald-600 to-indigo-600 rounded-2xl border-2 border-white/30 hover:border-white/50 transition-all duration-300 hover:shadow-xl backdrop-blur-sm min-w-[320px] justify-center group overflow-hidden shadow-lg"
+              >
+            
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-800 ease-in-out"></div>
+              
+              
+              <div className="absolute inset-0 bg-gradient-to-r from-white/5 via-white/10 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              
+             
+              <div className="absolute top-3 right-4 w-1.5 h-1.5 bg-white/80 rounded-full opacity-0 group-hover:opacity-100 animate-ping"></div>
+              <div className="absolute bottom-3 left-4 w-1 h-1 bg-orange-200/80 rounded-full opacity-0 group-hover:opacity-100 animate-ping delay-200"></div>
+              
+              <Sparkles className="w-7 h-7 group-hover:rotate-12 transition-transform duration-300 relative z-10 drop-shadow-sm" />
+              <span className="relative z-10 tracking-wide drop-shadow-sm">Start Your Journey</span>
+              <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300 relative z-10 drop-shadow-sm" />
+              </Link>
+              </motion.div>
             </motion.div>
           </motion.div>
-
 
           {/* About Section */}
           <motion.div
@@ -397,7 +446,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
             {/* Decorative elements */}
             <div className="absolute top-10 right-10 w-40 h-40 bg-orange-500/10 rounded-full blur-3xl -z-10"></div>
             <div className="absolute bottom-10 left-10 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl -z-10"></div>
-            
+
             <div className="text-center space-y-4">
               <motion.h2
                 initial={{ opacity: 0, y: 20 }}
@@ -416,7 +465,8 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
                 transition={{ duration: 0.8, delay: 0.8 }}
                 className="text-lg text-gray-300 max-w-3xl mx-auto"
               >
-                Your AI-powered companion for creating personalized travel experiences in India
+                Your AI-powered companion for creating personalized travel
+                experiences in India
               </motion.p>
             </div>
 
@@ -428,27 +478,44 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
                 className="space-y-6"
               >
                 <div className="bg-white/5 backdrop-blur-lg p-6 rounded-2xl border border-white/10">
-                  <h3 className="text-xl sm:text-2xl font-semibold text-orange-400 mb-3">Our Mission</h3>
+                  <h3 className="text-xl sm:text-2xl font-semibold text-orange-400 mb-3">
+                    Our Mission
+                  </h3>
                   <p className="text-gray-200 leading-relaxed">
-                    Itinerarly was created to revolutionize how travelers explore the rich cultural tapestry of India. We combine artificial intelligence with local expertise to create journeys that are both authentic and personalized to your preferences.
+                    Itinerarly was created to revolutionize how travelers
+                    explore the rich cultural tapestry of India. We combine
+                    artificial intelligence with local expertise to create
+                    journeys that are both authentic and personalized to your
+                    preferences.
                   </p>
                 </div>
-                
+
                 <div className="bg-white/5 backdrop-blur-lg p-6 rounded-2xl border border-white/10">
-                  <h3 className="text-xl sm:text-2xl font-semibold text-green-400 mb-3">How It Works</h3>
+                  <h3 className="text-xl sm:text-2xl font-semibold text-green-400 mb-3">
+                    How It Works
+                  </h3>
                   <p className="text-gray-200 leading-relaxed">
-                    Our AI analyzes your travel preferences, budget constraints, and desired experiences to craft the perfect itinerary. Whether you're seeking cultural immersion, adventure, relaxation, or culinary exploration, our platform adapts to your unique travel style.
+                    Our AI analyzes your travel preferences, budget constraints,
+                    and desired experiences to craft the perfect itinerary.
+                    Whether you're seeking cultural immersion, adventure,
+                    relaxation, or culinary exploration, our platform adapts to
+                    your unique travel style.
                   </p>
                 </div>
-                
+
                 <div className="bg-white/5 backdrop-blur-lg p-6 rounded-2xl border border-white/10">
-                  <h3 className="text-xl sm:text-2xl font-semibold text-purple-400 mb-3">Our Vision</h3>
+                  <h3 className="text-xl sm:text-2xl font-semibold text-purple-400 mb-3">
+                    Our Vision
+                  </h3>
                   <p className="text-gray-200 leading-relaxed">
-                    We envision a world where travel planning is stress-free and where every journey to India becomes a transformative experience. We aim to showcase both iconic landmarks and hidden gems that make India an extraordinary destination.
+                    We envision a world where travel planning is stress-free and
+                    where every journey to India becomes a transformative
+                    experience. We aim to showcase both iconic landmarks and
+                    hidden gems that make India an extraordinary destination.
                   </p>
                 </div>
               </motion.div>
-              
+
               <motion.div
                 initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -459,47 +526,49 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
                 <div className="relative bg-white/5 backdrop-blur-lg rounded-3xl p-6 border border-white/20 overflow-hidden shadow-2xl">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="aspect-square rounded-2xl overflow-hidden">
-                      <Image 
-                        src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da" 
-                        alt="Taj Mahal" 
-                        width={300} 
-                        height={300} 
+                      <Image
+                        src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da"
+                        alt="Taj Mahal"
+                        width={300}
+                        height={300}
                         className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
                       />
                     </div>
                     <div className="aspect-square rounded-2xl overflow-hidden">
-                      <Image 
-                        src="https://images.unsplash.com/photo-1566552881560-0be862a7c445" 
-                        alt="Kerala Backwaters" 
-                        width={300} 
-                        height={300} 
+                      <Image
+                        src="https://images.unsplash.com/photo-1566552881560-0be862a7c445"
+                        alt="Kerala Backwaters"
+                        width={300}
+                        height={300}
                         className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
                       />
                     </div>
                     <div className="aspect-square rounded-2xl overflow-hidden">
-                      <Image 
-                        src="https://images.unsplash.com/photo-1477587458883-47145ed94245" 
-                        alt="Himalayan Mountains" 
-                        width={300} 
-                        height={300} 
+                      <Image
+                        src="https://images.unsplash.com/photo-1477587458883-47145ed94245"
+                        alt="Himalayan Mountains"
+                        width={300}
+                        height={300}
                         className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
                       />
                     </div>
                     <div className="aspect-square rounded-2xl overflow-hidden">
-                      <Image 
-                        src="https://images.unsplash.com/photo-1587474260584-136574528ed5" 
-                        alt="Indian Food" 
-                        width={300} 
-                        height={300} 
+                      <Image
+                        src="https://images.unsplash.com/photo-1587474260584-136574528ed5"
+                        alt="Indian Food"
+                        width={300}
+                        height={300}
                         className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
                       />
                     </div>
                   </div>
-                  
+
                   <div className="mt-6 space-y-3">
                     <div className="flex items-center space-x-2">
                       <div className="w-4 h-4 rounded-full bg-orange-400"></div>
-                      <p className="text-sm text-gray-200">Cultural Experiences</p>
+                      <p className="text-sm text-gray-200">
+                        Cultural Experiences
+                      </p>
                     </div>
                     <div className="flex items-center space-x-2">
                       <div className="w-4 h-4 rounded-full bg-green-400"></div>
@@ -517,39 +586,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
                 </div>
               </motion.div>
             </div>
-            
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.2 }}
-              className="text-center mt-10"
-            >
-              <div className="space-y-4">
-                <p className="text-gray-300 max-w-2xl mx-auto">
-                  Join thousands of travelers who have discovered the magic of India through our personalized itineraries.
-                </p>
-                <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4 mt-6">
-                  <Link
-                    href="/start"
-                    className="inline-flex items-center space-x-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-orange-600/80 to-green-600/80 backdrop-blur-sm rounded-xl border border-white/20 hover:border-white/40 transition-all duration-300 hover:shadow-lg"
-                  >
-                    <span>Start Planning</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-                  
-                  <button
-                    onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                    className="inline-flex items-center space-x-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-purple-600/80 to-blue-600/80 backdrop-blur-sm rounded-xl border border-white/20 hover:border-white/40 transition-all duration-300 hover:shadow-lg"
-                  >
-                    <span>Explore Features</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </motion.div>
           </motion.div>
-
-
 
           {/* Enhanced Features Section - with proper ID */}
           <motion.div
@@ -562,7 +599,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
             {/* Decorative elements */}
             <div className="absolute top-0 right-0 w-40 h-40 bg-green-500/10 rounded-full blur-3xl -z-10"></div>
             <div className="absolute bottom-0 left-0 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl -z-10"></div>
-            
+
             <div className="text-center space-y-4">
               <motion.h2
                 initial={{ opacity: 0, y: 20 }}
@@ -624,7 +661,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
                 </motion.div>
               ))}
             </div>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -634,29 +671,39 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
               <h3 className="text-xl sm:text-2xl font-semibold text-white text-center mb-6">
                 Coming Soon
               </h3>
-              
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="flex items-start space-x-4">
                   <div className="p-3 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl shadow-lg">
                     <Calendar className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h4 className="text-lg font-medium text-orange-400 mb-2">Seasonal Recommendations</h4>
-                    <p className="text-gray-300 text-sm">Intelligent suggestions based on the best times to visit different regions of India</p>
+                    <h4 className="text-lg font-medium text-orange-400 mb-2">
+                      Seasonal Recommendations
+                    </h4>
+                    <p className="text-gray-300 text-sm">
+                      Intelligent suggestions based on the best times to visit
+                      different regions of India
+                    </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start space-x-4">
                   <div className="p-3 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl shadow-lg">
                     <Users className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h4 className="text-lg font-medium text-cyan-400 mb-2">Family-Friendly Filters</h4>
-                    <p className="text-gray-300 text-sm">Specially curated itineraries for travelers with children of different age groups</p>
+                    <h4 className="text-lg font-medium text-cyan-400 mb-2">
+                      Family-Friendly Filters
+                    </h4>
+                    <p className="text-gray-300 text-sm">
+                      Specially curated itineraries for travelers with children
+                      of different age groups
+                    </p>
                   </div>
                 </div>
               </div>
-              
+
               <div className="mt-8 text-center">
                 <Link
                   href="/start"
@@ -834,34 +881,33 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
             {/* Background decoration */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent rounded-3xl" />
           </motion.div>
-          
+
           {/* Back to top button */}
           {showFloatingElements && (
             <motion.button
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               className="fixed bottom-8 right-8 z-40 p-3 rounded-full bg-gradient-to-r from-orange-500/80 to-purple-500/80 shadow-lg shadow-orange-500/20 backdrop-blur-sm border border-white/20 hover:border-white/40 transition-all duration-300 hover:scale-110"
               aria-label="Back to top"
             >
-              <svg 
-                className="w-6 h-6 text-white" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24" 
+              <svg
+                className="w-6 h-6 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth="2" 
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   d="M5 15l7-7 7 7"
                 />
               </svg>
             </motion.button>
           )}
-
         </div>
       </div>
 
