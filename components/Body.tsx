@@ -549,32 +549,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
             </motion.div>
           </motion.div>
 
-          {/*  CTA Section */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 1.2 }}
-            className="text-center space-y-6 sm:space-y-8"
-          >
-            <motion.h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-100">
-              Ready to explore{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-purple-400">
-                Incredible India
-              </span>
-              ?
-            </motion.h2>
 
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <button
-                onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                className="group inline-flex items-center space-x-3 px-8 sm:px-12 lg:px-16 py-4 sm:py-5 text-lg sm:text-xl lg:text-2xl text-blue-800 font-bold bg-gradient-to-r from-green-400 via-orange-400 to-purple-400 rounded-full transition-all duration-500 hover:shadow-2xl hover:shadow-orange-500/25 relative overflow-hidden"
-              >
-                <span className="relative z-10">Start Your Journey</span>
-                <ArrowRight className="w-6 h-6 sm:w-7 sm:h-7 group-hover:translate-x-1 transition-transform duration-300 relative z-10" />
-                <div className="absolute inset-0 bg-gradient-to-r from-green-300 to-orange-300 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </button>
-            </motion.div>
-          </motion.div>
 
           {/* Enhanced Features Section - with proper ID */}
           <motion.div
