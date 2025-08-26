@@ -14,7 +14,7 @@ const Home: React.FC = () => {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, ease: "easeOut" }}
-        className="text-center space-y-6 sm:space-y-8 pt-8 sm:pt-12"
+        className="text-center  sm:space-y-8 pt-4 sm:pt-12"
       >
         <motion.div
           initial={{ scale: 0 }}

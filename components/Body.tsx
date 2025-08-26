@@ -79,11 +79,11 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   useEffect(() => {
@@ -186,14 +186,16 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
           </div>
         </div>
       ) : (
-        <div className="relative">
-          <div className="absolute inset-0 z-0">
+        <div className="relative min-h-screen">
+          <div className="fixed inset-0 z-0">
             <Image
               src="/assets/pic1.webp"
               alt="Background"
               fill
-              className="object-cover"
+              className="object-cover object-center"
               priority
+              quality={85}
+              sizes="100vw"
             />
             <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/40 to-black/60" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
@@ -215,7 +217,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
         </div>
       )}
 
-      {!isMobile && showFloatingElements && (
+      {showFloatingElements && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-20 left-10 w-2 h-2 bg-green-400 rounded-full animate-pulse" />
           <div className="absolute top-40 right-20 w-1 h-1 bg-purple-400 rounded-full animate-ping" />
@@ -223,216 +225,223 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
         </div>
       )}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 space-y-16 sm:space-y-20 lg:space-y-24">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="space-y-8 sm:space-y-12"
-        >
-          <div className="text-center space-y-4">
-            <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
-              Community{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-purple-400">
-                Highlights
-              </span>
-            </h3>
-            <p className="text-base sm:text-lg text-white max-w-2xl mx-auto px-4">
-              Discover breathtaking destinations through the eyes of our travel
-              community
-            </p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 1 }}
-              className="pt-4"
-            >
-              <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:justify-center sm:space-y-0 sm:space-x-4 px-4">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-full sm:w-auto"
-                >
-                  <a
-                    href="https://imgur.com/upload"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group inline-flex items-center justify-center space-x-3 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-purple-600/80 to-orange-600/80 backdrop-blur-sm rounded-2xl border border-white/20 hover:border-white/40 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20 relative overflow-hidden w-full sm:w-auto sm:min-w-[220px]"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-orange-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <Globe className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300 relative z-10" />
-                    <span className="relative z-10">
-                      Share Your Travel Photos
-                    </span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300 relative z-10" />
-                  </a>
-                </motion.div>
-
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-full sm:w-auto"
-                >
-                  <button
-                    onClick={() => {
-                      window.open(
-                        "https://docs.google.com/forms/d/e/1FAIpQLSex2El_Ag0yKlqho5a4bgoHYvJLfFF0zbcfBnyneJQjb607YA/viewform?usp=dialog",
-                        "_blank",
-                        "noopener,noreferrer"
-                      );
-                    }}
-                    className="group inline-flex items-center justify-center space-x-3 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-green-600/80 to-blue-600/80 backdrop-blur-sm rounded-2xl border border-white/20 hover:border-white/40 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20 relative overflow-hidden w-full sm:w-auto sm:min-w-[220px]"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <Star className="w-5 h-5 group-hover:scale-110 transition-transform duration-300 relative z-10" />
-                    <span className="relative z-10">Submit Imgur Link</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300 relative z-10" />
-                  </button>
-                </motion.div>
-              </div>
-              <p className="text-xs text-white mt-3 px-4">
-                Upload to Imgur and share your incredible India moments with our
-                community
+      {/* <div className="relative z-20 bg-gradient-to-br from-black/60 via-black/40 to-black/60"> */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 space-y-12 sm:space-y-16 lg:space-y-20">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="space-y-8 sm:space-y-12"
+          >
+            <div className="text-center space-y-4">
+              <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
+                Community{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-purple-400">
+                  Highlights
+                </span>
+              </h3>
+              <p className="text-base sm:text-lg text-white max-w-2xl mx-auto px-4">
+                Discover breathtaking destinations through the eyes of our
+                travel community
               </p>
-            </motion.div>
-          </div>
 
-          <div className="relative w-full max-w-6xl mx-auto px-4">
-            <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl shadow-2xl">
-              <div
-                className="flex transition-transform duration-700 ease-in-out"
-                style={{
-                  transform: `translateX(-${currentImageIndex * 100}%)`,
-                }}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1 }}
+                className="pt-4"
               >
-                {communityImages.map((img, idx) => (
-                  <div key={idx} className="w-full flex-shrink-0 relative">
-                    <Image
-                      src={img.url}
-                      alt={img.title}
-                      width={800}
-                      height={500}
-                      className="w-full h-48 sm:h-64 md:h-80 lg:h-96 xl:h-[500px] object-cover"
-                      loading={idx === 0 ? "eager" : "lazy"}
-                      priority={idx === 0}
-                      placeholder="blur"
-                      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 800px"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                    <div className="absolute bottom-3 sm:bottom-6 left-3 sm:left-6 right-3 sm:right-6 text-white">
-                      <h4 className="text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2">
-                        {img.title}
-                      </h4>
-                      <div className="flex items-center space-x-2 text-xs sm:text-sm md:text-base text-gray-200">
-                        <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />
-                        <span>{img.location}</span>
+                <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:justify-center sm:space-y-0 sm:space-x-4 px-4">
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="w-full sm:w-auto"
+                  >
+                    <a
+                      href="https://imgur.com/upload"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group inline-flex items-center justify-center space-x-3 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-purple-600/80 to-orange-600/80 backdrop-blur-sm rounded-2xl border border-white/20 hover:border-white/40 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20 relative overflow-hidden w-full sm:w-auto sm:min-w-[220px]"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-orange-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <Globe className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300 relative z-10" />
+                      <span className="relative z-10">
+                        Share Your Travel Photos
+                      </span>
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300 relative z-10" />
+                    </a>
+                  </motion.div>
+
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="w-full sm:w-auto"
+                  >
+                    <button
+                      onClick={() => {
+                        window.open(
+                          "https://docs.google.com/forms/d/e/1FAIpQLSex2El_Ag0yKlqho5a4bgoHYvJLfFF0zbcfBnyneJQjb607YA/viewform?usp=dialog",
+                          "_blank",
+                          "noopener,noreferrer"
+                        );
+                      }}
+                      className="group inline-flex items-center justify-center space-x-3 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-green-600/80 to-blue-600/80 backdrop-blur-sm rounded-2xl border border-white/20 hover:border-white/40 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20 relative overflow-hidden w-full sm:w-auto sm:min-w-[220px]"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <Star className="w-5 h-5 group-hover:scale-110 transition-transform duration-300 relative z-10" />
+                      <span className="relative z-10">Submit Imgur Link</span>
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300 relative z-10" />
+                    </button>
+                  </motion.div>
+                </div>
+                <p className="text-xs text-white mt-3 px-4">
+                  Upload to Imgur and share your incredible India moments with
+                  our community
+                </p>
+              </motion.div>
+            </div>
+
+            <div className="relative w-full max-w-6xl mx-auto px-4">
+              <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl shadow-2xl">
+                <div
+                  className="flex transition-transform duration-700 ease-in-out"
+                  style={{
+                    transform: `translateX(-${currentImageIndex * 100}%)`,
+                  }}
+                >
+                  {communityImages.map((img, idx) => (
+                    <div key={idx} className="w-full flex-shrink-0 relative">
+                      <Image
+                        src={img.url}
+                        alt={img.title}
+                        width={800}
+                        height={500}
+                        className="w-full h-48 sm:h-64 md:h-80 lg:h-96 xl:h-[500px] object-cover object-center"
+                        loading={idx === 0 ? "eager" : "lazy"}
+                        priority={idx === 0}
+                        quality={90}
+                        placeholder="blur"
+                        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                        sizes="(max-width: 640px) 100vw, (max-width: 768px) 90vw, (max-width: 1024px) 80vw, 800px"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                      <div className="absolute bottom-3 sm:bottom-6 left-3 sm:left-6 right-3 sm:right-6 text-white">
+                        <h4 className="text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2">
+                          {img.title}
+                        </h4>
+                        <div className="flex items-center space-x-2 text-xs sm:text-sm md:text-base text-gray-200">
+                          <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />
+                          <span>{img.location}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={prevImage}
+                  className="flex absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full p-2 sm:p-3 transition-all duration-300 items-center justify-center backdrop-blur-md border border-white/20 hover:scale-110"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+                </button>
+
+                <button
+                  onClick={nextImage}
+                  className="flex absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full p-2 sm:p-3 transition-all duration-300 items-center justify-center backdrop-blur-md border border-white/20 hover:scale-110"
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+                </button>
+              </div>
+
+              <div className="flex justify-center space-x-2 sm:space-x-3 mt-4 sm:mt-6 md:mt-8">
+                {communityImages.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => scrollToImage(idx)}
+                    className={`transition-all duration-300 rounded-full ${
+                      idx === currentImageIndex
+                        ? "w-6 sm:w-8 h-2 sm:h-3 bg-white scale-110"
+                        : "w-2 sm:w-3 h-2 sm:h-3 bg-white/40 hover:bg-white/60 hover:scale-110"
+                    }`}
+                    aria-label={`Go to image ${idx + 1}`}
+                  />
                 ))}
               </div>
 
-              <button
-                onClick={prevImage}
-                className="flex absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full p-2 sm:p-3 transition-all duration-300 items-center justify-center backdrop-blur-md border border-white/20 hover:scale-110"
-                aria-label="Previous image"
-              >
-                <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
-              </button>
-
-              <button
-                onClick={nextImage}
-                className="flex absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full p-2 sm:p-3 transition-all duration-300 items-center justify-center backdrop-blur-md border border-white/20 hover:scale-110"
-                aria-label="Next image"
-              >
-                <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
-              </button>
-            </div>
-
-            <div className="flex justify-center space-x-2 sm:space-x-3 mt-4 sm:mt-6 md:mt-8">
-              {communityImages.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => scrollToImage(idx)}
-                  className={`transition-all duration-300 rounded-full ${
-                    idx === currentImageIndex
-                      ? "w-6 sm:w-8 h-2 sm:h-3 bg-white scale-110"
-                      : "w-2 sm:w-3 h-2 sm:h-3 bg-white/40 hover:bg-white/60 hover:scale-110"
-                  }`}
-                  aria-label={`Go to image ${idx + 1}`}
-                />
-              ))}
-            </div>
-
-            <div className="sm:hidden flex justify-center mt-4">
-              <div className="flex items-center space-x-3 text-xs text-gray-300 bg-black/30 px-3 py-2 rounded-full backdrop-blur-sm border border-white/20">
-                <Calendar className="w-3 h-3" />
-                <span>Use arrows to explore destinations</span>
+              <div className="sm:hidden flex justify-center mt-4">
+                <div className="flex items-center space-x-3 text-xs text-gray-300 bg-black/30 px-3 py-2 rounded-full backdrop-blur-sm border border-white/20">
+                  <Calendar className="w-3 h-3" />
+                  <span>Use arrows to explore destinations</span>
+                </div>
               </div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          className="text-center space-y-6 pt-8 sm:pt-12 pb-8 relative"
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent rounded-3xl" />
-        </motion.div>
-
-        {showFloatingElements && (
-          <motion.button
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-40 p-3 rounded-full bg-gradient-to-r from-orange-500/80 to-purple-500/80 shadow-lg shadow-orange-500/20 backdrop-blur-sm border border-white/20 hover:border-white/40 transition-all duration-300 hover:scale-110"
-            aria-label="Back to top"
+            transition={{ duration: 0.6, delay: 0.8 }}
+            className="text-center space-y-6 pt-8 sm:pt-12 pb-8 relative"
           >
-            <svg
-              className="w-5 h-5 sm:w-6 sm:h-6 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M5 15l7-7 7 7"
-              />
-            </svg>
-          </motion.button>
-        )}
-      </div>
-
-      {isLoading && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="fixed inset-0 bg-black/70 backdrop-blur-md z-50"
-          />
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 text-center bg-white/10 backdrop-blur-lg p-6 sm:p-8 rounded-3xl border border-white/20 mx-4"
-          >
-            <LoaderCircle className="w-12 h-12 sm:w-16 sm:h-16 text-orange-400 animate-spin mx-auto mb-4" />
-            <p className="text-white text-base sm:text-lg font-medium">
-              Preparing your adventure...
-            </p>
-            <p className="text-gray-300 text-sm mt-2">This won't take long</p>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent rounded-3xl" />
           </motion.div>
-        </>
-      )}
+
+          {showFloatingElements && (
+            <motion.button
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-40 p-3 rounded-full bg-gradient-to-r from-orange-500/80 to-purple-500/80 shadow-lg shadow-orange-500/20 backdrop-blur-sm border border-white/20 hover:border-white/40 transition-all duration-300 hover:scale-110"
+              aria-label="Back to top"
+            >
+              <svg
+                className="w-5 h-5 sm:w-6 sm:h-6 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M5 15l7-7 7 7"
+                />
+              </svg>
+            </motion.button>
+          )}
+
+          {isLoading && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="fixed inset-0 bg-black/70 backdrop-blur-md z-50"
+              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 text-center bg-white/10 backdrop-blur-lg p-6 sm:p-8 rounded-3xl border border-white/20 mx-4"
+              >
+                <LoaderCircle className="w-12 h-12 sm:w-16 sm:h-16 text-orange-400 animate-spin mx-auto mb-4" />
+                <p className="text-white text-base sm:text-lg font-medium">
+                  Preparing your adventure...
+                </p>
+                <p className="text-gray-300 text-sm mt-2">
+                  This won't take long
+                </p>
+              </motion.div>
+            </>
+          )}
+        </div>
+      {/* </div> */}
+
     </div>
   );
 };
+
 
 export default Body;
