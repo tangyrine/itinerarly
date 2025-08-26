@@ -188,15 +188,46 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
       ) : (
         <div className="relative min-h-screen">
           <div className="fixed inset-0 z-0">
-            <Image
-              src="/assets/pic1.webp"
-              alt="Background"
-              fill
-              className="object-cover object-center"
-              priority
-              quality={85}
-              sizes="100vw"
-            />
+            <motion.div
+              style={{ opacity: opacity1 }}
+              className="absolute inset-0"
+            >
+              <Image
+                src="/assets/pic1.webp"
+                alt="Background 1"
+                fill
+                className="object-cover object-center"
+                priority
+                quality={85}
+                sizes="100vw"
+              />
+            </motion.div>
+            <motion.div
+              style={{ opacity: opacity2 }}
+              className="absolute inset-0"
+            >
+              <Image
+                src="/assets/pic2.webp"
+                alt="Background 2"
+                fill
+                className="object-cover object-center"
+                quality={85}
+                sizes="100vw"
+              />
+            </motion.div>
+            <motion.div
+              style={{ opacity: opacity3 }}
+              className="absolute inset-0"
+            >
+              <Image
+                src="/assets/pic3.webp"
+                alt="Background 3"
+                fill
+                className="object-cover object-center"
+                quality={85}
+                sizes="100vw"
+              />
+            </motion.div>
             <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/40 to-black/60" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
           </div>
