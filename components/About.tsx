@@ -8,6 +8,7 @@ import { ArrowRight } from "lucide-react";
 
 const About: React.FC = () => {
   return (
+    <>
     <motion.div
       id="about"
       initial={{ opacity: 0, y: 30 }}
@@ -165,30 +166,11 @@ const About: React.FC = () => {
         transition={{ duration: 0.8, delay: 1.2 }}
         className="text-center mt-10"
       >
-        <div className="space-y-4">
-          <p className="text-gray-300 max-w-2xl mx-auto">
-            Join thousands of travelers who have discovered the magic of India through our personalized itineraries.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4 mt-6">
-            <Link
-              href="/start"
-              className="inline-flex items-center space-x-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-orange-600/80 to-green-600/80 backdrop-blur-sm rounded-xl border border-white/20 hover:border-white/40 transition-all duration-300 hover:shadow-lg"
-            >
-              <span>Start Planning</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-            
-            <button
-              onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-              className="inline-flex items-center space-x-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-purple-600/80 to-blue-600/80 backdrop-blur-sm rounded-xl border border-white/20 hover:border-white/40 transition-all duration-300 hover:shadow-lg"
-            >
-              <span>Explore Features</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+
+
       </motion.div>
     </motion.div>
+    </>
   );
 };
 

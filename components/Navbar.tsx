@@ -479,7 +479,7 @@ const Navbar = () => {
               </Link>
             </div>
             
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               {navItems.map((item) =>
                 item.isSection ? (
                   <button
@@ -508,7 +508,7 @@ const Navbar = () => {
                   </Link>
                 )
               )}
-            </div>
+            </div> */}
             
             <div className="my-6 border-t border-white/10 pt-6">
               <Link
