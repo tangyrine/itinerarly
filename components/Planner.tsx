@@ -16,6 +16,7 @@ import {
   Coffee,
   Clock,
   Info,
+  LoaderIcon,
 } from "lucide-react";
 import { SignInModal } from "./SignInModal";
 import axios from "axios";
@@ -758,7 +759,7 @@ export default function Planner() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="font-medium truncate">
-                          {userInfo?.name || "User"}
+                          {userInfo?.name || <LoaderIcon />}
                         </div>
                         {userInfo?.email && (
                           <div className="text-gray-500 text-xs truncate">
