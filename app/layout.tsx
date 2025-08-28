@@ -9,11 +9,22 @@ export const metadata = {
   description: "Plan and organize your trips effortlessly",
   icons: {
     icon: [
-      { url: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🌴</text></svg>' },
+      {
+        url: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🌴</text></svg>',
+      },
     ],
     apple: [
-      { url: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🌴</text></svg>' },
+      {
+        url: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🌴</text></svg>',
+      },
     ],
+  },
+  keywords: ["travel", "trip planner", "itinerary", "vacation", "Itinerarly"],
+  openGraph: {
+    title: "Itinerarly",
+    description: "Your smart travel companion",
+    url: "https://itinerarly-fe.vercel.app",
+    siteName: "Itinerarly",
   },
 };
 
