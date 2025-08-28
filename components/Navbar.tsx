@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Coffee, LogIn, User, ChevronDown, LogOut, Info, Compass } from "lucide-react";
+import {
+  Coffee,
+  LogIn,
+  User,
+  ChevronDown,
+  LogOut,
+  Info,
+  Compass,
+} from "lucide-react";
 import { SignInModal } from "./SignInModal";
 import Cookies from "js-cookie";
 import axios from "axios";
@@ -39,13 +47,14 @@ const Navbar = () => {
       // Add offset for fixed navbar height
       const navbarHeight = 64; // h-16 in Tailwind equals 64px
       const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
+      const offsetPosition =
+        elementPosition + window.pageYOffset - navbarHeight;
 
       window.scrollTo({
         top: offsetPosition,
-        behavior: "smooth"
+        behavior: "smooth",
       });
-      
+
       // Close all menus
       setIsMenuOpen(false);
       setIsProfileDropdownOpen(false);
@@ -61,44 +70,47 @@ const Navbar = () => {
   };
 
   const handleLogout = async (): Promise<void> => {
-    
-  setIsLoggedIn(false);
-  setUserInfo(null);
-  setIsProfileDropdownOpen(false);
-  
-  const cookies = document.cookie.split(";");
-  for (let i = 0; i < cookies.length; i++) {
-    const cookie = cookies[i];
-    const eqPos = cookie.indexOf("=");
-    const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
-    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;";
-    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=" + window.location.hostname;
-  }
+    setIsLoggedIn(false);
+    setUserInfo(null);
+    setIsProfileDropdownOpen(false);
 
-  if (typeof window !== 'undefined') {
-    sessionStorage.clear();
-    localStorage.clear();
-  }
-  
-  logout();
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i];
+      const eqPos = cookie.indexOf("=");
+      const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+      document.cookie =
+        name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;";
+      document.cookie =
+        name +
+        "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=" +
+        window.location.hostname;
+    }
 
-  try {
-    await axios.post(
-      `${SiteUrl}/api/v1/logout`,
-      {},
-      {
-        withCredentials: true,
-        timeout: 5000, 
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-  } catch (err) {
-    console.error("Backend logout error (frontend already cleaned up):", err);
-  }
-  window.location.href = "/";
-};
+    if (typeof window !== "undefined") {
+      sessionStorage.clear();
+      localStorage.clear();
+    }
+
+    logout();
+
+    try {
+      await axios.post(
+        `${SiteUrl}/api/v1/logout`,
+        {},
+        {
+          withCredentials: true,
+          timeout: 5000,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    } catch (err) {
+      console.error("Backend logout error (frontend already cleaned up):", err);
+    }
+    window.location.href = "/";
+  };
 
   const fetchUserInfo = async () => {
     try {
@@ -111,7 +123,8 @@ const Navbar = () => {
       setUserInfo(response.data);
     } catch (error) {
       console.error("Failed to fetch user info:", error);
-      setUserInfo({ name: "User", email: "" });
+      setUserInfo(null);
+      setIsLoggedIn(false);
     }
   };
 
@@ -161,27 +174,27 @@ const Navbar = () => {
 
   // Handle URL hash fragment for smooth scrolling on page load
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       // Wait for the page to fully load
       const handleHashScroll = () => {
         const hash = window.location.hash;
         if (hash) {
           // Remove the # symbol
           const sectionId = hash.substring(1);
-          
+
           // Small delay to ensure the page is fully rendered
           setTimeout(() => {
             scrollToSection(sectionId);
           }, 500);
         }
       };
-      
+
       // Run once on mount
       handleHashScroll();
-      
+
       // Also listen for hashchange events
-      window.addEventListener('hashchange', handleHashScroll);
-      return () => window.removeEventListener('hashchange', handleHashScroll);
+      window.addEventListener("hashchange", handleHashScroll);
+      return () => window.removeEventListener("hashchange", handleHashScroll);
     }
   }, []);
 
@@ -341,8 +354,6 @@ const Navbar = () => {
 
             {/* Mobile menu button */}
             <div className="md:hidden flex items-center space-x-2">
-             
-
               {isLoggedIn ? (
                 <div className="relative profile-dropdown">
                   <button
@@ -439,12 +450,10 @@ const Navbar = () => {
                 <Coffee className="w-4 h-4" />
               </a>
             </div>
-            
           </div>
         </div>
       </nav>
-      
-      
+
       <SignInModal openModal={openModal} onClose={handleModal} />
     </>
   );
