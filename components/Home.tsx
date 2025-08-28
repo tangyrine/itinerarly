@@ -14,7 +14,7 @@ const Home: React.FC = () => {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, ease: "easeOut" }}
-        className="text-center  sm:space-y-8 pt-4 sm:pt-12"
+        className="text-center sm:space-y-8 pt-4 sm:pt-12"
       >
         <motion.div
           initial={{ scale: 0 }}
@@ -23,13 +23,13 @@ const Home: React.FC = () => {
           className="flex items-center justify-center space-x-3 mb-6"
         >
           <div className="w-8 h-0.5 bg-gradient-to-r from-transparent to-purple-400"></div>
-          <div className="flex items-center space-x-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
+          {/* <div className="flex items-center space-x-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
             <Sparkles className="w-5 h-5 text-orange-500 animate-pulse" />
             <span className="text-sm font-medium text-purple-400 tracking-wide">
               AI-POWERED TRAVEL PLANNING
             </span>
             <Sparkles className="w-5 h-5 text-orange-500 animate-pulse" />
-          </div>
+          </div> */}
           <div className="w-8 h-0.5 bg-gradient-to-l from-transparent to-green-400"></div>
         </motion.div>
 
@@ -37,7 +37,7 @@ const Home: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.4 }}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-tight"
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-tight drop-shadow-[2px_2px_6px_rgba(0,0,0,0.6)]"
         >
           Welcome to{" "}
           <span className="relative">
@@ -57,10 +57,10 @@ const Home: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.6 }}
-          className="text-lg sm:text-xl md:text-2xl leading-relaxed font-light max-w-4xl mx-auto text-gray-200"
+          className="text-lg sm:text-xs md:text-2xl leading-relaxed font-light max-w-4xl mx-auto text-gray-00 drop-shadow-[3px_3px_3px_rgba(0,0,0,0.8)]"
         >
           Your intelligent and{" "}
-          <span className="relative text-green-400 font-semibold">
+          <span className="relative text-green-400 font-semibold drop-shadow-[1px_1px_4px_rgba(0,0,0,0.7)]">
             personalized
             <motion.div
               initial={{ scaleX: 0 }}

@@ -173,7 +173,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
 
           <div className="relative z-10 text-white pt-16">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 space-y-12 sm:space-y-16 lg:space-y-20">
-              <section className="h-screen flex items-center justify-center pt-6">
+              <section className="h-screen flex justify-center pt-6">
                 <Home />
               </section>
               <section className="h-screen flex items-center justify-center pt-6">
@@ -232,6 +232,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
           </div>
 
+          
           <div className="relative z-10 text-white">
             <div className="max-w-7xl mx-auto px-4 py-8 space-y-16">
               <section className="min-h-screen flex items-center justify-center py-8">
@@ -256,21 +257,21 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
         </div>
       )}
 
-      {/* <div className="relative z-20 bg-gradient-to-br from-black/60 via-black/40 to-black/60"> */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 space-y-12 sm:space-y-16 lg:space-y-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:py-12 lg:py-16 space-y-12 sm:space-y-16 lg:space-y-20">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
             className="space-y-8 sm:space-y-12"
           >
-            <div className="text-center space-y-4">
+            <div className="space-y-4 mt-8 sm:mt-12 lg:mt-20 text-center text-lg sm:text-xl md:text-2xl font-semibold text-white">
               <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
                 Community{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-purple-400">
                   Highlights
                 </span>
               </h3>
+              
               <p className="text-base sm:text-lg text-white max-w-2xl mx-auto px-4">
                 Discover breathtaking destinations through the eyes of our
                 travel community
@@ -468,7 +469,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
             </>
           )}
         </div>
-      {/* </div> */}
+
 
     </div>
   );
