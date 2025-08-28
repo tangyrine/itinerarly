@@ -156,13 +156,7 @@ export default function Planner() {
       setUserInfo(userData);
     } catch (error) {
       console.error("Failed to fetch user info:", error);
-      const defaultUser = {
-        name: "User",
-        email: "",
-        avatar:
-          "https://ui-avatars.com/api/?name=User&background=3b82f6&color=fff&size=128&rounded=true",
-      };
-      setUserInfo(defaultUser);
+      setUserInfo(null);
     }
   };
 
