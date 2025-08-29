@@ -111,6 +111,7 @@ export default function Planner() {
   
   if (typeof window !== 'undefined') {
     sessionStorage.clear();
+    localStorage.clear();
   }
 
   logout();
