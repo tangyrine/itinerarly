@@ -306,41 +306,44 @@ const Itinerary: React.FC<ItineraryProps> = ({
             Hope you enjoyed this itinerary! If you found it helpful, consider supporting my work.
           </div>
           
-          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-row gap-3 justify-center">
             <a
               href="https://coff.ee/heisen47"
               target="_blank"
               rel="noopener noreferrer"
-              className="py-2 px-4 flex items-center justify-center bg-yellow-500 hover:bg-yellow-600 text-white font-medium rounded-lg shadow transition-all duration-300"
+              className="flex-1 py-2 px-4 flex items-center justify-center bg-yellow-500 hover:bg-yellow-600 text-white font-medium rounded-lg shadow transition-all duration-300"
             >
               <Coffee className="w-4 h-4 mr-2" />
               Buy me a coffee
             </a>
 
             <button
-              className={`py-2 px-4 flex items-center justify-center text-white font-medium rounded-lg shadow transition-all duration-300 ${
-                copied ? "bg-green-600 hover:bg-green-700" : "bg-blue-600 hover:bg-blue-700"
+              className={`flex-1 py-2 px-4 flex items-center justify-center text-white font-medium rounded-lg shadow transition-all duration-300 ${
+              copied ? "bg-green-600 hover:bg-green-700" : "bg-blue-600 hover:bg-blue-700"
               }`}
               onClick={handleCopy}
             >
               {copied ? (
-                <>
-                  <Check className="w-4 h-4 mr-2" />
-                  Copied!
-                </>
+              <>
+                <Check className="w-4 h-4 mr-2" />
+                Copied!
+              </>
               ) : (
-                <>
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copy
-                </>
+              <>
+                <Copy className="w-4 h-4 mr-2" />
+                Copy
+              </>
               )}
             </button>
 
-            <button className="col-span-2 py-2 px-4 flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg shadow transition-all duration-300" onClick={handleSave}>
+            <button
+              className="flex-1 py-2 px-4 flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg shadow transition-all duration-300"
+              onClick={handleSave}
+            >
               Save!
             </button>
+            </div>
 
-          </div>
         </div>
       </div>
 
