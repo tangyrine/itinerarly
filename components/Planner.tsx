@@ -227,7 +227,7 @@ export default function Planner() {
 
       const cacheKey = `itinerary_${formData.destination}`;
       if (typeof window !== "undefined") {
-        const cached = localStorage.getItem(cacheKey);
+        const cached = localStorage.getItem(cacheKey.toLowerCase());
         if (cached) {
           setItinerary(cached);
           setDestinationName(formData.destination);
