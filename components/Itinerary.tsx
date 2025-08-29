@@ -131,9 +131,10 @@ const Itinerary: React.FC<ItineraryProps> = ({
   };
 
   const handleSave = () => {
-    const blob = new Blob([getCopyText()], { type: "text/plain" });
-    localStorage.setItem("saved_itinerary.txt", URL.createObjectURL(blob));
-  }
+    if (parsed) {
+      localStorage.setItem("savedItinerary", getCopyText());
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-[4000] flex items-center justify-center">
