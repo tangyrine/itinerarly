@@ -103,27 +103,6 @@ export function StateDetailsModal({
         return;
       }
 
-      let tokenConsumed = false;
-      try {
-        tokenConsumed = await consumeToken();
-      } catch (error) {
-        if (error instanceof Error && error.message === "Network Error") {
-          setIsNetworkError(true);
-          setErrorMessage("Unable to connect to the server. Please check your internet connection and try again.");
-          setShowTokenModal(true);
-        } else {
-          setErrorMessage("Error consuming token. Please try again.");
-          setShowTokenModal(true);
-        }
-        setDataLoad(false);
-        return;
-      }
-      
-      if (!tokenConsumed) {
-        setDataLoad(false);
-        return;
-      }
-
       if (typeof window !== "undefined") {
         let placeName = stateName.toLowerCase();
         const cached = localStorage.getItem(`stateDetails_${placeName}`);
@@ -135,6 +114,8 @@ export function StateDetailsModal({
           return;
         }
       }
+
+      let tokenConsumed = false;
       try {
         tokenConsumed = await consumeToken();
       } catch (error) {
