@@ -130,6 +130,11 @@ const Itinerary: React.FC<ItineraryProps> = ({
     }
   };
 
+  const handleSave = () => {
+    const blob = new Blob([getCopyText()], { type: "text/plain" });
+    localStorage.setItem("saved_itinerary.txt", URL.createObjectURL(blob));
+  }
+
   return (
     <div className="fixed inset-0 z-[4000] flex items-center justify-center">
       <div
@@ -329,6 +334,11 @@ const Itinerary: React.FC<ItineraryProps> = ({
                 </>
               )}
             </button>
+
+            <button className="col-span-2 py-2 px-4 flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg shadow transition-all duration-300" onClick={handleSave}>
+              Save!
+            </button>
+
           </div>
         </div>
       </div>
