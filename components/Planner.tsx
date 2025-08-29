@@ -225,6 +225,19 @@ export default function Planner() {
         return;
       }
 
+      const cacheKey = `itinerary_${formData.destination}`;
+      if (typeof window !== "undefined") {
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) {
+          setItinerary(cached);
+          setDestinationName(formData.destination);
+          setDrawerOpen(false);
+          setShowModal(true);
+          setLoading(false);
+          return;
+        }
+      }
+
       const tokenConsumed = await consumeToken();
 
       if (!tokenConsumed) {
@@ -235,6 +248,11 @@ export default function Planner() {
       const result = await ItineraryGeneration(formData);
       setItinerary(result ?? "");
       setDestinationName(formData.destination);
+
+      if (typeof window !== "undefined" && result) {
+        localStorage.setItem(cacheKey, result);
+      }
+
       setDrawerOpen(false);
       setShowModal(true);
     } catch (error) {
@@ -253,7 +271,6 @@ export default function Planner() {
   const generateMonthBasedItinerary = async () => {
     setLoading(true);
 
-
     try {
       if (!isLoggedIn) {
         setOpenModal(true);
@@ -267,6 +284,19 @@ export default function Planner() {
         return;
       }
 
+      const cacheKey = `itinerary_month_${monthData.month}_${monthData.people}_${monthData.days}_${monthData.budget}`;
+      if (typeof window !== "undefined") {
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) {
+          setItinerary(cached);
+          setDestinationName(extractDestinationName(cached));
+          setDrawerOpen(false);
+          setShowModal(true);
+          setLoading(false);
+          return;
+        }
+      }
+
       const tokenConsumed = await consumeToken();
 
       if (!tokenConsumed) {
@@ -277,6 +307,10 @@ export default function Planner() {
       const result = await generateMonthBasedTrip(monthData);
       setItinerary(result ?? "");
       setDestinationName(extractDestinationName(result ?? ""));
+
+      if (typeof window !== "undefined" && result) {
+        localStorage.setItem(cacheKey, result);
+      }
 
       setDrawerOpen(false);
       setShowModal(true);
