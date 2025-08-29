@@ -50,7 +50,7 @@ const Home: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.6 }}
-          className="text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed font-light max-w-4xl mx-auto text-gray-300 drop-shadow-[3px_3px_3px_rgba(0,0,0,0.8)]"
+          className="hidden sm:block text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed font-light max-w-4xl mx-auto text-gray-300 drop-shadow-[3px_3px_3px_rgba(0,0,0,0.8)] bg-black/20 px-4 py-2 rounded-lg"
         >
           Your intelligent and{" "}
           <span className="relative text-green-400 font-semibold drop-shadow-[1px_1px_4px_rgba(0,0,0,0.7)]">
