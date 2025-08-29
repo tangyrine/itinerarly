@@ -83,10 +83,6 @@ export default function IndiaMap({ type }: IndiaMapProps) {
     setShowStateDetails(true);
     setStateMousePosition({ x: e.clientX, y: e.clientY });
     setShowStateModal(true);
-
-    setTimeout(() => {
-      setShowStateDetails(false);
-    }, 3000);
   };
 
   const fetchDetailsForMarker = async (markerName: string) => {

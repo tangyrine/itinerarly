@@ -128,7 +128,6 @@ export function StateDetailsModal({
         placeName: stateName,
       });
       setDetails(res.data.result);
-      setTimeout(onClose, 15000);
     } catch (err) {
       if (err instanceof Error && err.message === "Network Error") {
         setIsNetworkError(true);
