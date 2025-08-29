@@ -130,19 +130,43 @@ export function StateDetailsModal({
         if (cached) {
           setDetails(cached);
           setDataLoad(false);
+          setIsNetworkError(false);
+          setErrorMessage("");
           return;
         }
       }
+      try {
+        tokenConsumed = await consumeToken();
+      } catch (error) {
+        if (error instanceof Error && error.message === "Network Error") {
+          setIsNetworkError(true);
+          setErrorMessage("Unable to connect to the server. Please check your internet connection and try again.");
+          setShowTokenModal(true);
+        } else {
+          setErrorMessage("Error consuming token. Please try again.");
+          setShowTokenModal(true);
+        }
+        setDataLoad(false);
+        return;
+      }
+      
+      if (!tokenConsumed) {
+        setDataLoad(false);
+        return;
+      }
+
       const res = await axios.post("/api/stateDetails", {
         placeName: stateName,
       });
       setDetails(res.data.result);
+
       if (typeof window !== "undefined" && res.data.result) {
         let place = stateName.toLowerCase();
         localStorage.setItem(`stateDetails_${place}`, res.data.result);
       }
       setIsNetworkError(false);
       setErrorMessage("");
+
     } catch (err) {
       if (err instanceof Error && err.message === "Network Error") {
         setIsNetworkError(true);
