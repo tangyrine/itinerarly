@@ -137,7 +137,8 @@ const Itinerary: React.FC<ItineraryProps> = ({
         alert("Destination is missing. Cannot save itinerary.");
         return;
       }
-      localStorage.setItem(`itinerary_${parsed.destination}`, getCopyText());
+      let destination = parsed.destination;
+      localStorage.setItem(`itinerary_${destination.toLowerCase()}`, getCopyText());
     }
     setSaved(true);
   };
