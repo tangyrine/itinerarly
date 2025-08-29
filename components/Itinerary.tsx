@@ -133,7 +133,11 @@ const Itinerary: React.FC<ItineraryProps> = ({
 
   const handleSave = () => {
     if (parsed) {
-      localStorage.setItem("savedItinerary", getCopyText());
+      if (!parsed.destination) {
+        alert("Destination is missing. Cannot save itinerary.");
+        return;
+      }
+      localStorage.setItem(`itinerary_${parsed.destination}`, getCopyText());
     }
     setSaved(true);
   };
