@@ -1,4 +1,4 @@
-import { Check, Coffee, Copy, MapPin, Calendar, DollarSign, Home, Utensils, Sparkles, AlignLeft } from "lucide-react";
+import { Check, Coffee, Copy, MapPin, Calendar, DollarSign, Home, Utensils, Sparkles, AlignLeft, Save } from "lucide-react";
 import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 
@@ -84,6 +84,7 @@ const Itinerary: React.FC<ItineraryProps> = ({
   }
 
   const [copied, setCopied] = useState(false);
+  const [saved , setSaved] = useState(false);
 
   const getCopyText = () => {
     if (!parsed) return "";
@@ -134,6 +135,7 @@ const Itinerary: React.FC<ItineraryProps> = ({
     if (parsed) {
       localStorage.setItem("savedItinerary", getCopyText());
     }
+    setSaved(true);
   };
 
   return (
@@ -337,10 +339,23 @@ const Itinerary: React.FC<ItineraryProps> = ({
             </button>
 
             <button
-              className="flex-1 py-2 px-4 flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg shadow transition-all duration-300"
+              className={`flex-1 py-2 px-4 flex items-center justify-center text-black font-medium rounded-lg shadow transition-all duration-300 ${
+              copied ? "bg-green-600 hover:bg-green-700" : "bg-gray-300 hover:bg-blue-600"
+              }`}
               onClick={handleSave}
             >
-              Save!
+              {saved ? (
+                <>
+                  <Check className="w-4 h-4 mr-2" />
+                  Saved!
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4 mr-2" />
+                  Save
+                </>
+              )}
+              
             </button>
             </div>
 
