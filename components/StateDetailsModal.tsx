@@ -124,10 +124,25 @@ export function StateDetailsModal({
         return;
       }
 
+      if (typeof window !== "undefined") {
+        let placeName = stateName.toLowerCase();
+        const cached = localStorage.getItem(`stateDetails_${placeName}`);
+        if (cached) {
+          setDetails(cached);
+          setDataLoad(false);
+          return;
+        }
+      }
       const res = await axios.post("/api/stateDetails", {
         placeName: stateName,
       });
       setDetails(res.data.result);
+      if (typeof window !== "undefined" && res.data.result) {
+        let place = stateName.toLowerCase();
+        localStorage.setItem(`stateDetails_${place}`, res.data.result);
+      }
+      setIsNetworkError(false);
+      setErrorMessage("");
     } catch (err) {
       if (err instanceof Error && err.message === "Network Error") {
         setIsNetworkError(true);
@@ -185,7 +200,7 @@ export function StateDetailsModal({
               ) : !isTokenAvailable ? (
                 "No tokens remaining"
               ) : (
-                `Generate! (1 token)`
+                `Generate!`
               )}
             </Button>
           </DialogFooter>
