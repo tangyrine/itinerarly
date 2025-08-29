@@ -172,27 +172,20 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Handle URL hash fragment for smooth scrolling on page load
   useEffect(() => {
     if (typeof window !== "undefined") {
-      // Wait for the page to fully load
       const handleHashScroll = () => {
         const hash = window.location.hash;
         if (hash) {
-          // Remove the # symbol
           const sectionId = hash.substring(1);
-
-          // Small delay to ensure the page is fully rendered
           setTimeout(() => {
             scrollToSection(sectionId);
           }, 500);
         }
       };
 
-      // Run once on mount
       handleHashScroll();
 
-      // Also listen for hashchange events
       window.addEventListener("hashchange", handleHashScroll);
       return () => window.removeEventListener("hashchange", handleHashScroll);
     }
