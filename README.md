@@ -13,7 +13,10 @@ Itinerarly is an AI-powered travel planning application that helps you create pe
 I sincerely hope you enjoy the stay and visit of this beautiful country and your safety and security is maintained throughout. :D
 
 
-**🎯 Quick Start**: Visit our live application and start planning your next adventure! 
+https://github.com/user-attachments/assets/c461f23f-a724-4946-a1a3-708abd01b3bd
+
+
+
 
 ## ✨ Key Features
 - 🗺️ **Interactive India Map** with react-simple-maps visualization
