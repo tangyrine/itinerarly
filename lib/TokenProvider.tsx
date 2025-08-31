@@ -124,7 +124,7 @@ export function TokenProvider({ children }: { children: ReactNode }) {
         console.error("Could not store auth state in storage:", e);
       }
     } catch (error) {
-      console.error("❌ Authentication check failed:", error); // Debug log
+      console.error("Authentication check failed:", error);
       setToken(0);
       setIsAuthenticated(false);
 
@@ -225,7 +225,7 @@ export function TokenProvider({ children }: { children: ReactNode }) {
         return false;
       }
     } catch (error) {
-      console.error("❌ Error consuming token:", error);
+      console.error("Error consuming token:", error);
       
       if (axios.isAxiosError(error)) {
         console.error("📊 Axios error details:", {
