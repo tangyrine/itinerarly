@@ -3,6 +3,16 @@
 ## Overview
 Itinerarly is an AI-powered travel planning application that helps you create perfect itineraries for exploring India. Born from the frustration of indecisive group travel planning, this tool leverages AI to make travel planning effortless and enjoyable.
 
+## Features & how to use
+
+- you can write about the exact place you wanna go for the number of days and number of people , we will generate you an itinerary about and around that place
+- you don't know where exactly to go but you know which month you gonna go with how many people and your budget , again we can help you generate a itinerary based on your budget and time duration
+- you wanna visit a state , you can click on that state and we can tell you that particular indian state's cuisine , safety and the places to visit of that state.
+- if you click on the dropdown , it will tell you the various wild life sanctuaries , hill stations , beaches , cities of this beautiful country . click on the selected destination, click on show details and we can show you the details of that particular place along with it's current weather .
+
+I sincerely hope you enjoy the stay and visit of this beautiful country and your safety and security is maintained throughout. :D
+
+
 **🎯 Quick Start**: Visit our live application and start planning your next adventure! 
 
 ## ✨ Key Features
