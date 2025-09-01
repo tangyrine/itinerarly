@@ -10,7 +10,7 @@ import {
 } from "react-simple-maps";
 import indiaGeoJson from "../app/start/india-geoJson.json";
 import { sections } from "@/data/sections";
-import { LoaderCircle, RotateCcw } from "lucide-react";
+import { LoaderCircle, RotateCcw, X } from "lucide-react";
 import { Plus, Minus } from "lucide-react";
 import Gemini from "../lib/Gemini";
 import PlaceDetails from "./PlaceDetails";
@@ -26,9 +26,9 @@ export default function IndiaMap({ type }: IndiaMapProps) {
   const [isMapLoading, setIsMapLoading] = useState(true);
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<string | null>(null);
-  const [position, setPosition] = useState({ 
-    coordinates: [82, 22], 
-    zoom: 1 
+  const [position, setPosition] = useState({
+    coordinates: [82, 22],
+    zoom: 1,
   });
   const [markerDetailsMap, setMarkerDetailsMap] = useState<
     Record<string, string>
@@ -43,41 +43,44 @@ export default function IndiaMap({ type }: IndiaMapProps) {
   const [minZoom, setMinZoom] = useState(1);
   const [initialZoom, setInitialZoom] = useState(1);
 
-  // Adjust map scale based on screen size
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 480) {
-        setMapScale(1400); // Extra large for very small devices
+        setMapScale(1400);
         setMinZoom(0.8);
         setInitialZoom(1.2);
       } else if (window.innerWidth < 768) {
-        setMapScale(1200); // Large for small devices
+        setMapScale(1200);
         setMinZoom(0.9);
         setInitialZoom(1.2);
       } else {
-        setMapScale(800); // Default for medium and larger devices
+        setMapScale(800);
         setMinZoom(1);
         setInitialZoom(1);
       }
     };
-    
-    handleResize(); // Initialize on first render
-    
-    // Update position with new initial zoom
-    setPosition(pos => ({
+
+    handleResize();
+
+    setPosition((pos) => ({
       ...pos,
-      zoom: initialZoom
+      zoom: initialZoom,
     }));
-    
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const selectedSection = sections.find((section) => section.id === type);
   const highlightedPlaces = selectedSection?.places || [];
 
   const handleStateClick = (geo: any, e: React.MouseEvent<SVGPathElement>) => {
-    const stateName = geo.properties?.NAME_1 || geo.properties?.st_nm || geo.properties?.name || geo.properties?.NAME || 'Unknown State';
+    const stateName =
+      geo.properties?.NAME_1 ||
+      geo.properties?.st_nm ||
+      geo.properties?.name ||
+      geo.properties?.NAME ||
+      "Unknown State";
     setSelectedState(stateName);
     setHoveredState(null);
     setShowStateDetails(true);
@@ -161,10 +164,10 @@ export default function IndiaMap({ type }: IndiaMapProps) {
           <Minus className="w-6 h-6" />
         </button>
         <button
-          onClick={() => 
-            setPosition({ 
-              coordinates: [82, 22], 
-              zoom: initialZoom
+          onClick={() =>
+            setPosition({
+              coordinates: [82, 22],
+              zoom: initialZoom,
             })
           }
           className="p-2 bg-white rounded-full cursor-pointer shadow-lg hover:bg-gray-100 transition-colors"
@@ -180,9 +183,9 @@ export default function IndiaMap({ type }: IndiaMapProps) {
       ) : (
         <ComposableMap
           projection="geoMercator"
-          projectionConfig={{ 
-            scale: mapScale, 
-            center: [82, 22] 
+          projectionConfig={{
+            scale: mapScale,
+            center: [82, 22],
           }}
           style={{ width: "100%", height: "100%" }}
         >
@@ -202,7 +205,12 @@ export default function IndiaMap({ type }: IndiaMapProps) {
             <Geographies geography={indiaGeoJson}>
               {({ geographies }: { geographies: any[] }) =>
                 geographies.map((geo, index) => {
-                  const name = geo.properties?.NAME_1 || geo.properties?.st_nm || geo.properties?.name || geo.properties?.NAME || `geography-${index}`;
+                  const name =
+                    geo.properties?.NAME_1 ||
+                    geo.properties?.st_nm ||
+                    geo.properties?.name ||
+                    geo.properties?.NAME ||
+                    `geography-${index}`;
                   const isSelected = selectedState === name;
                   const isHovered = hoveredState === name;
 
@@ -249,7 +257,7 @@ export default function IndiaMap({ type }: IndiaMapProps) {
 
             <g className="disputed-territories">
               <path
-                d="M..." 
+                d="M..."
                 fill="none"
                 stroke="#FF0000"
                 strokeWidth={1}
@@ -298,7 +306,15 @@ export default function IndiaMap({ type }: IndiaMapProps) {
           }}
           onClick={(e) => e.stopPropagation()}
         >
-          <h3 className="font-semibold text-lg mb-2">{hoveredPlace}</h3>
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="font-semibold text-lg">{hoveredPlace}</h3>
+            <button
+              onClick={() => setHoveredPlace(null)}
+              className="text-gray-500 hover:text-gray-700 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
           <hr />
           {loadingMarker === hoveredPlace ? (
             <div className="flex items-center justify-center">

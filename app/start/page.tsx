@@ -47,6 +47,7 @@ export default function Page() {
       <div className="flex-none relative z-10">
         <Planner />
       </div>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -55,21 +56,23 @@ export default function Page() {
       >
         <select
           onChange={handleDestinationChange}
-          className="lg:w-full px-4 py-3 text-center rounded-lg bg-white/10 backdrop-blur-sm text-[#f7e9d5] border border-white/20 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-all md:w-1/2"
+          className="lg:w-full px-4 py-3 text-center rounded-lg bg-white/10 backdrop-blur-sm text-[#222] font-semibold border border-white/20 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition-all md:w-1/2"
           defaultValue=""
           disabled={isLoading}
+          style={{ color: "#222", fontWeight: "600", fontSize: "1rem" }}
         >
-          <option value="" disabled>
-            Select your destination type
+          <option value="" disabled style={{ color: "#888", fontWeight: "500" }}>
+        Select your destination type
           </option>
-          <option value="hillstations">Hill Stations</option>
-          <option value="beaches">Beaches</option>
-          <option value="wildlife">Wildlife Sanctuaries</option>
-          <option value="historical">Historical Sites</option>
-          <option value="cities">Cities</option>
-          <option value="none">Entire India Map</option>
+          <option value="hillstations" style={{ color: "#222" }}>Hill Stations</option>
+          <option value="beaches" style={{ color: "#222" }}>Beaches</option>
+          <option value="wildlife" style={{ color: "#222" }}>Wildlife Sanctuaries</option>
+          <option value="historical" style={{ color: "#222" }}>Historical Sites</option>
+          <option value="cities" style={{ color: "#222" }}>Cities</option>
+          <option value="none" style={{ color: "#222" }}>Entire India Map</option>
         </select>
       </motion.div>
+      
       <div className="flex-grow min-h-0 relative z-0">
         <Suspense
           fallback={
