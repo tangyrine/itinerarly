@@ -8,6 +8,7 @@ import {
   LogOut,
   Info,
   Compass,
+  LoaderIcon,
 } from "lucide-react";
 import { SignInModal } from "./SignInModal";
 import Cookies from "js-cookie";
@@ -269,7 +270,12 @@ const Navbar = () => {
                       />
                     </div>
                     <span className="text-sm font-medium">
-                      {userInfo?.name ? userInfo.name.split(" ")[0] : "User"}
+                        <button
+                        onClick={handleAuthClick}
+                        className="text-sm font-medium hover:text-orange-400 transition-colors"
+                        >
+                        Sign In
+                        </button>
                     </span>
                     <ChevronDown
                       className={`w-4 h-4 transition-transform ${
@@ -283,7 +289,12 @@ const Navbar = () => {
                     <div className="absolute right-0 mt-2 w-48 bg-black/90 backdrop-blur-md rounded-2xl shadow-2xl py-2 z-50 border border-white/20">
                       <div className="px-4 py-3 text-sm border-b border-white/20">
                         <div className="font-medium text-white">
-                          {userInfo?.name || "User"}
+                          <button
+                            onClick={handleAuthClick}
+                            className="text-sm font-medium hover:text-orange-400 transition-colors"
+                          >
+                            Sign In
+                          </button>
                         </div>
                         {userInfo?.email && (
                           <div className="text-gray-400 text-xs mt-1">
@@ -356,22 +367,12 @@ const Navbar = () => {
                     }
                   >
                     <div className="w-7 h-7 bg-gradient-to-r from-orange-400 to-green-400 rounded-full flex items-center justify-center overflow-hidden border border-white/20">
-                      {userInfo?.avatar ? (
-                        <img
-                          src={userInfo.avatar}
-                          alt={userInfo.name || "User"}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.currentTarget.style.display = "none";
-                            if (e.currentTarget.nextElementSibling) {
-                              (
-                                e.currentTarget
-                                  .nextElementSibling as HTMLElement
-                              ).style.display = "flex";
-                            }
-                          }}
-                        />
-                      ) : null}
+                      <button
+                        onClick={handleAuthClick}
+                        className="text-xs font-medium hover:text-orange-400 transition-colors"
+                      >
+                        Sign In
+                      </button>
                       <User
                         className={`w-4 h-4 text-white ${
                           userInfo?.avatar ? "hidden" : "block"
@@ -390,7 +391,12 @@ const Navbar = () => {
                     <div className="absolute right-0 mt-2 w-40 bg-black/90 backdrop-blur-md rounded-2xl shadow-2xl py-2 z-50 border border-white/20">
                       <div className="px-3 py-2 text-xs border-b border-white/20">
                         <div className="font-medium truncate text-white">
-                          {userInfo?.name || "User"}
+                          <button
+                            onClick={handleAuthClick}
+                            className="text-xs font-medium hover:text-orange-400 transition-colors"
+                          >
+                            Sign In
+                          </button>
                         </div>
                       </div>
 
@@ -401,7 +407,7 @@ const Navbar = () => {
                             <span className="text-gray-300">Tokens:</span>
                             <span className="font-medium text-orange-400 flex items-center">
                               <span className="text-yellow-400 mr-1">⚡</span>
-                              {tokenLoading ? "..." : token}
+                              {tokenLoading ? <LoaderIcon/> : token}
                             </span>
                           </div>
                           <div className="flex items-center mt-2 p-1.5 bg-blue-500/20 rounded border border-blue-400/30">
