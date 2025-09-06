@@ -257,7 +257,6 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
         </div>
       )}
 
-      {/* Community Highlights Section with Higher Z-Index */}
       <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:py-12 lg:py-16 space-y-12 sm:space-y-16 lg:space-y-20">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
