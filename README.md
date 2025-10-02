@@ -58,8 +58,8 @@ Itinerarly features **1000+ carefully curated destinations** across India:
 ### Installation
 ```bash
 # Clone and install
-git clone https://github.com/yourusername/itinerarly-FE.git
-cd itinerarly-FE
+git clone https://github.com/yourusername/itinerarly.git
+cd itinerarly
 npm install
 
 # Set up environment
