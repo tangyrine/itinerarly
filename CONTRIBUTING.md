@@ -117,7 +117,7 @@ git push origin feature/AmazingFeature
 ```
 
 ### 7. Open a Pull Request
-Open a Pull Request against the main branch with:
+Open a Pull Request against the dev branch with:
 - Clear description of changes
 - Screenshots (if applicable)
 - Links to related issues
