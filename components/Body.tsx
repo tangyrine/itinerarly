@@ -142,7 +142,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
               src="/assets/pic1.webp"
               alt="Background 1"
               fill
-              className="object-cover"
+              className="object-cover blur-sm"
               priority
             />
           </motion.div>
@@ -155,7 +155,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
               src="/assets/pic2.webp"
               alt="Background 2"
               fill
-              className="object-cover"
+              className="object-cover blur-sm"
             />
           </motion.div>
 
@@ -167,7 +167,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
               src="/assets/pic3.webp"
               alt="Background 3"
               fill
-              className="object-cover"
+              className="object-cover blur-sm"
             />
           </motion.div>
 
@@ -272,7 +272,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
               </span>
             </h3>
             
-            <p className="text-base sm:text-lg text-white max-w-2xl mx-auto px-4">
+            <p className="text-base sm:text-lg text-slate-100 max-w-2xl mx-auto px-4">
               Discover breathtaking destinations through the eyes of our
               travel community
             </p>

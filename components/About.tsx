@@ -36,7 +36,7 @@ const About: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
-          className="text-lg text-gray-300 max-w-3xl mx-auto"
+          className="text-lg text-slate-100 max-w-3xl mx-auto"
         >
           Your AI-powered companion for creating personalized travel
           experiences in India
