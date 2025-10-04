@@ -196,7 +196,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
                 src="/assets/pic1.webp"
                 alt="Background 1"
                 fill
-                className="object-cover object-center"
+                className="object-cover object-center blur-sm"
                 priority
                 quality={85}
                 sizes="100vw"
@@ -210,7 +210,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
                 src="/assets/pic2.webp"
                 alt="Background 2"
                 fill
-                className="object-cover object-center"
+                className="object-cover object-center blur-sm"
                 quality={85}
                 sizes="100vw"
               />
@@ -223,7 +223,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
                 src="/assets/pic3.webp"
                 alt="Background 3"
                 fill
-                className="object-cover object-center"
+                className="object-cover object-center blur-sm"
                 quality={85}
                 sizes="100vw"
               />
