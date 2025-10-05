@@ -10,7 +10,8 @@ We welcome contributions to Itinerarly! This document provides guidelines for co
 - Google Gemini API key
 
 ### Installation
-1. Clone the repository
+1. Fork the repo , create your own branch do the changes you want to make . Send a PR after you have tested the changes .
+2. Clone the repository
 ```bash
 git clone https://github.com/yourusername/itinerarly-FE.git
 cd itinerarly-FE
@@ -116,7 +117,7 @@ git push origin feature/AmazingFeature
 ```
 
 ### 7. Open a Pull Request
-Open a Pull Request against the main branch with:
+Open a Pull Request against the dev branch with:
 - Clear description of changes
 - Screenshots (if applicable)
 - Links to related issues

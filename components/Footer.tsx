@@ -8,7 +8,7 @@ const Footer: React.FC = () => (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
         {/* Company Info */}
         <div className="space-y-3">
-          <h3 className="text-xl font-bold">
+          <h3 className="text-3xl font-bold">
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-green-400">
               Itinerarly
             </span>
@@ -63,18 +63,18 @@ const Footer: React.FC = () => (
 
       {/* Bottom Bar */}
       <div className="mt-8 pt-6 border-t border-white/20">
-        <div className="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
-          <p className="text-sm text-gray-400">
-            &copy; {new Date().getFullYear()} Itinerarly. All rights reserved.
-          </p>
-          <div className="flex items-center space-x-4 text-sm text-gray-400">
-            <span>Made with ❤️ for travelers</span>
-            <div className="flex items-center space-x-1">
-              <span className="text-orange-400">⚡</span>
-              <span>Powered by AI</span>
-            </div>
-          </div>
-        </div>
+      <div className="flex flex-col sm:flex-col justify-between items-center space-y-2 sm:space-y-0">
+  <p className="text-sm text-gray-400">
+    &copy; {new Date().getFullYear()} Itinerarly. All rights reserved.
+  </p>
+  <div className="flex items-center space-x-5 text-sm text-gray-400">
+    <span>Made with ❤️ for travelers</span>
+    <div className="flex items-center space-x-1">
+      <span className="text-orange-400">⚡</span>
+      <span>Powered by AI</span>
+    </div>
+  </div>
+</div>
       </div>
     </div>
     
