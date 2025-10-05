@@ -1,7 +1,9 @@
 # Itinerarly - Travel Planning Made Simple
 
 ## Overview
-Itinerarly is an AI-powered travel planning application that helps you create perfect itineraries for exploring India. Born from the frustration of indecisive group travel planning, this tool leverages AI to make travel planning effortless and enjoyable.
+Itinerarly is an AI-powered travel planning application that helps you create perfect itineraries for exploring India. Born from the frustration of indecisive group travel planning, this tool leverages AI to make travel planning effortless and enjoyable. 
+
+## Kindly do star ⭐ the repo , that will motivate me a lot
 
 ## Features & how to use
 
