@@ -66,9 +66,11 @@ const Features: React.FC = () => {
         transition={{ duration: 0.8, delay: 0.4 }}
         className=" sm:space-y-12  sm:py-16 sm:mt-70 relative"
       >
-        {/* Decorative elements */}
-        <div className="absolute top-0 right-0 w-40 h-40 bg-green-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl"></div>
+       
+{/* Decorative elements */}
+<div className="absolute top-0 right-0 w-40 h-40 bg-green-500/10 rounded-full blur-3xl z-0"></div>
+<div className="absolute bottom-0 left-0 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl z-0"></div>
+
 
         <div className="text-center space-y-2">
           <motion.h2
@@ -87,14 +89,14 @@ const Features: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.8 }}
-            className="text-lg text-gray-300 max-w-3xl mx-auto"
+            className="text-lg text-slate-100 max-w-3xl mx-auto"
           >
             Experience the future of travel planning with our cutting-edge
             features designed to make your Indian adventure unforgettable
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10 p-8">
           {features.map((feature, index) => (
             <motion.div
               key={feature.label}
@@ -102,11 +104,13 @@ const Features: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.8 + index * 0.1 }}
               whileHover={{
-                scale: 1.03,
-                y: -5,
-                transition: { duration: 0.2 },
+                scale: 1.05,
+                y: -8,
+                transition: { duration: 0.25 },
               }}
-              className="group relative bg-white/5 backdrop-blur-lg p-6 sm:p-8 rounded-3xl border border-white/10 hover:border-white/30 transition-all duration-500 hover:shadow-2xl hover:shadow-white/10 overflow-hidden"
+              className="group relative z-10 bg-white/5 backdrop-blur-lg p-6 sm:p-8 
+             rounded-3xl border border-white/10 hover:border-white/30 
+             transition-all duration-500 hover:shadow-2xl hover:shadow-white/10"
             >
               {/* Background glow effect */}
               <div
