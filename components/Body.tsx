@@ -126,8 +126,8 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
     offset: ["start start", "end end"],
   });
 
-  const opacity1 = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
-  const opacity2 = useTransform(scrollYProgress, [0.2, 0.6], [0, 1]);
+  const opacity1 = useTransform(scrollYProgress, [0.5, 1], [1, 0]);
+  const opacity2 = useTransform(scrollYProgress, [0.2, 0.5], [0, 1]);
   const opacity3 = useTransform(scrollYProgress, [0.5, 1], [0, 1]);
 
   return (
@@ -232,7 +232,6 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
           </div>
 
-          
           <div className="relative z-10 text-white">
             <div className="max-w-7xl mx-auto px-4 py-8 space-y-16">
               <section className="min-h-screen flex items-center justify-center py-8">
@@ -271,10 +270,10 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
                 Highlights
               </span>
             </h3>
-            
+
             <p className="text-base sm:text-lg text-slate-100 max-w-2xl mx-auto px-4">
-              Discover breathtaking destinations through the eyes of our
-              travel community
+              Discover breathtaking destinations through the eyes of our travel
+              community
             </p>
 
             <motion.div
@@ -327,8 +326,8 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
                 </motion.div>
               </div>
               <p className="text-xs text-white mt-3 px-4">
-                Upload to Imgur and share your incredible India moments with
-                our community
+                Upload to Imgur and share your incredible India moments with our
+                community
               </p>
             </motion.div>
           </div>
@@ -463,9 +462,7 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
               <p className="text-white text-base sm:text-lg font-medium">
                 Preparing your adventure...
               </p>
-              <p className="text-gray-300 text-sm mt-2">
-                This won't take long
-              </p>
+              <p className="text-gray-300 text-sm mt-2">This won't take long</p>
             </motion.div>
           </>
         )}
