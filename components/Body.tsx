@@ -256,14 +256,14 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
         </div>
       )}
 
-      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:py-12 lg:py-16 space-y-12 sm:space-y-16 lg:space-y-20">
+      <div className="relative z-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 space-y-8 sm:space-y-10 lg:space-y-12">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
           className="space-y-8 sm:space-y-12 relative z-30"
         >
-          <div className="space-y-4 mt-8 sm:mt-110 lg:mt-110 text-center text-lg sm:text-xl md:text-2xl font-semibold text-white">
+          <div className="space-y-4 mt-8 sm:mt-110 lg:mt-110 text-center text-lg sm:text-xl md:text-2xl font-semibold text-white relative z-10">
             <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
               Community{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-purple-400">
@@ -415,9 +415,9 @@ const Body: React.FC<BodyProps> = ({ sectionRefs, sections }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.8 }}
-          className="text-center space-y-6 pt-8 sm:pt-12 pb-8 relative z-30"
+          className="text-center space-y-6 pt-8 sm:pt-12 pb-8 relative z-5"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent rounded-3xl" />
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent rounded-3xl pointer-events-none z-0" />
         </motion.div>
 
         {showFloatingElements && (
