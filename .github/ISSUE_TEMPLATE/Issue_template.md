@@ -1,7 +1,7 @@
 ---
 name: Issue Guidelines
 about: General issue template with guidelines for bugs, features, and enhancements
-title: '[TYPE] '
+title: '[TYPE] [Is it a Bug / Feature request / Enhancement request]'
 labels: ''
 assignees: ''
 ---
