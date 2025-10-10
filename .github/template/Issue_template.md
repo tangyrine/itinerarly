@@ -1,119 +1,65 @@
-# Issue Creation Form
+# 📝 Issue Guidelines
 
-Please select the type of issue you want to create:
+> **Please read this before creating your issue!**
 
-- [ ] 🐞 Bug Report
-- [ ] 💡 Feature Request  
-- [ ] ⚡ Enhancement
+## 🚨 Important Notice
 
----
+Before submitting your issue, please help us by providing the right information based on what you're reporting:
 
-## 🐞 Bug Report
+### 🐞 **For Bug Reports:**
+- **REQUIRED**: Provide screenshots or videos showing the bug
+- **REQUIRED**: Include detailed steps to reproduce the issue
+- **REQUIRED**: Describe what you expected vs what actually happened
+- Include your browser and operating system information
 
-**Bug Title**
-A clear and concise description of what the bug is.
+### 💡 **For Feature Requests:**
+- **REQUIRED**: Explain the problem you're trying to solve
+- **REQUIRED**: Provide a detailed implementation plan before raising a PR
+- **REQUIRED**: Describe your proposed solution in detail
+- Consider alternative approaches and explain why yours is better
 
-**Steps to Reproduce**
-Please provide detailed steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '...'
-3. Scroll down to '...'
-4. See error
-
-**Expected Behavior**
-What you expected to happen.
-
-**Actual Behavior**
-What actually happened.
-
-**Screenshots/Videos** *(Required)*
-Please provide screenshots or videos showing the bug. This helps us understand and fix the issue faster.
-
-**Environment**
-- OS: [e.g. macOS 14.0, Windows 11, Ubuntu 22.04]
-- Browser: [e.g. Chrome 120, Firefox 119, Safari 17]
-- Version: [e.g. v1.0.2]
-
-**Priority**
-- [ ] Low
-- [ ] Medium
-- [ ] High
-- [ ] Critical
+### ⚡ **For Enhancements:**
+- **REQUIRED**: Explain how current functionality can be improved
+- **REQUIRED**: Provide a detailed plan for implementation before raising a PR
+- **REQUIRED**: Define clear acceptance criteria
+- Consider the impact on existing users
 
 ---
 
-## 💡 Feature Request
+## 📋 Issue Template
 
-**Feature Title**
-A clear and concise description of the feature you'd like.
+**Issue Type:** [ ] Bug Report | [ ] Feature Request | [ ] Enhancement
 
-**Problem/Motivation** *(Required)*
-What problem does this solve? Why is it needed?
+**Title:** Brief description of the issue
 
-**Proposed Solution** *(Required)*
-Describe your proposed solution or feature in detail.
+**Description:**
+<!-- Replace this comment with your detailed description -->
 
-**Implementation Plan** *(Required)*
-Provide a detailed plan for implementation. Include:
+**Steps to Reproduce** *(for bugs only)*:
+1. 
+2. 
+3. 
+
+**Expected Behavior:**
+<!-- What should have happened? -->
+
+**Actual Behavior:**
+<!-- What actually happened? -->
+
+**Screenshots/Videos:**
+<!-- Please drag and drop screenshots or videos here -->
+
+**Environment** *(for bugs only)*:
+- OS: 
+- Browser: 
+- Version: 
+
+**Implementation Plan** *(for features/enhancements)*:
+<!-- Provide detailed plan including:
 - Technical approach
-- Required changes
+- Required changes  
 - Dependencies
-- Timeline estimate
+- Timeline estimate -->
 
-**Alternative Solutions Considered**
-Describe any alternative solutions you've considered and why they were rejected.
-
-**Acceptance Criteria**
-Define the criteria that must be met for this feature to be considered complete.
-
-**Supporting Materials**
-Add mockups, diagrams, or other supporting materials to help illustrate your idea.
-
-**Priority**
-- [ ] Low
-- [ ] Medium
-- [ ] High
-- [ ] Critical
-
----
-
-## ⚡ Enhancement
-
-**Enhancement Title**
-A clear and concise description of the enhancement.
-
-**Current Behavior**
-Describe how the current functionality works.
-
-**Problem/Motivation** *(Required)*
-What problem does this solve? Why is the enhancement needed?
-
-**Proposed Enhancement** *(Required)*
-Describe your proposed enhancement in detail.
-
-**Implementation Plan** *(Required)*
-Provide a detailed plan for implementation. Include:
-- Technical approach
-- Required changes
-- Dependencies
-- Timeline estimate
-
-**Alternative Solutions Considered**
-Describe any alternative solutions you've considered and why they were rejected.
-
-**Acceptance Criteria**
-Define the criteria that must be met for this enhancement to be considered complete.
-
-**Supporting Materials**
-Add mockups, diagrams, or other supporting materials to help illustrate your enhancement.
-
-**Priority**
-- [ ] Low
-- [ ] Medium
-- [ ] High
-- [ ] Critical
-
----
-
-## Additional Context
-Add any other context or information that might be helpful.
+**Additional Context:**
+<!-- Add any other context about the problem here -->

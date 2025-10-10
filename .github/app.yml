@@ -1,0 +1,27 @@
+# GitHub App Configuration
+# This file would be used if you want to create a GitHub App for automatic issue creation
+
+name: Itinerarly Issue Creator
+description: Automatically creates GitHub issues from web forms
+url: https://your-domain.com
+
+# Permissions needed
+permissions:
+  issues: write
+  contents: read
+  metadata: read
+
+# Events to listen for (if using webhooks)
+events:
+  - issues
+
+# Installation settings
+installations:
+  on_install:
+    - issues: write
+
+# Webhook endpoints (if using webhooks instead of direct API calls)
+webhooks:
+  - url: https://your-domain.com/api/github/webhook
+    events:
+      - issues
