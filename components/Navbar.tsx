@@ -193,9 +193,9 @@ const Navbar = () => {
   }, []);
 
   const navItems = [
-    { label: "Home", href: "#home"},
-    { label: "About", href: "#about"},
-    { label: "Features", href: "#features"},
+    { label: "Home", href: "#home" },
+    { label: "About", href: "#about", isSection: true },
+    { label: "Features", href: "#features", isSection: true },
   ];
 
   return (
@@ -260,12 +260,7 @@ const Navbar = () => {
                       />
                     </div>
                     <span className="text-sm font-medium">
-                        <button
-                        onClick={handleAuthClick}
-                        className="text-sm font-medium hover:text-orange-400 transition-colors"
-                        >
-                        Sign In
-                        </button>
+                      {userInfo?.name ? userInfo.name.split(" ")[0] : "Profile"}
                     </span>
                     <ChevronDown
                       className={`w-4 h-4 transition-transform ${
@@ -278,16 +273,11 @@ const Navbar = () => {
                   {isProfileDropdownOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-black/90 backdrop-blur-md rounded-2xl shadow-2xl py-2 z-50 border border-white/20">
                       <div className="px-4 py-3 text-sm border-b border-white/20">
-                        <div className="font-medium text-white">
-                          <button
-                            onClick={handleAuthClick}
-                            className="text-sm font-medium hover:text-orange-400 transition-colors"
-                          >
-                            Sign In
-                          </button>
+                        <div className="font-medium text-white truncate">
+                          {userInfo?.name || "User"}
                         </div>
                         {userInfo?.email && (
-                          <div className="text-gray-400 text-xs mt-1">
+                          <div className="text-gray-400 text-xs mt-1 truncate">
                             {userInfo.email}
                           </div>
                         )}
@@ -357,17 +347,15 @@ const Navbar = () => {
                     }
                   >
                     <div className="w-7 h-7 bg-gradient-to-r from-orange-400 to-green-400 rounded-full flex items-center justify-center overflow-hidden border border-white/20">
-                      <button
-                        onClick={handleAuthClick}
-                        className="text-xs font-medium hover:text-orange-400 transition-colors"
-                      >
-                        Sign In
-                      </button>
-                      <User
-                        className={`w-4 h-4 text-white ${
-                          userInfo?.avatar ? "hidden" : "block"
-                        }`}
-                      />
+                      {userInfo?.avatar ? (
+                        <img
+                          src={userInfo.avatar}
+                          alt={userInfo.name || "User"}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <User className="w-4 h-4 text-white" />
+                      )}
                     </div>
                     <ChevronDown
                       className={`w-3 h-3 transition-transform ${
@@ -381,12 +369,7 @@ const Navbar = () => {
                     <div className="absolute right-0 mt-2 w-40 bg-black/90 backdrop-blur-md rounded-2xl shadow-2xl py-2 z-50 border border-white/20">
                       <div className="px-3 py-2 text-xs border-b border-white/20">
                         <div className="font-medium truncate text-white">
-                          <button
-                            onClick={handleAuthClick}
-                            className="text-xs font-medium hover:text-orange-400 transition-colors"
-                          >
-                            Sign In
-                          </button>
+                          {userInfo?.name || "User"}
                         </div>
                       </div>
 
