@@ -3,6 +3,7 @@ import React from "react";
 import { Analytics } from "@vercel/analytics/react";
 import { TokenProvider } from "@/lib/TokenProvider";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { Chatbot } from "@/components/Chatbot";
 
 export const metadata = {
   title: "Itinerary App",
@@ -39,6 +40,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <TokenProvider>{children}</TokenProvider>
+        <Chatbot />
         <Analytics />
         {gaId && <GoogleAnalytics gaId={gaId} />}
       </body>
